@@ -1,0 +1,15 @@
+.SideBar {
+  width: 20%;
+
+  & ul {
+    list-style-type: none;
+    padding: 0;
+
+    li {
+      width: 100%;
+      padding: 1rem 1.5rem;
+      border: 1px solid #eee;
+      font-size: 1.2rem;
+    }
+  }
+}
