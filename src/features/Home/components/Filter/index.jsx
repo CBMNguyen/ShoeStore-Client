@@ -1,15 +1,18 @@
-import React, { useState } from "react";
 import PropTypes from "prop-types";
-import "./filter.scss";
-import { Row, Col } from "reactstrap";
+import React, { useState } from "react";
 import InputRange from "react-input-range";
 import "react-input-range/lib/css/index.css";
-import { capitalizeFirstLetter } from "utils/common";
+import { Row } from "reactstrap";
+import CategoryItem from "../CategoryItem";
+import ColorItem from "../ColorItem";
+import SizeItem from "../SizeItem";
+import "./filter.scss";
 
 Filter.propTypes = {
   color: PropTypes.array.isRequired,
   category: PropTypes.array.isRequired,
   size: PropTypes.array.isRequired,
+  filter: PropTypes.object.isRequired,
   minPrice: PropTypes.number.isRequired,
   maxPrice: PropTypes.number.isRequired,
 
@@ -25,6 +28,7 @@ function Filter(props) {
     color,
     category,
     size,
+    filter,
     minPrice,
     maxPrice,
     onColorChange,
@@ -38,34 +42,15 @@ function Filter(props) {
       <li>
         <span className="d-block">Brand</span>
         {category.map((c, i) => (
-          <div className="ms-2" key={c.name}>
-            {i === 0 && (
-              <div>
-                {" "}
-                <input
-                  id=""
-                  type="radio"
-                  name="category"
-                  defaultChecked={true}
-                  onChange={(e) => onCategoryChange(e.target.id)}
-                />
-                <label className="ms-2" htmlFor={c.name}>
-                  All
-                </label>
-              </div>
-            )}
-            <input
-              id={c.name}
-              type="radio"
-              name="category"
-              onChange={(e) => onCategoryChange(e.target.id)}
-            />
-            <label className="ms-2" htmlFor={c.name}>
-              {capitalizeFirstLetter(c.name)}
-            </label>
-          </div>
+          <CategoryItem
+            key={c.name}
+            index={i}
+            category={c}
+            onCategoryChange={onCategoryChange}
+          />
         ))}
       </li>
+
       <li>
         <span className="d-block mb-5">Price Range</span>
         <InputRange
@@ -84,51 +69,35 @@ function Filter(props) {
         />
         <span className="d-block mt-5" />
       </li>
+
       <li className="Filter__color">
         <span className="d-block mb-2">Color</span>
         <Row>
           {color.map((c) => (
-            <Col key={c.color} md="3">
-              <div
-                style={{
-                  backgroundColor: `${c.color}`,
-                  width: "2rem",
-                  height: "2rem",
-                  margin: "0.5rem 0",
-                  borderRadius: "0.2rem",
-                  cursor: "pointer",
-                }}
-                className="border shadow"
-                onClick={() => onColorChange(c.color)}
-              />
-            </Col>
+            <ColorItem
+              key={c.color}
+              color={c}
+              onColorChange={onColorChange}
+              filter={filter}
+            />
           ))}
         </Row>
         <span className="d-block mb-3" />
       </li>
+
       <li>
-        <span className="d-block  mb-3">Size</span>
+        <span className="d-block  mb-2">Size</span>
         <Row>
           {size.map((s) => (
-            <Col key={s.size} md="3">
-              <div
-                style={{
-                  width: "2rem",
-                  height: "2rem",
-                  margin: "0.5rem 0",
-                  borderRadius: "0.2rem",
-                  textAlign: "center",
-                  cursor: "pointer",
-                }}
-                className="border shadow"
-                onClick={() => onSizeChange(s.size)}
-              >
-                {s.size}
-              </div>
-            </Col>
+            <SizeItem
+              key={s.size}
+              size={s}
+              filter={filter}
+              onSizeChange={onSizeChange}
+            />
           ))}
         </Row>
-        <span className="d-block mb-2" />
+        <span className="d-block mb-1" />
       </li>
     </ul>
   );

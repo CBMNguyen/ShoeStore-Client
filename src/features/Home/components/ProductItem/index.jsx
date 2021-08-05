@@ -22,7 +22,7 @@ function ProductItem(props) {
         <header>
           <section
             style={
-              border === product._id ? { borderLeft: "2px solid orange" } : {}
+              border === product._id ? { borderLeft: "3px solid orange" } : {}
             }
           >
             <div>{capitalizeFirstLetter(product.category.name)}</div>

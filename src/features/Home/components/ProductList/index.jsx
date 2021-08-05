@@ -25,12 +25,12 @@ function ProductList(props) {
     <div className="ProductList">
       <header>
         <h3>New Arrivals</h3>
-        <div>
+        <div onClick={handleSortPriceClick}>
           <span>Sort by Price</span>
           {filter.isIncreasePrice > 0 ? (
-            <i onClick={handleSortPriceClick} className="bx bx-chevron-down" />
+            <i className="bx bx-chevron-down" />
           ) : (
-            <i onClick={handleSortPriceClick} className="bx bx-chevron-up" />
+            <i className="bx bx-chevron-up" />
           )}
         </div>
       </header>
