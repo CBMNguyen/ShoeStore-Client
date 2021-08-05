@@ -1,8 +1,10 @@
 @import url("https://fonts.googleapis.com/css2?family=Pacifico&display=swap");
 .Header {
+  position: relative;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  z-index: 1000;
 
   padding: 0 1.5rem;
   border-bottom: 1px solid #eef;
@@ -39,7 +41,7 @@
     align-items: center;
 
     & i {
-      margin: 0 1rem;
+      margin: 1.5rem;
       font-size: 1.5rem;
     }
 

@@ -8,11 +8,18 @@ ProductList.propTypes = {
   products: PropTypes.array.isRequired,
   filter: PropTypes.object.isRequired,
   onInCreasePriceChange: PropTypes.func,
+  onSelectProduct: PropTypes.func,
 };
 
 function ProductList(props) {
   const [border, setBorder] = useState("61056d6d691a953968d55bc2");
-  const { products, filter, onInCreasePriceChange } = props;
+  const {
+    products,
+    filter,
+    onInCreasePriceChange,
+    onSelectProduct,
+    showModel,
+  } = props;
 
   const handleSortPriceClick = () => {
     const price = 1;
@@ -41,6 +48,8 @@ function ProductList(props) {
             product={product}
             border={border}
             setBorder={setBorder}
+            onSelectProduct={onSelectProduct}
+            showModel={showModel}
           />
         ))}
       </Row>

@@ -1,0 +1,28 @@
+.ImageModel {
+  & i {
+    position: absolute;
+    top: 0;
+    right: 0;
+    padding: 1rem;
+
+    font-size: 4rem;
+    color: #ccc;
+    cursor: pointer;
+    transition: 0.3s;
+  }
+
+  & i:hover {
+    transform: scale(1.05);
+  }
+
+  &__list {
+    width: 600px;
+    height: 600px;
+
+    & img {
+      width: 100%;
+      vertical-align: middle;
+      cursor: pointer;
+    }
+  }
+}

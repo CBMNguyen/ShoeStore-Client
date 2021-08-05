@@ -1,0 +1,122 @@
+.ProductDetail {
+  position: relative;
+  width: 20%;
+  height: 90vh;
+  float: left;
+  border-left: 1px solid #eee;
+  box-sizing: border-box;
+
+  &__list {
+    position: absolute;
+    width: 90%;
+    top: -140px;
+    left: 0;
+  }
+
+  & img {
+    width: 100%;
+    height: 100%;
+    cursor: pointer;
+  }
+
+  &__title {
+    position: relative;
+    top: 180px;
+    text-align: center;
+    margin-right: 1.5rem;
+
+    & div:first-child {
+      font-size: 1.1rem;
+      font-weight: bold;
+    }
+
+    & div:last-child {
+      color: #ccc;
+    }
+  }
+
+  &__size {
+    position: relative;
+    top: 210px;
+    margin-left: 1rem;
+
+    & header {
+      font-weight: 600;
+      margin-bottom: 0.75rem;
+    }
+
+    & section {
+      display: flex;
+
+      & > div {
+        padding: 10px 15px 10px 15px;
+        border: 1px solid #eee;
+        margin-right: 0.5rem;
+        border-radius: 25%;
+        cursor: pointer;
+      }
+    }
+  }
+
+  &__color {
+    position: relative;
+    top: 230px;
+    margin-left: 1rem;
+
+    & header {
+      font-weight: 600;
+      margin-bottom: 0.75rem;
+    }
+
+    & section {
+      display: flex;
+
+      & > div {
+        width: 38px;
+        height: 38px;
+        margin-right: 0.5rem;
+        border-radius: 50%;
+      }
+    }
+  }
+
+  &__description {
+    position: relative;
+    top: 250px;
+    margin-left: 1rem;
+
+    & header {
+      font-weight: 600;
+      margin-bottom: 0.75rem;
+    }
+
+    & p {
+      color: #aaa;
+    }
+  }
+
+  &__button {
+    position: relative;
+    top: 280px;
+    width: 100%;
+
+    & button {
+      position: relative;
+      display: block;
+      width: 90%;
+      margin: 0 auto;
+      padding: 0.8rem 1.2rem;
+      border: none;
+      border-radius: 0.6rem;
+      background-color: black;
+      color: white;
+
+      & i {
+        position: absolute;
+        left: 10px;
+        top: 0.85rem;
+        font-size: 1.4rem;
+      }
+    }
+  }
+}

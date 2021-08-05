@@ -1,4 +1,3 @@
-import Header from "components/Header";
 import NotFound from "components/NotFound";
 import Home from "features/Home";
 import { BrowserRouter, Route, Switch } from "react-router-dom";

@@ -17,14 +17,14 @@
       border-left: 2px solid black;
     }
 
-    & section div:first-child {
+    & section div:last-child {
       font-weight: bold;
       font-size: 1rem;
     }
 
-    & section div:last-child {
+    & section div:first-child {
       width: 100%;
-      color: #ccd;
+      color: #ddd;
     }
   }
   &__image {

@@ -3,9 +3,12 @@ import Loading from "components/Loading";
 import { fetchCategory } from "features/Home/categorySlice";
 import { fetchColor } from "features/Home/colorSlice";
 import Filter from "features/Home/components/Filter";
+import ImageModel from "features/Home/components/ImageModel";
+import ProductDetail from "features/Home/components/ProductDetail";
 import ProductList from "features/Home/components/ProductList";
 import { fetchProduct } from "features/Home/productSlice";
 import { fetchSize } from "features/Home/sizeSlice";
+import useModel from "hooks/useModel";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
@@ -13,9 +16,9 @@ function MainPage(props) {
   const dispatch = useDispatch();
 
   useEffect(() => {
+    dispatch(fetchProduct());
     dispatch(fetchColor());
     dispatch(fetchCategory());
-    dispatch(fetchProduct());
     dispatch(fetchSize());
   }, [dispatch]);
 
@@ -34,6 +37,7 @@ function MainPage(props) {
       maxPrice: 1082.23,
     },
     isIncreasePrice: 0,
+    selectedProduct: null,
   });
 
   const filterProduct = products.filter(
@@ -62,6 +66,8 @@ function MainPage(props) {
       .slice()
       .sort((a, b) => b.originalPrice - a.originalPrice));
 
+  const { model, showModel, closeModel } = useModel();
+
   const handleColorChange = (color) => {
     setFilter({ ...filter, color });
   };
@@ -86,32 +92,46 @@ function MainPage(props) {
     setFilter({ ...filter, isIncreasePrice });
   };
 
-  return (
+  const handleSelectProduct = (selectedProduct) => {
+    setFilter({ ...filter, selectedProduct });
+  };
+
+  return products.length === 0 ? (
+    <Loading />
+  ) : (
     <div>
-      {products.length === 0 ? (
-        <Loading />
-      ) : (
-        <div>
-          <Header onNameChange={handleNameChange} />
-          <Filter
-            color={color}
-            category={category}
-            size={size}
-            filter={filter}
-            minPrice={42.32}
-            maxPrice={1083}
-            onColorChange={handleColorChange}
-            onSizeChange={handleSizeChange}
-            onCategoryChange={handleCategoryChange}
-            onPriceChange={handlePriceChange}
-          />
-          <ProductList
-            products={sortProductByPrice}
-            filter={filter}
-            onImage
-            onInCreasePriceChange={handleInCreasePriceChange}
-          />
-        </div>
+      <Header onNameChange={handleNameChange} />
+
+      <Filter
+        color={color}
+        category={category}
+        size={size}
+        filter={filter}
+        minPrice={42.32}
+        maxPrice={1083}
+        onColorChange={handleColorChange}
+        onSizeChange={handleSizeChange}
+        onCategoryChange={handleCategoryChange}
+        onPriceChange={handlePriceChange}
+      />
+
+      <ProductList
+        products={sortProductByPrice}
+        filter={filter}
+        onInCreasePriceChange={handleInCreasePriceChange}
+        onSelectProduct={handleSelectProduct}
+        showModel={showModel}
+      />
+
+      <ProductDetail
+        product={
+          !filter["selectedProduct"] ? products[0] : filter["selectedProduct"]
+        }
+        showModel={showModel}
+      />
+
+      {model.show && (
+        <ImageModel product={model.data} closeModel={closeModel} />
       )}
     </div>
   );
