@@ -33,6 +33,8 @@ function SizeItem(props) {
           cursor: "pointer",
           backgroundColor: "#eee",
           verticalAlign: "middle",
+          transform: size["size"] === filter["size"] ? "scale(1.1)" : "",
+          transition: "all .2s easy 0s",
         }}
         className={classNames("border shadow", {
           "border-secondary border-2": size["size"] === filter["size"],

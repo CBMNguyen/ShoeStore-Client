@@ -54,6 +54,7 @@
         margin-right: 0.5rem;
         border-radius: 25%;
         cursor: pointer;
+        transition: 0.5s;
       }
     }
   }
@@ -76,6 +77,9 @@
         height: 38px;
         margin-right: 0.5rem;
         border-radius: 50%;
+        border: 2px solid #eee;
+        cursor: pointer;
+        transition: 0.5s;
       }
     }
   }
@@ -106,6 +110,8 @@
       width: 90%;
       margin: 0 auto;
       padding: 0.8rem 1.2rem;
+
+      font-weight: 600;
       border: none;
       border-radius: 0.6rem;
       background-color: black;

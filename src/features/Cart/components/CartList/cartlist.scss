@@ -1,0 +1,106 @@
+.CartList {
+  display: block;
+  width: 1150px;
+  margin: 0 auto;
+
+  & header {
+    margin: 2rem 0;
+    text-transform: uppercase;
+    font-size: 2rem;
+    font-weight: 500;
+  }
+
+  & table {
+    margin-bottom: 0;
+  }
+
+  & table th {
+    padding: 0.5rem;
+    background-color: deeppink;
+    color: white;
+  }
+
+  & table tr {
+    vertical-align: middle;
+  }
+
+  & table td {
+    margin: 0;
+    padding: 0;
+    border-bottom: 1px solid #eee;
+  }
+
+  & table select {
+    width: auto;
+    border: none;
+    cursor: pointer;
+  }
+
+  & table select:focus {
+    outline: none;
+  }
+
+  &__empty {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    width: 100%;
+    height: 500px;
+    margin-top: 5rem;
+    background-color: pink;
+
+    & i {
+      position: relative;
+      font-size: 15rem;
+
+      & span {
+        position: absolute;
+        top: 11rem;
+        left: 12.6rem;
+        font-size: 1.5rem;
+      }
+    }
+
+    & .button {
+      margin-top: 2rem;
+      padding: 1rem 2rem;
+      color: white;
+      border: none;
+      border-radius: 0.4rem;
+
+      background-color: cyan;
+      font-weight: bold;
+      cursor: pointer;
+    }
+  }
+
+  &__payment {
+    display: block;
+    width: 325px;
+    margin-left: auto;
+
+    & > div {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 0.4rem;
+      padding: 0.2rem;
+
+      font-weight: bold;
+    }
+
+    & > div div:last-child {
+      padding: 0.4rem 0.8rem;
+      border: none;
+      border-radius: 0.2rem;
+      color: white;
+      background-color: cyan;
+
+      font-size: 0.85rem;
+      font-weight: bold;
+      cursor: pointer;
+    }
+  }
+}

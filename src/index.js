@@ -1,8 +1,11 @@
-import store from "app/store";
+import store, { persistor } from "app/store";
 import "bootstrap/dist/css/bootstrap.min.css";
+import Loading from "components/Loading";
 import React from "react";
 import ReactDOM from "react-dom";
 import { Provider } from "react-redux";
+import "react-toastify/dist/ReactToastify.css";
+import { PersistGate } from "redux-persist/integration/react";
 import App from "./App";
 import "./index.css";
 import reportWebVitals from "./reportWebVitals";
@@ -10,7 +13,9 @@ import reportWebVitals from "./reportWebVitals";
 ReactDOM.render(
   <React.StrictMode>
     <Provider store={store}>
-      <App />
+      <PersistGate loading={<Loading />} persistor={persistor}>
+        <App />
+      </PersistGate>
     </Provider>
   </React.StrictMode>,
   document.getElementById("root")

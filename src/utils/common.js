@@ -1,6 +1,6 @@
 import { unwrapResult } from "@reduxjs/toolkit";
-// import { PRODUCT_TOAST_OPTIONS } from "constants/globals";
-// import { toast } from "react-toastify";
+import { PRODUCT_TOAST_OPTIONS } from "constants/globals";
+import { toast } from "react-toastify";
 
 export function capitalizeFirstLetter(string) {
   return string.charAt(0).toUpperCase() + string.slice(1);
@@ -44,18 +44,18 @@ export function dataURLtoFile(dataurl, filename) {
 
 // Show Toast Success
 
-// export const showToastSuccess = async (asyncAction) => {
-//   const result = await asyncAction;
-//   if (!unwrapResult(result)) return;
-//   toast.success("🧦 " + result.payload.message, {
-//     ...PRODUCT_TOAST_OPTIONS,
-//   });
-// };
+export const showToastSuccess = async (asyncAction) => {
+  const result = await asyncAction;
+  if (!unwrapResult(result)) return;
+  toast.success("🧦 " + result.payload.message, {
+    ...PRODUCT_TOAST_OPTIONS,
+  });
+};
 
-// // Show Toast Error
+// Show Toast Error
 
-// export const showToastError = (error) => {
-//   toast.error("🧦 " + error.message, {
-//     ...PRODUCT_TOAST_OPTIONS,
-//   });
-// };
+export const showToastError = (error) => {
+  toast.error("🧦 " + error.message, {
+    ...PRODUCT_TOAST_OPTIONS,
+  });
+};
