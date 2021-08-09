@@ -11,7 +11,6 @@ CheckBoxField.propTypes = {
   placeholder: PropTypes.string,
   className: PropTypes.string,
   control: PropTypes.object.isRequired,
-  setValue: PropTypes.func.isRequired,
 };
 
 CheckBoxField.defaultProps = {

@@ -51,6 +51,8 @@ function Filter(props) {
         ))}
       </li>
 
+      {/* Filter Product by range price */}
+
       <li>
         <span className="d-block mb-5">Price Range</span>
         <InputRange
@@ -70,6 +72,8 @@ function Filter(props) {
         <span className="d-block mt-5" />
       </li>
 
+      {/* Filter product by color */}
+
       <li className="Filter__color">
         <span className="d-block mb-2">Color</span>
         <Row>
@@ -84,6 +88,8 @@ function Filter(props) {
         </Row>
         <span className="d-block mb-3" />
       </li>
+
+      {/* Filter product by size */}
 
       <li>
         <span className="d-block  mb-2">Size</span>

@@ -17,11 +17,13 @@ import cartReducer from "../features/Cart/cartSlice";
 import categoryReducer from "../features/Home/categorySlice";
 import sizeReducer from "../features/Home/sizeSlice";
 import productReducer from "../features/Home/productSlice";
+import orderReducer from "../features/Order/orderSlice";
+import userReducer from "./userSlice";
 
 const persistConfig = {
   key: "cart",
   storage,
-  whitelist: ["cart"],
+  whitelist: ["cart", "user"],
 };
 
 const rootReducer = combineReducers({
@@ -30,6 +32,8 @@ const rootReducer = combineReducers({
   category: categoryReducer,
   size: sizeReducer,
   products: productReducer,
+  user: userReducer,
+  order: orderReducer,
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

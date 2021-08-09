@@ -35,7 +35,7 @@ function ProductDetail(props) {
     slidesToScroll: 1,
   };
 
-  const handleAddtoCart = (product) => {
+  const handleAddtoCart = async (product) => {
     const index = cart.findIndex((c) => c._id === product._id);
 
     if (!select.selectedSize) {
@@ -59,11 +59,16 @@ function ProductDetail(props) {
       return;
     }
 
-    dispatch(addToCart({ ...product, ...select }));
+    await dispatch(addToCart({ ...product, ...select }));
+    toast.success("🧦 Added a product to the cart 🎀", {
+      ...PRODUCT_TOAST_OPTIONS,
+    });
   };
 
   return (
     <div className="ProductDetail">
+      {/* Product Image List */}
+
       <Slider className="ProductDetail__list" {...settings}>
         {product.images.map((img) => (
           <img
@@ -75,10 +80,14 @@ function ProductDetail(props) {
         ))}
       </Slider>
 
+      {/* Product title */}
+
       <div className="ProductDetail__title">
         <div>{capitalizeFirstLetter(product.category.name)}</div>
         <div>{product.name}</div>
       </div>
+
+      {/* Product size */}
 
       <div className="ProductDetail__size">
         <header>Select Size</header>
@@ -104,6 +113,8 @@ function ProductDetail(props) {
         </section>
       </div>
 
+      {/* Product color */}
+
       <div className="ProductDetail__color">
         <header>Select Color</header>
         <section>
@@ -125,6 +136,8 @@ function ProductDetail(props) {
           ))}
         </section>
       </div>
+
+      {/* Product description */}
 
       <div className="ProductDetail__description">
         <header>Description</header>

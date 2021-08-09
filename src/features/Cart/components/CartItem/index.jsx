@@ -27,6 +27,8 @@ function CartItem(props) {
     onProductRemove,
   } = props;
 
+  // handle change attribute
+
   const handleColorChange = (id, color) => {
     if (!onColorChange) return;
     onColorChange(id, color);

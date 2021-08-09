@@ -1,5 +1,8 @@
+import { getOrderWithCart } from "features/Order/orderSlice";
+import jwt from "jsonwebtoken";
 import PropTypes from "prop-types";
 import React from "react";
+import { useDispatch } from "react-redux";
 import { useHistory } from "react-router-dom";
 import { Badge, Table } from "reactstrap";
 import CartItem from "../CartItem";
@@ -7,27 +10,47 @@ import "./cartlist.scss";
 CartList.propTypes = {
   cart: PropTypes.array.isRequired,
   total: PropTypes.number.isRequired,
+  token: PropTypes.string.isRequired,
 
   onSizeChange: PropTypes.func.isRequired,
   onColorChange: PropTypes.func.isRequired,
   onQuantityChange: PropTypes.func.isRequired,
   onProductRemove: PropTypes.func.isRequired,
+  showModel: PropTypes.func.isRequired,
 };
 
 function CartList(props) {
   const history = useHistory();
+  const dispatch = useDispatch();
   const {
     cart,
     total,
+    token,
 
     onSizeChange,
     onColorChange,
     onQuantityChange,
     onProductRemove,
+    showModel,
   } = props;
 
+  // handle click when go to check out
+
+  const handleCheckOutClick = async () => {
+    try {
+      await jwt.verify(token, process.env.REACT_APP_JWT_KEY);
+      const order = cart.map((cart) => ({ ...cart, state: "" }));
+      dispatch(getOrderWithCart(order));
+
+      history.push("/order");
+    } catch (error) {
+      showModel();
+    }
+  };
+
   return (
-    <div className="CartList">
+    <div className="CartList mt-0">
+      {/* handle when order empty */}
       {cart.length === 0 && (
         <div className="CartList__empty">
           <i className="bx bx-basket animate__animated animate__swing">
@@ -38,6 +61,7 @@ function CartList(props) {
           </div>
         </div>
       )}
+
       {cart.length !== 0 && (
         <div>
           <header>My Shopping Cart 🛒</header>
@@ -73,7 +97,7 @@ function CartList(props) {
             <div>
               <div>Total: </div>
               <div className="ms-3">{`${total.toFixed(2)}$`}</div>
-              <div>Check out</div>
+              <div onClick={handleCheckOutClick}>Check out</div>
             </div>
           </div>
         </div>

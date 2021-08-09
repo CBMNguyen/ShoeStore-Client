@@ -1,5 +1,4 @@
-import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import cartApi from "api/product";
+import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
   cart: [],
@@ -7,24 +6,16 @@ const initialState = {
   loading: false,
 };
 
-export const fetchCartById = createAsyncThunk(
-  "cart/fetchCart",
-  async (id, { rejectWithValue, fulfillWithValue }) => {
-    try {
-      const cart = await cartApi.get(id);
-      return fulfillWithValue(cart);
-    } catch (error) {
-      return rejectWithValue(error);
-    }
-  }
-);
-
 const cartSlice = createSlice({
   name: "cart",
   initialState,
   reducers: {
     addToCart: (state, action) => {
       state.cart.push(action.payload);
+    },
+
+    resetCart: (state, action) => {
+      state.cart = [];
     },
 
     selectSize: (state, action) => {
@@ -55,19 +46,6 @@ const cartSlice = createSlice({
       state.cart.splice(index, 1);
     },
   },
-  extraReducers: {
-    // handle fetch cart by id
-    [fetchCartById.rejected]: (state, action) => {
-      state.loading = false;
-      state.error = action.payload.message;
-    },
-    [fetchCartById.fulfilled]: (state, action) => {
-      const { products } = action.payload;
-      state.loading = false;
-      state.products = products;
-      state.error = "";
-    },
-  },
 });
 
 const { reducer, actions } = cartSlice;
@@ -77,5 +55,6 @@ export const {
   selectSize,
   selectQuantity,
   removeProduct,
+  resetCart,
 } = actions;
 export default reducer;

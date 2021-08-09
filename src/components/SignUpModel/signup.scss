@@ -1,0 +1,59 @@
+.SignUpModel {
+  & form {
+    position: relative;
+    width: 540px;
+    height: 680px;
+    color: #000;
+    background-color: white;
+    padding: 1.5rem;
+    border-radius: 1.5rem;
+
+    & header {
+      text-align: center;
+      font-family: "Pacifico", cursive;
+      font-size: 2rem;
+    }
+
+    & i {
+      position: absolute;
+      top: 0.5rem;
+      right: 0.5rem;
+      padding: 1rem;
+      font-size: 2rem;
+      color: #eee;
+      transition: 0.3s;
+    }
+
+    & i:hover {
+      transform: scale(1.1);
+      cursor: pointer;
+      color: #ddd;
+    }
+
+    & a {
+      text-decoration: none;
+      font-size: 0.85rem;
+    }
+
+    & button {
+      position: relative;
+      margin-top: 1rem;
+      border: none;
+      padding: 0.6rem 0;
+      font-weight: bold;
+      letter-spacing: 0.2rem;
+      background-color: deeppink;
+      transition: all 0.3s ease-in-out 0s;
+    }
+
+    & button:hover {
+      background-color: rgb(236, 22, 137);
+    }
+
+    & button:focus {
+      background-color: rgb(236, 22, 137);
+      box-shadow: none !important;
+      outline: none;
+    }
+  }
+}

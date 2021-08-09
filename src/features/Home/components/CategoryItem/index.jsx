@@ -37,12 +37,14 @@ function CategoryItem(props) {
           </label>
         </div>
       )}
+
       <input
         id={category.name}
         type="radio"
         name="category"
         onChange={(e) => handleCategoryChange(e.target.id)}
       />
+
       <label className="ms-1" htmlFor={category.name}>
         {capitalizeFirstLetter(category.name)}
       </label>

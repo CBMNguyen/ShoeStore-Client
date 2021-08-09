@@ -41,6 +41,8 @@ function ProductItem(props) {
           handleSelectProduct(product);
         }}
       >
+        {/* Product header */}
+
         <header>
           <section
             style={
@@ -52,6 +54,8 @@ function ProductItem(props) {
           </section>
         </header>
 
+        {/* Product Image */}
+
         <img
           onClick={() => handleShowModel(product)}
           className="ProductItem__image"
@@ -61,12 +65,16 @@ function ProductItem(props) {
           alt={product._id}
         />
 
+        {/* Product Price */}
+
         <div className="ProductItem__price">
           <section>
             {" "}
             <div>Price</div>
             <div>{`${product.originalPrice}$`}</div>
           </section>
+
+          {/* Selected Product small image */}
 
           <section>
             <img

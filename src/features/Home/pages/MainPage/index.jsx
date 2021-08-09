@@ -1,5 +1,8 @@
+import { createUser, userLogin } from "app/userSlice";
 import Header from "components/Header";
 import Loading from "components/Loading";
+import LoginModel from "components/LoginModel";
+import SignUpModel from "components/SignUpModel";
 import { fetchCategory } from "features/Home/categorySlice";
 import { fetchColor } from "features/Home/colorSlice";
 import Filter from "features/Home/components/Filter";
@@ -11,9 +14,12 @@ import { fetchSize } from "features/Home/sizeSlice";
 import useModel from "hooks/useModel";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { showToastError, showToastSuccess } from "utils/common";
 
 function MainPage(props) {
   const dispatch = useDispatch();
+
+  // fetch data for home page
 
   useEffect(() => {
     dispatch(fetchProduct());
@@ -26,6 +32,8 @@ function MainPage(props) {
   const { size } = useSelector((state) => state.size);
   const { category } = useSelector((state) => state.category);
   const { products } = useSelector((state) => state.products);
+
+  // Filter Product
 
   const [filter, setFilter] = useState({
     category: "",
@@ -54,12 +62,18 @@ function MainPage(props) {
       product.name.toLowerCase().indexOf(filter["name"].toLowerCase()) !== -1
   );
 
+  // Sort product
+
   let sortProductByPrice = filterProduct;
+
+  // Sort Increase Product
 
   filter.isIncreasePrice === 1 &&
     (sortProductByPrice = filterProduct
       .slice()
       .sort((a, b) => a.originalPrice - b.originalPrice));
+
+  // Sort Decrease Product
 
   filter.isIncreasePrice === -1 &&
     (sortProductByPrice = filterProduct
@@ -67,6 +81,10 @@ function MainPage(props) {
       .sort((a, b) => b.originalPrice - a.originalPrice));
 
   const { model, showModel, closeModel } = useModel();
+  const loginModel = useModel();
+  const signupModel = useModel();
+
+  // handle change
 
   const handleColorChange = (color) => {
     setFilter({ ...filter, color });
@@ -92,15 +110,43 @@ function MainPage(props) {
     setFilter({ ...filter, isIncreasePrice });
   };
 
+  // take current product
+
   const handleSelectProduct = (selectedProduct) => {
     setFilter({ ...filter, selectedProduct });
+  };
+
+  // handle sign up add user
+
+  const handleCreateUser = async (data) => {
+    try {
+      await showToastSuccess(dispatch(createUser(data)));
+      signupModel.closeModel();
+      loginModel.showModel();
+    } catch (error) {
+      showToastError(error);
+    }
+  };
+
+  // handle login
+
+  const handleLogin = async (data) => {
+    try {
+      await showToastSuccess(dispatch(userLogin(data)));
+      loginModel.closeModel();
+    } catch (error) {
+      showToastError(error);
+    }
   };
 
   return products.length === 0 ? (
     <Loading />
   ) : (
     <div>
-      <Header onNameChange={handleNameChange} />
+      <Header
+        showModel={loginModel.showModel}
+        onNameChange={handleNameChange}
+      />
 
       <Filter
         color={color}
@@ -130,8 +176,29 @@ function MainPage(props) {
         showModel={showModel}
       />
 
+      {/* Show image model  */}
+
       {model.show && (
         <ImageModel product={model.data} closeModel={closeModel} />
+      )}
+
+      {/* Show login model */}
+
+      {loginModel.model.show && (
+        <LoginModel
+          onLogin={handleLogin}
+          closeModel={loginModel.closeModel}
+          showModel={signupModel.showModel}
+        />
+      )}
+
+      {/* Show sign up model */}
+
+      {signupModel.model.show && (
+        <SignUpModel
+          onCreateUser={handleCreateUser}
+          closeModel={signupModel.closeModel}
+        />
       )}
     </div>
   );

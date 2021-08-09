@@ -27,6 +27,7 @@ function ImageModel(props) {
     prevArrow: <LeftArrowDirection />,
     nextArrow: <RightArrowDirection />,
   };
+
   return (
     <div className="ImageModel" style={STYLE_MODEL}>
       <i onClick={() => closeModel()} className="bx bx-x" />
