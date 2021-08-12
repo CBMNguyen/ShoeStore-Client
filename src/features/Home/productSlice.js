@@ -19,6 +19,18 @@ export const fetchProduct = createAsyncThunk(
   }
 );
 
+export const updateProduct = createAsyncThunk(
+  "product/updateProduct",
+  async ({ _id, quantityStock }, { rejectWithValue, fulfillWithValue }) => {
+    try {
+      const product = await productApi.update(_id, { quantityStock });
+      return fulfillWithValue(product);
+    } catch (error) {
+      return rejectWithValue(error);
+    }
+  }
+);
+
 const productSlice = createSlice({
   name: "product",
   initialState,

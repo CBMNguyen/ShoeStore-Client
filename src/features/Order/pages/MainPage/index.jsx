@@ -1,13 +1,18 @@
 import { yupResolver } from "@hookform/resolvers/yup";
-import { createUser, updateUser, userLogin } from "app/userSlice";
+import { createUser, getMe, updateUser, userLogin } from "app/userSlice";
 import axios from "axios";
 import Header from "components/Header";
 import LoginModel from "components/LoginModel";
 import SignUpModel from "components/SignUpModel";
 import { resetCart } from "features/Cart/cartSlice";
+import { updateProduct } from "features/Home/productSlice";
 import FieldList from "features/Order/components/FieldList";
 import OrderList from "features/Order/components/OrderList";
-import { createOrder, deleteOrder } from "features/Order/orderSlice";
+import {
+  createOrder,
+  deleteOrder,
+  getOrderById,
+} from "features/Order/orderSlice";
 import useModel from "hooks/useModel";
 import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -25,9 +30,17 @@ import "./order.scss";
 
 function MainPage(props) {
   const { order, id, loading, state } = useSelector((state) => state.order);
+  const dispatch = useDispatch();
+
   const { user } = useSelector((state) => state.user);
 
-  const dispatch = useDispatch();
+  useEffect(() => {
+    if (state) {
+      dispatch(getMe(user._id));
+      dispatch(getOrderById(user._id));
+    }
+  }, [dispatch, user._id, state]);
+
   const history = useHistory();
 
   const loginModel = useModel();
@@ -137,7 +150,7 @@ function MainPage(props) {
   );
 
   const defaultValues = {
-    fullName: user.orderAddress.fullName,
+    fullName: "hieu",
     isFullDay: user.orderAddress.isFullDay,
     phone: user.orderAddress.phone,
     city: { label: user.orderAddress.city, value: 0 },
@@ -180,6 +193,7 @@ function MainPage(props) {
       user: user._id,
       products: order,
     };
+
     try {
       await dispatch(
         updateUser({
@@ -187,7 +201,22 @@ function MainPage(props) {
           user: { orderAddress: orderAddress },
         })
       );
+
       await showToastSuccess(dispatch(createOrder(data)));
+
+      const updateProductQuantity = async () => {
+        order.forEach(async (product) => {
+          await dispatch(
+            updateProduct({
+              _id: product._id,
+              quantityStock: product.quantityStock - product.selectedQuantity,
+            })
+          );
+        });
+      };
+
+      await updateProductQuantity();
+
       dispatch(resetCart());
     } catch (error) {
       showToastError(error);
@@ -199,6 +228,19 @@ function MainPage(props) {
   const handleRemoveClick = async () => {
     try {
       await showToastSuccess(dispatch(deleteOrder(id)));
+
+      const updateProductQuantity = async () => {
+        order.forEach(async (product) => {
+          await dispatch(
+            updateProduct({
+              _id: product._id,
+              quantityStock: product.quantityStock,
+            })
+          );
+        });
+      };
+
+      await updateProductQuantity();
     } catch (error) {
       showToastError(error);
     }
@@ -217,6 +259,7 @@ function MainPage(props) {
 
           <Col md={5}>
             <FieldList
+              defaultValues={defaultValues}
               register={register}
               control={control}
               errors={errors}
@@ -257,7 +300,7 @@ function MainPage(props) {
                   padding: "0.5rem 1rem",
                   width: "100%",
                   height: "540px",
-                  overflowX: "scroll",
+                  overflow: "scroll",
                 }}
               >
                 {/* Product List check out */}
@@ -308,7 +351,20 @@ function MainPage(props) {
                 {state && (
                   <section
                     onClick={state === "pending" ? handleRemoveClick : null}
-                    style={{ backgroundColor: "#f72a8d", color: "white" }}
+                    style={{
+                      backgroundColor:
+                        state === "pending"
+                          ? "#f72a8d"
+                          : state === "processing"
+                          ? "cyan"
+                          : "green",
+                      color: "white",
+                      cursor:
+                        state === "processing" || state === "deliveried"
+                          ? "default"
+                          : "pointer",
+                      opacity: state !== "pending" ? "0.5" : "1",
+                    }}
                   >
                     <div>
                       {capitalizeFirstLetter(state)}
@@ -328,14 +384,18 @@ function MainPage(props) {
 
                       {/* React loading */}
 
-                      <ReactLoading
-                        type="balls"
-                        color="white"
-                        width="30px"
-                        height="30px"
-                      />
+                      {state !== "deliveried" && (
+                        <ReactLoading
+                          type="balls"
+                          color="white"
+                          width="30px"
+                          height="30px"
+                        />
+                      )}
                     </div>
-                    <small>Cancel and Clear Checkout</small>
+                    {state === "pending" && (
+                      <small>Cancel and Clear Checkout</small>
+                    )}
                   </section>
                 )}
               </div>

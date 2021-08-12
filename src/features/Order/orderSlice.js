@@ -7,13 +7,14 @@ const initialState = {
   loading: false,
   state: "",
   id: "",
+  userId: "",
 };
 
 export const getOrderById = createAsyncThunk(
   "order/getOrder",
-  async (id, { rejectWithValue, fulfillWithValue }) => {
+  async (userId, { rejectWithValue, fulfillWithValue }) => {
     try {
-      const order = await orderApi.get(id);
+      const order = await orderApi.get(userId);
       return fulfillWithValue(order);
     } catch (error) {
       return rejectWithValue(error);
@@ -26,6 +27,7 @@ export const createOrder = createAsyncThunk(
   async (order, { rejectWithValue, fulfillWithValue }) => {
     try {
       const data = await orderApi.create(order);
+      console.log(data);
       return fulfillWithValue(data);
     } catch (error) {
       return rejectWithValue(error);
@@ -50,7 +52,10 @@ const orderSlice = createSlice({
   initialState,
   reducers: {
     getOrderWithCart: (state, action) => {
-      state.order = action.payload;
+      const { order, userId } = action.payload;
+      state.order = order;
+      state.state = "";
+      state.userId = userId;
     },
   },
 
@@ -61,12 +66,18 @@ const orderSlice = createSlice({
     },
     [getOrderById.rejected]: (state, action) => {
       state.loading = false;
+      state.order = [];
+      state.userId = "";
+      state.id = "";
       state.error = action.payload.message;
     },
     [getOrderById.fulfilled]: (state, action) => {
       const { order } = action.payload;
       state.loading = false;
-      state.order = order;
+      state.state = order.state;
+      state.order = order.products;
+      state.id = order._id;
+      state.userId = order.user._id;
       state.error = "";
     },
 
@@ -101,6 +112,7 @@ const orderSlice = createSlice({
       state.error = "";
       state.state = "";
       state.id = "";
+      state.userId = "";
     },
   },
 });

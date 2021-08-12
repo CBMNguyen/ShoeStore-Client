@@ -1,10 +1,14 @@
 .CartList {
-  display: block;
   width: 1150px;
   margin: 0 auto;
+  margin-top: 4rem;
+  max-height: 600px;
+  padding: 1rem;
+  border-radius: 1rem;
+  overflow: scroll;
 
   & header {
-    margin: 2rem 0;
+    margin-bottom: 0.5rem;
     text-transform: uppercase;
     font-size: 2rem;
     font-weight: 500;
@@ -12,6 +16,7 @@
 
   & table {
     margin-bottom: 0;
+    padding: 1rem;
   }
 
   & table th {
@@ -47,8 +52,7 @@
     align-items: center;
 
     width: 100%;
-    height: 500px;
-    margin-top: 5rem;
+    height: 600px;
     background-color: pink;
 
     & i {
@@ -103,4 +107,8 @@
       cursor: pointer;
     }
   }
+}
+
+.CartList::-webkit-scrollbar {
+  display: none;
 }

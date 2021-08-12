@@ -18,7 +18,7 @@ import { showToastError, showToastSuccess } from "utils/common";
 
 function MainPage(props) {
   const { cart } = useSelector((state) => state.cart);
-  const { token } = useSelector((state) => state.user);
+  const { token, user } = useSelector((state) => state.user);
 
   const loginModel = useModel();
   const signupModel = useModel();
@@ -90,6 +90,7 @@ function MainPage(props) {
         cart={cart}
         total={total}
         token={token}
+        user={user}
         showModel={loginModel.showModel}
         onColorChange={handleColorChange}
         onSizeChange={handleSizeChange}

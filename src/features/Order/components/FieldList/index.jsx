@@ -123,6 +123,7 @@ function FieldList(props) {
       </FormGroup>
 
       <CheckBoxField
+        className="me-2"
         name="isFullDay"
         control={control}
         label="Delivery every day of the week"

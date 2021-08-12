@@ -5,6 +5,7 @@
   float: left;
   border-left: 1px solid #eee;
   box-sizing: border-box;
+  overflow: scroll;
 
   &__list {
     position: absolute;
@@ -125,4 +126,8 @@
       }
     }
   }
+}
+
+.ProductDetail::-webkit-scrollbar {
+  display: none;
 }

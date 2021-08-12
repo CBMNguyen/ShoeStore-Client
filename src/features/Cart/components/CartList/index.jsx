@@ -1,3 +1,4 @@
+import classNames from "classnames";
 import { getOrderWithCart } from "features/Order/orderSlice";
 import jwt from "jsonwebtoken";
 import PropTypes from "prop-types";
@@ -10,13 +11,19 @@ import "./cartlist.scss";
 CartList.propTypes = {
   cart: PropTypes.array.isRequired,
   total: PropTypes.number.isRequired,
-  token: PropTypes.string.isRequired,
+  token: PropTypes.string,
+  user: PropTypes.object,
 
   onSizeChange: PropTypes.func.isRequired,
   onColorChange: PropTypes.func.isRequired,
   onQuantityChange: PropTypes.func.isRequired,
   onProductRemove: PropTypes.func.isRequired,
   showModel: PropTypes.func.isRequired,
+};
+
+CartList.defaultProps = {
+  token: "",
+  user: null,
 };
 
 function CartList(props) {
@@ -26,6 +33,7 @@ function CartList(props) {
     cart,
     total,
     token,
+    user,
 
     onSizeChange,
     onColorChange,
@@ -40,7 +48,7 @@ function CartList(props) {
     try {
       await jwt.verify(token, process.env.REACT_APP_JWT_KEY);
       const order = cart.map((cart) => ({ ...cart, state: "" }));
-      dispatch(getOrderWithCart(order));
+      dispatch(getOrderWithCart({ order, userId: user._id }));
 
       history.push("/order");
     } catch (error) {
@@ -49,7 +57,9 @@ function CartList(props) {
   };
 
   return (
-    <div className="CartList mt-0">
+    <div
+      className={classNames("CartList shadow", { "p-0": cart.length === 0 })}
+    >
       {/* handle when order empty */}
       {cart.length === 0 && (
         <div className="CartList__empty">

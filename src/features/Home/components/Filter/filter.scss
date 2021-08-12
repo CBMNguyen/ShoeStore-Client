@@ -5,6 +5,7 @@
   padding: 0;
   margin: 0;
   float: left;
+  overflow: scroll;
 
   & li {
     width: 100%;
@@ -72,4 +73,8 @@
   opacity: 1;
   -webkit-transform: scale(1);
   transform: scale(1);
+}
+
+.Filter::-webkit-scrollbar {
+  display: none;
 }

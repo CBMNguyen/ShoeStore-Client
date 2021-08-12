@@ -10,6 +10,11 @@ const productApi = {
     const url = `/products/${id}`;
     return axiosClient.get(url);
   },
+
+  update: (productId, data) => {
+    const url = `/products/${productId}`;
+    return axiosClient.patch(url, data);
+  },
 };
 
 export default productApi;
