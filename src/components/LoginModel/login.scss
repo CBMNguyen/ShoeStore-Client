@@ -1,5 +1,5 @@
 .LoginModel {
-  & form {
+  & .form {
     position: relative;
     width: 400px;
     color: #000;
@@ -35,21 +35,22 @@
       font-size: 0.85rem;
     }
 
-    & button {
+    & .btn {
       position: relative;
       padding: 0.6rem 0;
       font-weight: bold;
       letter-spacing: 0.2rem;
       border: none;
       background-color: deeppink;
+      border-radius: 0.4rem;
       transition: all 0.3s ease-in-out 0s;
     }
 
-    & button:hover {
+    & .btn:hover {
       background-color: rgb(236, 22, 137);
     }
 
-    & button:focus {
+    & .btn:focus {
       background-color: rgb(236, 22, 137);
       box-shadow: none !important;
       outline: none;

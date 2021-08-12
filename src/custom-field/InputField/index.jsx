@@ -11,6 +11,7 @@ InputField.propTypes = {
   placeholder: PropTypes.string,
   className: PropTypes.string,
   control: PropTypes.object.isRequired,
+  readOnly: PropTypes.bool,
 };
 
 InputField.defaultProps = {
@@ -19,6 +20,7 @@ InputField.defaultProps = {
   disabled: false,
   placeholder: "",
   className: "",
+  readOnly: false,
 };
 
 function InputField(props) {
@@ -31,6 +33,7 @@ function InputField(props) {
     className,
     control,
     errors,
+    readOnly,
   } = props;
   return (
     <Controller
@@ -53,6 +56,7 @@ function InputField(props) {
               disabled={disabled}
               placeholder={placeholder}
               invalid={showError}
+              readOnly={readOnly}
             />
             {showError && (
               <FormFeedback>{errors[name]["message"]}</FormFeedback>

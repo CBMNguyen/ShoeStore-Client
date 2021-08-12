@@ -28,7 +28,7 @@ function SizeItem(props) {
           width: "2.2rem",
           height: "2.2rem",
           margin: "0.5rem 0",
-          borderRadius: "0.2rem",
+          borderRadius: "0.5rem",
           textAlign: "center",
           cursor: "pointer",
           backgroundColor: "#eee",
@@ -36,8 +36,8 @@ function SizeItem(props) {
           transform: size["size"] === filter["size"] ? "scale(1.1)" : "",
           transition: "all .2s easy 0s",
         }}
-        className={classNames("border shadow", {
-          "border-secondary border-2": size["size"] === filter["size"],
+        className={classNames("border shadow-sm", {
+          "border-secondary border-5": size["size"] === filter["size"],
         })}
         onClick={() => handleSizeChange(size["size"])}
       >

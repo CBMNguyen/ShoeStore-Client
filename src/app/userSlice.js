@@ -71,6 +71,11 @@ const userSlice = createSlice({
       state.user = "";
       state.error = "";
     },
+    fakeUpdateUser: (state, action) => {
+      const { token, user } = action.payload;
+      state.token = token;
+      state.user = user;
+    }, // test login firebase remember remove
   },
   extraReducers: {
     // handle employee login
@@ -127,6 +132,7 @@ const userSlice = createSlice({
     [updateUser.fulfilled]: (state, action) => {
       const { userUpdated } = action.payload;
       state.loading = false;
+
       state.user = userUpdated;
       state.error = "";
     },
@@ -134,5 +140,5 @@ const userSlice = createSlice({
 });
 
 const { reducer, actions } = userSlice;
-export const { logOut } = actions;
+export const { logOut, fakeUpdateUser } = actions;
 export default reducer;

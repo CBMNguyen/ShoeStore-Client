@@ -1,0 +1,103 @@
+.Profile {
+  position: relative;
+  width: 550px;
+  padding: 1.5rem;
+  border-radius: 1.5rem;
+
+  background-color: #fff;
+  font-weight: 500;
+
+  & input {
+    color: #aaa;
+  }
+
+  & .css-1uccc91-singleValue {
+    color: #aaa !important;
+  }
+
+  &__header {
+    margin-bottom: 1rem;
+    & h4 {
+      font-family: "Pacifico", cursive;
+      user-select: none;
+    }
+
+    & div:first-child {
+      position: relative;
+      display: block;
+      margin: auto;
+      width: 100px;
+      height: 100px;
+      box-sizing: border-box;
+
+      & img {
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+      }
+
+      & i {
+        position: absolute;
+        bottom: 0.5rem;
+        right: 0;
+        padding: 5px;
+        border-radius: 50%;
+        background-color: rgba(0, 0, 0, 0.4);
+        color: #fff;
+      }
+      & input[type="file"] {
+        position: absolute;
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        opacity: 0;
+        cursor: pointer;
+      }
+    }
+  }
+
+  &__close {
+    position: absolute;
+    top: 0;
+    right: 0;
+    padding: 0.6rem 1.5rem;
+
+    font-size: 2rem;
+    transition: all 0.25 ease-in-out 0s;
+  }
+
+  &__close:hover {
+    color: #ccc;
+    cursor: pointer;
+    transform: scale(1.1);
+  }
+
+  &__btn {
+    position: relative;
+    display: block;
+    margin: 0 auto;
+    margin-bottom: 0;
+    padding: 0.8rem 0;
+
+    width: 80%;
+    border: none;
+    border-radius: 0.5rem;
+    color: #fff;
+    background-color: #ec5990;
+    font-weight: bold;
+    font-size: 1.5rem;
+    letter-spacing: 0.5rem;
+  }
+
+  & .passwordEdit {
+    padding: 5px 5px 5px 0;
+    font-size: 0.9rem;
+    font-weight: bold;
+    transition: all 0.2s ease-in-out 0s;
+  }
+
+  & .passwordEdit:hover {
+    cursor: pointer;
+    transform: scale(1.05);
+  }
+}

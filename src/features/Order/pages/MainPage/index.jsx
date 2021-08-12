@@ -3,6 +3,7 @@ import { createUser, getMe, updateUser, userLogin } from "app/userSlice";
 import axios from "axios";
 import Header from "components/Header";
 import LoginModel from "components/LoginModel";
+import Profile from "components/Profile";
 import SignUpModel from "components/SignUpModel";
 import { resetCart } from "features/Cart/cartSlice";
 import { updateProduct } from "features/Home/productSlice";
@@ -33,7 +34,9 @@ function MainPage(props) {
   const dispatch = useDispatch();
 
   const { user } = useSelector((state) => state.user);
+  const userState = useSelector((state) => state.user);
 
+  // hanle fetch user and order when user login
   useEffect(() => {
     if (state) {
       dispatch(getMe(user._id));
@@ -45,6 +48,7 @@ function MainPage(props) {
 
   const loginModel = useModel();
   const signupModel = useModel();
+  const profileModel = useModel();
 
   const [city, setCity] = useState([]);
   const [district, setDistrict] = useState([]);
@@ -57,7 +61,6 @@ function MainPage(props) {
   });
 
   // Fetch city on Province page
-
   useEffect(() => {
     const fetchCity = async () => {
       const City = await axios.get("https://provinces.open-api.vn/api/");
@@ -74,7 +77,6 @@ function MainPage(props) {
   }, []);
 
   // Fetch district when city change
-
   useEffect(() => {
     const fetchDistrict = async () => {
       if (filter.cityCode === null) return;
@@ -95,7 +97,6 @@ function MainPage(props) {
   }, [filter]);
 
   // Fetch commune when district change
-
   useEffect(() => {
     const fetchCommune = async () => {
       if (filter.districtCode === null) return;
@@ -116,7 +117,6 @@ function MainPage(props) {
   }, [filter]);
 
   // handle signup and add new user
-
   const handleCreateUser = async (data) => {
     try {
       await showToastSuccess(dispatch(createUser(data)));
@@ -128,7 +128,6 @@ function MainPage(props) {
   };
 
   // handle login
-
   const handleLogin = async (data) => {
     try {
       await showToastSuccess(dispatch(userLogin(data)));
@@ -139,7 +138,6 @@ function MainPage(props) {
   };
 
   // handle total price cart
-
   const total = order.reduce(
     (sum, product) =>
       sum +
@@ -150,7 +148,7 @@ function MainPage(props) {
   );
 
   const defaultValues = {
-    fullName: "hieu",
+    fullName: user.orderAddress.fullName,
     isFullDay: user.orderAddress.isFullDay,
     phone: user.orderAddress.phone,
     city: { label: user.orderAddress.city, value: 0 },
@@ -224,7 +222,6 @@ function MainPage(props) {
   };
 
   // handle remove order
-
   const handleRemoveClick = async () => {
     try {
       await showToastSuccess(dispatch(deleteOrder(id)));
@@ -246,9 +243,35 @@ function MainPage(props) {
     }
   };
 
+  // handle profile change
+  const handleProfileChange = async (data) => {
+    const formData = new FormData();
+    formData.append("firstname", data.firstname);
+    formData.append("lastname", data.lastname);
+    formData.append("email", data.email);
+    formData.append("phone", data.phone);
+    formData.append("password", data.password);
+    formData.append("gender", data.gender.value);
+    formData.append("image", data.image);
+    formData.append("address", data.address);
+    try {
+      await showToastSuccess(
+        dispatch(
+          updateUser({ _id: profileModel.model.data._id, user: formData })
+        )
+      );
+      profileModel.closeModel();
+    } catch (error) {
+      showToastError(error);
+    }
+  };
+
   return (
     <div>
-      <Header showModel={loginModel.showModel} />
+      <Header
+        showModel={loginModel.showModel}
+        showProfileModel={profileModel.showModel}
+      />
       <Form onSubmit={handleSubmit(onSubmit)} className="Order">
         <Row className="Order__checkout shadow-lg">
           <header>
@@ -276,7 +299,6 @@ function MainPage(props) {
           </Col>
 
           {/* Render product list */}
-
           <Col md={7}>
             {/* handle when order empty */}
             {order.length === 0 ? (
@@ -404,8 +426,7 @@ function MainPage(props) {
         </Row>
       </Form>
 
-      {/* handle show model auth */}
-
+      {/* handle show login model */}
       {loginModel.model.show && (
         <LoginModel
           onLogin={handleLogin}
@@ -414,10 +435,21 @@ function MainPage(props) {
         />
       )}
 
+      {/* handle show signup model */}
       {signupModel.model.show && (
         <SignUpModel
           onCreateUser={handleCreateUser}
           closeModel={signupModel.closeModel}
+        />
+      )}
+
+      {/* handle show profile model */}
+      {profileModel.model.show && (
+        <Profile
+          loading={userState.loading}
+          onSubmit={handleProfileChange}
+          model={profileModel.model}
+          closeModel={profileModel.closeModel}
         />
       )}
     </div>

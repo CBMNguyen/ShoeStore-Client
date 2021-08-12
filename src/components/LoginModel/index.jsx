@@ -8,6 +8,8 @@ import { useSelector } from "react-redux";
 import { Button, Form, Spinner } from "reactstrap";
 import * as yup from "yup";
 import "./login.scss";
+import firebase from "firebase";
+import StyledFirebaseAuth from "react-firebaseui/StyledFirebaseAuth";
 
 LoginModel.propTypes = {
   showModel: PropTypes.func.isRequired,
@@ -45,9 +47,20 @@ function LoginModel(props) {
     if (!onLogin) return;
     onLogin(data);
   };
+  const uiConfig = {
+    signInFlow: "popup",
+    signInOptions: [
+      firebase.auth.GoogleAuthProvider.PROVIDER_ID,
+      firebase.auth.FacebookAuthProvider.PROVIDER_ID,
+    ],
+    callbacks: {
+      signInSuccessWithAuthResult: () => closeModel(),
+    },
+  };
+
   return (
     <div className="LoginModel" style={STYLE_MODEL}>
-      <Form onSubmit={handleSubmit(onSubmit)}>
+      <Form className="form" onSubmit={handleSubmit(onSubmit)}>
         <header>Shoes Store🧦</header>
         <i onClick={() => closeModel()} className="bx bx-x" />
         <InputField
@@ -65,7 +78,7 @@ function LoginModel(props) {
           type="password"
         />
         <a href="/#">Forgot Password ?</a>
-        <Button className="d-block w-100 m-auto mt-2 mb-2">
+        <Button className="d-block w-100 m-auto mt-2 mb-2 btn">
           Login
           {loading && (
             <Spinner
@@ -77,6 +90,10 @@ function LoginModel(props) {
             </Spinner>
           )}
         </Button>
+        <StyledFirebaseAuth
+          uiConfig={uiConfig}
+          firebaseAuth={firebase.auth()}
+        />
         <footer>
           Don't have account?{" "}
           <span

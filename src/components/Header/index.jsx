@@ -1,10 +1,9 @@
 import { logOut } from "app/userSlice";
-import { PRODUCT_TOAST_OPTIONS } from "constants/globals";
+import jwt from "jsonwebtoken";
 import PropTypes from "prop-types";
 import React, { useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useHistory } from "react-router-dom";
-import { toast } from "react-toastify";
 import { Badge, Input, Tooltip } from "reactstrap";
 import avt from "../../assets/images/avt.jpg";
 import "./header.scss";
@@ -12,10 +11,12 @@ import "./header.scss";
 Header.propTypes = {
   onNameChange: PropTypes.func,
   showModel: PropTypes.func.isRequired,
+  showProfileModel: PropTypes.func,
 };
 
 Header.defaultProps = {
   onNameChange: null,
+  showProfileModel: null,
 };
 
 function Header(props) {
@@ -28,7 +29,7 @@ function Header(props) {
   const toggle = () => setTooltipOpen(!tooltipOpen);
 
   const timeoutId = useRef(null);
-  const { onNameChange, showModel } = props;
+  const { onNameChange, showModel, showProfileModel } = props;
 
   const { cart } = useSelector((state) => state.cart);
   const { token, user } = useSelector((state) => state.user);
@@ -47,11 +48,21 @@ function Header(props) {
     }, 500);
   };
 
+  // handle user click when login
+
+  const handleProfileClick = () => {
+    try {
+      jwt.verify(token, process.env.REACT_APP_JWT_KEY);
+      showProfileModel(user);
+    } catch (error) {
+      showModel();
+    }
+  };
+
   // handle log out
 
   const handleLogout = () => {
     dispatch(logOut());
-    toast.warning("🦄 See you a gain ... 🐱‍🏍", { ...PRODUCT_TOAST_OPTIONS });
   };
 
   return (
@@ -84,12 +95,14 @@ function Header(props) {
         </div>
 
         <img
-          onClick={() => showModel()}
+          onClick={handleProfileClick}
           src={
             !token
               ? avt
               : user.image
-              ? `${process.env.REACT_APP_API_URL}/${user.image}`
+              ? !user.test // test login firebase remember remove
+                ? `${process.env.REACT_APP_API_URL}/${user.image}`
+                : user.image
               : user.imageUrl
           }
           alt="#"

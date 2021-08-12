@@ -1,7 +1,8 @@
-import { createUser, userLogin } from "app/userSlice";
+import { createUser, updateUser, userLogin } from "app/userSlice";
 import Header from "components/Header";
 import Loading from "components/Loading";
 import LoginModel from "components/LoginModel";
+import Profile from "components/Profile";
 import SignUpModel from "components/SignUpModel";
 import { fetchCategory } from "features/Home/categorySlice";
 import { fetchColor } from "features/Home/colorSlice";
@@ -20,7 +21,6 @@ function MainPage(props) {
   const dispatch = useDispatch();
 
   // fetch data for home page
-
   useEffect(() => {
     dispatch(fetchProduct());
     dispatch(fetchColor());
@@ -29,12 +29,12 @@ function MainPage(props) {
   }, [dispatch]);
 
   const { color } = useSelector((state) => state.color);
-  const { size } = useSelector((state) => state.size);
   const { category } = useSelector((state) => state.category);
+  const { size } = useSelector((state) => state.size);
   const { products } = useSelector((state) => state.products);
+  const { loading } = useSelector((state) => state.user);
 
   // Filter Product
-
   const [filter, setFilter] = useState({
     category: "",
     color: "",
@@ -63,18 +63,15 @@ function MainPage(props) {
   );
 
   // Sort product
-
   let sortProductByPrice = filterProduct;
 
   // Sort Increase Product
-
   filter.isIncreasePrice === 1 &&
     (sortProductByPrice = filterProduct
       .slice()
       .sort((a, b) => a.originalPrice - b.originalPrice));
 
   // Sort Decrease Product
-
   filter.isIncreasePrice === -1 &&
     (sortProductByPrice = filterProduct
       .slice()
@@ -83,6 +80,7 @@ function MainPage(props) {
   const { model, showModel, closeModel } = useModel();
   const loginModel = useModel();
   const signupModel = useModel();
+  const profileModel = useModel();
 
   // handle change
 
@@ -111,13 +109,11 @@ function MainPage(props) {
   };
 
   // take current product
-
   const handleSelectProduct = (selectedProduct) => {
     setFilter({ ...filter, selectedProduct });
   };
 
   // handle sign up add user
-
   const handleCreateUser = async (data) => {
     try {
       await showToastSuccess(dispatch(createUser(data)));
@@ -129,11 +125,33 @@ function MainPage(props) {
   };
 
   // handle login
-
   const handleLogin = async (data) => {
     try {
       await showToastSuccess(dispatch(userLogin(data)));
       loginModel.closeModel();
+    } catch (error) {
+      showToastError(error);
+    }
+  };
+
+  // handle profile change
+  const handleProfileChange = async (data) => {
+    const formData = new FormData();
+    formData.append("firstname", data.firstname);
+    formData.append("lastname", data.lastname);
+    formData.append("email", data.email);
+    formData.append("phone", data.phone);
+    formData.append("password", data.password);
+    formData.append("gender", data.gender.value);
+    formData.append("image", data.image);
+    formData.append("address", data.address);
+    try {
+      await showToastSuccess(
+        dispatch(
+          updateUser({ _id: profileModel.model.data._id, user: formData })
+        )
+      );
+      profileModel.closeModel();
     } catch (error) {
       showToastError(error);
     }
@@ -146,6 +164,7 @@ function MainPage(props) {
       <Header
         showModel={loginModel.showModel}
         onNameChange={handleNameChange}
+        showProfileModel={profileModel.showModel}
       />
 
       <Filter
@@ -177,13 +196,11 @@ function MainPage(props) {
       />
 
       {/* Show image model  */}
-
       {model.show && (
         <ImageModel product={model.data} closeModel={closeModel} />
       )}
 
       {/* Show login model */}
-
       {loginModel.model.show && (
         <LoginModel
           onLogin={handleLogin}
@@ -193,11 +210,19 @@ function MainPage(props) {
       )}
 
       {/* Show sign up model */}
-
       {signupModel.model.show && (
         <SignUpModel
           onCreateUser={handleCreateUser}
           closeModel={signupModel.closeModel}
+        />
+      )}
+
+      {profileModel.model.show && (
+        <Profile
+          loading={loading}
+          onSubmit={handleProfileChange}
+          model={profileModel.model}
+          closeModel={profileModel.closeModel}
         />
       )}
     </div>

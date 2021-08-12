@@ -29,13 +29,13 @@ function ColorItem(props) {
           width: "2rem",
           height: "2rem",
           margin: "0.5rem 0",
-          borderRadius: "0.2rem",
+          borderRadius: "0.5rem",
           cursor: "pointer",
           transform: color["color"] === filter.color ? "scale(1.1)" : "",
           transition: "all .3s easy 0s",
         }}
-        className={classNames("border shadow", {
-          "border-secondary border-3": color["color"] === filter.color,
+        className={classNames("border shadow-sm", {
+          "border-secondary border-5": color["color"] === filter.color,
         })}
         onClick={() => handleColorChange(color["color"])}
       />
