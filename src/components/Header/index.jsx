@@ -1,4 +1,5 @@
 import { logOut } from "app/userSlice";
+import firebase from "firebase";
 import jwt from "jsonwebtoken";
 import PropTypes from "prop-types";
 import React, { useRef, useState } from "react";
@@ -61,7 +62,8 @@ function Header(props) {
 
   // handle log out
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    await firebase.auth().signOut();
     dispatch(logOut());
   };
 

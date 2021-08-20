@@ -32,7 +32,7 @@ function App() {
         }
       });
     return () => unregisterAuthObserver();
-  }, []);
+  }, [dispatch]);
 
   const Home = React.lazy(() => import("./features/Home"));
   const Cart = React.lazy(() => import("./features/Cart"));

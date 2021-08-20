@@ -70,6 +70,7 @@ const userSlice = createSlice({
       state.token = "";
       state.user = "";
       state.error = "";
+      state.test = "";
     },
     fakeUpdateUser: (state, action) => {
       const { token, user } = action.payload;

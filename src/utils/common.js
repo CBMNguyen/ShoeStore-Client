@@ -50,6 +50,7 @@ export const showToastSuccess = async (asyncAction) => {
   toast.success("🧦 " + result.payload.message, {
     ...PRODUCT_TOAST_OPTIONS,
   });
+  return result.payload;
 };
 
 // Show Toast Error

@@ -28,6 +28,7 @@ import {
 } from "utils/common";
 import * as yup from "yup";
 import "./order.scss";
+import "../../../Cart/components/CartList/cartlist.scss";
 
 function MainPage(props) {
   const { order, id, loading, state } = useSelector((state) => state.order);
@@ -303,7 +304,7 @@ function MainPage(props) {
             {/* handle when order empty */}
             {order.length === 0 ? (
               <div
-                className="CartList__empty mt-0"
+                className="empty mt-0"
                 style={{ backgroundColor: "transparent" }}
               >
                 <i className="bx bx-basket animate__animated animate__swing">
