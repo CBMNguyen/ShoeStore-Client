@@ -5,10 +5,16 @@ export function RightArrowDirection(props) {
       className={className}
       style={{
         ...style,
-        position: "absolute",
         top: "50%",
         right: "-20%",
-        display: "block",
+        width: "4rem",
+        height: "4rem",
+        display: "flex",
+        borderRadius: "50%",
+        alignItems: "center",
+        position: "absolute",
+        justifyContent: "center",
+        backgroundColor: "#bbb",
       }}
       onClick={onClick}
     />
@@ -22,10 +28,16 @@ export function LeftArrowDirection(props) {
       className={className}
       style={{
         ...style,
-        position: "absolute",
         top: "50%",
         left: "-20%",
-        display: "block",
+        width: "4rem",
+        height: "4rem",
+        display: "flex",
+        borderRadius: "50%",
+        position: "absolute",
+        alignItems: "center",
+        backgroundColor: "#bbb",
+        justifyContent: "center",
       }}
       onClick={onClick}
     />

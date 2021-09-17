@@ -44,9 +44,24 @@
     }
 
     & header {
+      position: relative;
       margin: 1rem 0;
       text-transform: uppercase;
       color: white;
+
+      & i {
+        position: absolute;
+        top: 0;
+        right: 1rem;
+        font-size: 2.5rem;
+        color: #fff;
+        transition: all 0.3s ease-in-out 0s;
+      }
+
+      & i:hover {
+        transform: scale(1.05);
+        cursor: pointer;
+      }
     }
 
     & tr {

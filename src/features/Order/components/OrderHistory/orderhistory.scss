@@ -1,0 +1,30 @@
+.OrderHistory {
+  & header {
+    color: #000;
+    font-weight: bolder;
+
+    & i {
+      position: absolute;
+      top: -0.5rem;
+      color: #000;
+      transition: all 0.3s ease-in-out 0s;
+    }
+
+    & i:hover {
+      transform: scale(1.05);
+    }
+  }
+  &__time {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 0.2rem;
+  }
+
+  &__products {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+  }
+}

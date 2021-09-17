@@ -29,10 +29,12 @@ import {
 import * as yup from "yup";
 import "./order.scss";
 import "../../../Cart/components/CartList/cartlist.scss";
+import OrderHistory from "features/Order/components/OrderHistory";
 
 function MainPage(props) {
-  const { order, id, loading, state } = useSelector((state) => state.order);
   const dispatch = useDispatch();
+  const [showOrderHistory, setShowOrderHistory] = useState(false);
+  const { order, id, loading, state } = useSelector((state) => state.order);
 
   const { user } = useSelector((state) => state.user);
   const userState = useSelector((state) => state.user);
@@ -277,6 +279,10 @@ function MainPage(props) {
         <Row className="Order__checkout shadow-lg">
           <header>
             <h1>Check out 🎀</h1>
+            <i
+              className="bx bx-shopping-bag"
+              onClick={() => setShowOrderHistory(!showOrderHistory)}
+            />
           </header>
 
           {/* render field list */}
@@ -302,7 +308,7 @@ function MainPage(props) {
           {/* Render product list */}
           <Col md={7}>
             {/* handle when order empty */}
-            {order.length === 0 ? (
+            {order.length === 0 && !showOrderHistory ? (
               <div
                 className="empty mt-0"
                 style={{ backgroundColor: "transparent" }}
@@ -327,99 +333,106 @@ function MainPage(props) {
                 }}
               >
                 {/* Product List check out */}
-                <Table>
-                  <thead>
-                    <tr>
-                      <th>Product</th>
-                      <th>Quantity</th>
-                      <th>SubTotal</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {order.map((product) => (
-                      <OrderList key={product._id} product={product} />
-                    ))}
-                  </tbody>
-                </Table>
 
-                <footer>
-                  <div>Total</div>
-                  <div>{total.toFixed(2)}$</div>
-                </footer>
-
-                {/* Check out button */}
-                {!state && (
-                  <Button>
-                    Check out
-                    {loading && (
-                      <Spinner
-                        color="light"
-                        size="sm"
-                        style={{
-                          position: "absolute",
-                          top: "1rem",
-                          right: "1rem",
-                        }}
-                      >
-                        {" "}
-                      </Spinner>
-                    )}
-                    {state === "pending" && (
-                      <small>"Cancel and Clear Checkout"</small>
-                    )}
-                  </Button>
+                {showOrderHistory && (
+                  <OrderHistory showOrderHistory={showOrderHistory} />
                 )}
 
-                {/* Button when await check out */}
-                {state && (
-                  <section
-                    onClick={state === "pending" ? handleRemoveClick : null}
-                    style={{
-                      backgroundColor:
-                        state === "pending"
-                          ? "#f72a8d"
-                          : state === "processing"
-                          ? "cyan"
-                          : "green",
-                      color: "white",
-                      cursor:
-                        state === "processing" || state === "deliveried"
-                          ? "default"
-                          : "pointer",
-                      opacity: state !== "pending" ? "0.5" : "1",
-                    }}
-                  >
-                    <div>
-                      {capitalizeFirstLetter(state)}
-                      {loading && (
-                        <Spinner
-                          color="light"
-                          size="sm"
-                          style={{
-                            position: "absolute",
-                            top: "1rem",
-                            right: "1rem",
-                          }}
-                        >
-                          {" "}
-                        </Spinner>
-                      )}
-
-                      {/* React loading */}
-
-                      {state !== "deliveried" && (
-                        <ReactLoading
-                          type="balls"
-                          color="white"
-                          width="30px"
-                          height="30px"
-                        />
-                      )}
-                    </div>
-                    {state === "pending" && (
-                      <small>Cancel and Clear Checkout</small>
+                {!showOrderHistory && (
+                  <div>
+                    {" "}
+                    <Table>
+                      <thead>
+                        <tr>
+                          <th>Product</th>
+                          <th>Quantity</th>
+                          <th>SubTotal</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {order.map((product) => (
+                          <OrderList key={product._id} product={product} />
+                        ))}
+                      </tbody>
+                    </Table>
+                    <footer>
+                      <div>Total</div>
+                      <div>{total.toFixed(2)}$</div>
+                    </footer>
+                    {/* Check out button */}
+                    {!state && (
+                      <Button>
+                        Check out
+                        {loading && (
+                          <Spinner
+                            color="light"
+                            size="sm"
+                            style={{
+                              position: "absolute",
+                              top: "1rem",
+                              right: "1rem",
+                            }}
+                          >
+                            {" "}
+                          </Spinner>
+                        )}
+                        {state === "pending" && (
+                          <small>"Cancel and Clear Checkout"</small>
+                        )}
+                      </Button>
                     )}
-                  </section>
+                    {/* Button when await check out */}
+                    {state && (
+                      <section
+                        onClick={state === "pending" ? handleRemoveClick : null}
+                        style={{
+                          backgroundColor:
+                            state === "pending"
+                              ? "#f72a8d"
+                              : state === "processing"
+                              ? "cyan"
+                              : "green",
+                          color: "white",
+                          cursor:
+                            state === "processing" || state === "deliveried"
+                              ? "default"
+                              : "pointer",
+                          opacity: state !== "pending" ? "0.5" : "1",
+                        }}
+                      >
+                        <div>
+                          {capitalizeFirstLetter(state)}
+                          {loading && (
+                            <Spinner
+                              color="light"
+                              size="sm"
+                              style={{
+                                position: "absolute",
+                                top: "1rem",
+                                right: "1rem",
+                              }}
+                            >
+                              {" "}
+                            </Spinner>
+                          )}
+
+                          {/* React loading */}
+
+                          {state !== "deliveried" && (
+                            <ReactLoading
+                              type="balls"
+                              color="white"
+                              width="30px"
+                              height="30px"
+                            />
+                          )}
+                        </div>
+                        {state === "pending" && (
+                          <small>Cancel and Clear Checkout</small>
+                        )}
+                      </section>
+                    )}
+                  </div>
                 )}
               </div>
             )}
