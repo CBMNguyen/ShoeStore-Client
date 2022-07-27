@@ -21,6 +21,14 @@
       color: black;
       text-decoration: none;
     }
+
+    & img {
+      position: relative;
+      top: -4px;
+      width: 32px;
+      height: 32px;
+      object-fit: cover;
+    }
   }
 
   &__input {
@@ -39,6 +47,22 @@
     & input {
       padding-left: 2rem;
       border-color: #eee;
+
+      &:not(:placeholder-shown) {
+        & + img {
+          display: none;
+        }
+      }
+    }
+
+    & img {
+      position: absolute;
+      top: 50%;
+      left: 36%;
+      width: 16px;
+      height: 16px;
+      object-fit: cover;
+      transform: translate(-50%, -50%);
     }
   }
 

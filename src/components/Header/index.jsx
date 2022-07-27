@@ -7,6 +7,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { Link, useHistory } from "react-router-dom";
 import { Badge, Input, Tooltip } from "reactstrap";
 import avt from "../../assets/images/avt.jpg";
+import branchLogo from "../../assets/images/brandLogo.png";
 import "./header.scss";
 
 Header.propTypes = {
@@ -71,7 +72,9 @@ function Header(props) {
     <div className="Header Container">
       <div className="Header__logo">
         <h2>
-          <Link to="/">Shoes Store🧦</Link>
+          <Link to="/">
+            Shoes Store <img src={branchLogo} alt="branchLogo" />
+          </Link>
         </h2>
       </div>
 
@@ -80,8 +83,9 @@ function Header(props) {
         <Input
           onChange={handleInputChange}
           value={value}
-          placeholder="Search name product ... 🧦"
+          placeholder="Search name product ..."
         />
+        <img src={branchLogo} alt="branchLogo" />
       </div>
 
       <div className="Header__info">
