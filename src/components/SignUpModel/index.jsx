@@ -9,6 +9,7 @@ import { useSelector } from "react-redux";
 import { Button, Col, Form, Row, Spinner } from "reactstrap";
 import * as yup from "yup";
 import "./signup.scss";
+import brandLogo from "../../assets/images/brandLogo.png";
 
 SignUpModel.propTypes = {
   closeModel: PropTypes.func.isRequired,
@@ -75,9 +76,11 @@ function SignUpModel(props) {
   };
 
   return (
-    <div className="SignUpModel" style={STYLE_MODEL}>
+    <div className="SignUpModel animation-fade-in" style={STYLE_MODEL}>
       <Form onSubmit={handleSubmit(onSubmit)}>
-        <header>Shoes Store🧦</header>
+        <header>
+          Shoes Store <img src={brandLogo} alt="brandLogo" />
+        </header>
         <i onClick={() => closeModel()} className="bx bx-x" />
         <Row>
           <Col md={6}>

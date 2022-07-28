@@ -1,25 +1,34 @@
+import Pagination from "components/Pagination";
 import PropTypes from "prop-types";
 import React, { useState } from "react";
-import { Row } from "reactstrap";
+import { Button, Row } from "reactstrap";
 import ProductItem from "../ProductItem";
 import "./productlist.scss";
+import noResultFound from "../../../../assets/images/noResultFound.png";
 
 ProductList.propTypes = {
+  totalRow: PropTypes.number.isRequired,
   products: PropTypes.array.isRequired,
   filter: PropTypes.object.isRequired,
-  onInCreasePriceChange: PropTypes.func,
-  onSelectProduct: PropTypes.func,
+  onInCreasePriceChange: PropTypes.func.isRequired,
+  onSelectProduct: PropTypes.func.isRequired,
+  onPageChange: PropTypes.func.isRequired,
+  onResetFilter: PropTypes.func.isRequired,
 };
 
 function ProductList(props) {
-  const [border, setBorder] = useState("61056d6d691a953968d55bc2");
   const {
+    totalRow,
     products,
     filter,
     onInCreasePriceChange,
     onSelectProduct,
+    onPageChange,
+    onResetFilter,
     showModel,
   } = props;
+
+  const [border, setBorder] = useState(products[0]?._id || "");
 
   const handleSortPriceClick = () => {
     const price = 1;
@@ -32,26 +41,63 @@ function ProductList(props) {
     <div className="ProductList">
       <header>
         <h3>New Arrivals</h3>
-        <div onClick={handleSortPriceClick}>
-          <span>Sort by Price</span>
-          {filter.isIncreasePrice > 0 ? (
-            <i className="bx bx-chevron-down" />
-          ) : (
-            <i className="bx bx-chevron-up" />
-          )}
+        <div>
+          <Pagination
+            filter={filter}
+            totalRow={totalRow}
+            onPageChange={onPageChange}
+          />
+
+          <Button
+            type="button"
+            className="btn btn-light btn-sm mx-4"
+            onClick={handleSortPriceClick}
+          >
+            <div className="d-flex align-items-center">
+              <span>Sort by Price</span>
+              {filter.isIncreasePrice > 0 ? (
+                <i className="bx bx-chevron-down" />
+              ) : (
+                <i className="bx bx-chevron-up" />
+              )}
+            </div>
+          </Button>
+
+          <Button
+            onClick={() => onResetFilter()}
+            type="button"
+            className="btn btn-dark btn-sm"
+          >
+            Clear
+          </Button>
         </div>
       </header>
       <Row>
-        {products.map((product) => (
-          <ProductItem
-            key={product._id}
-            product={product}
-            border={border}
-            setBorder={setBorder}
-            onSelectProduct={onSelectProduct}
-            showModel={showModel}
+        {products.length > 0 &&
+          products.map((product) => (
+            <ProductItem
+              key={product._id}
+              product={product}
+              border={border}
+              setBorder={setBorder}
+              onSelectProduct={onSelectProduct}
+              selectedProductId={filter.selectedProduct?._id}
+              showModel={showModel}
+            />
+          ))}
+
+        {products.length === 0 && (
+          <img
+            style={{
+              width: "100%",
+              height: "400px",
+              objectFit: "contain",
+              marginTop: "5rem",
+            }}
+            src={noResultFound}
+            alt="noResultFound"
           />
-        ))}
+        )}
       </Row>
     </div>
   );

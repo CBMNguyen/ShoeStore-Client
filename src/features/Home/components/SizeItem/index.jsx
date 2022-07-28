@@ -2,6 +2,7 @@ import classNames from "classnames";
 import PropTypes from "prop-types";
 import React from "react";
 import { Col } from "reactstrap";
+import "./size.scss";
 
 SizeItem.propTypes = {
   size: PropTypes.object.isRequired,
@@ -15,6 +16,7 @@ SizeItem.defaultProps = {
 
 function SizeItem(props) {
   const { size, filter, onSizeChange } = props;
+  const isSelectedSize = size["size"] === filter["size"];
 
   const handleSizeChange = (size) => {
     if (!onSizeChange) return;
@@ -24,32 +26,12 @@ function SizeItem(props) {
   return (
     <Col key={size["size"]} md="3">
       <div
-        style={{
-          width: "2.2rem",
-          height: "2.2rem",
-          margin: "0.5rem 0",
-          borderRadius: "0.5rem",
-          textAlign: "center",
-          cursor: "pointer",
-          backgroundColor: "#eee",
-          verticalAlign: "middle",
-          transform: size["size"] === filter["size"] ? "scale(1.1)" : "",
-          transition: "all .2s easy 0s",
-        }}
-        className={classNames("border shadow-sm", {
-          "border-secondary border-5": size["size"] === filter["size"],
+        className={classNames("Size border shadow-sm", {
+          "bg-dark text-white shadow-lg": isSelectedSize,
         })}
         onClick={() => handleSizeChange(size["size"])}
       >
-        <span
-          style={{
-            textAlign: "center",
-            fontSize: "0.9rem",
-            fontWeight: "400",
-          }}
-        >
-          {size["size"]}
-        </span>
+        {size["size"]}
       </div>
     </Col>
   );

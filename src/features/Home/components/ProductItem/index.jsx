@@ -18,9 +18,16 @@ ProductItem.defaultProps = {
 };
 
 function ProductItem(props) {
-  const [imageIndex, setImageIndex] = useState({ id: "", index: null });
+  const [imageIndex, setImageIndex] = useState(0);
 
-  const { product, border, setBorder, onSelectProduct, showModel } = props;
+  const {
+    product,
+    border,
+    setBorder,
+    selectedProductId,
+    onSelectProduct,
+    showModel,
+  } = props;
 
   const handleSelectProduct = (product) => {
     if (!onSelectProduct) return;
@@ -33,9 +40,9 @@ function ProductItem(props) {
   };
 
   return (
-    <Col md={4} className="mb-4">
+    <Col md={4} className="mb-3">
       <div
-        className="ProductItem"
+        className="ProductItem shadow-sm"
         onClick={() => {
           setBorder(product._id);
           handleSelectProduct(product);
@@ -59,9 +66,7 @@ function ProductItem(props) {
         <img
           onClick={() => handleShowModel(product)}
           className="ProductItem__image"
-          src={`${process.env.REACT_APP_API_URL}/${
-            product.images[product._id === imageIndex.id ? imageIndex.index : 0]
-          }`}
+          src={`${process.env.REACT_APP_API_URL}/${product.images[imageIndex]}`}
           alt={product._id}
         />
 
@@ -77,41 +82,20 @@ function ProductItem(props) {
           {/* Selected Product small image */}
 
           <section>
-            <img
-              style={
-                product._id === imageIndex.id && imageIndex.index === 0
-                  ? { border: "2px solid black" }
-                  : {}
-              }
-              id={product._id}
-              onClick={(e) => setImageIndex({ id: e.target.id, index: 0 })}
-              src={`${process.env.REACT_APP_API_URL}/${product.images[0]}`}
-              alt={product._id}
-            />
-
-            <img
-              style={
-                product._id === imageIndex.id && imageIndex.index === 1
-                  ? { border: "2px solid black" }
-                  : {}
-              }
-              id={product._id}
-              onClick={(e) => setImageIndex({ id: e.target.id, index: 1 })}
-              src={`${process.env.REACT_APP_API_URL}/${product.images[1]}`}
-              alt={product._id}
-            />
-
-            <img
-              style={
-                product._id === imageIndex.id && imageIndex.index === 2
-                  ? { border: "2px solid black" }
-                  : {}
-              }
-              id={product._id}
-              onClick={(e) => setImageIndex({ id: e.target.id, index: 2 })}
-              src={`${process.env.REACT_APP_API_URL}/${product.images[2]}`}
-              alt={product._id}
-            />
+            {product.images.map((image, index) => (
+              <img
+                key={image}
+                style={
+                  product._id === selectedProductId && imageIndex === index
+                    ? { border: "2px solid black" }
+                    : {}
+                }
+                id={product._id}
+                onClick={(e) => setImageIndex(index)}
+                src={`${process.env.REACT_APP_API_URL}/${product.images[index]}`}
+                alt={product._id}
+              />
+            ))}
           </section>
         </div>
       </div>

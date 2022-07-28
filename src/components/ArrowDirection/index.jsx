@@ -5,14 +5,15 @@ export function RightArrowDirection(props) {
       className={className}
       style={{
         ...style,
+        position: "absolute",
         top: "50%",
-        right: "-20%",
+        right: "-40%",
+        display: "flex",
+        alignItems: "center",
+
         width: "4rem",
         height: "4rem",
-        display: "flex",
         borderRadius: "50%",
-        alignItems: "center",
-        position: "absolute",
         justifyContent: "center",
         backgroundColor: "#bbb",
       }}
@@ -28,14 +29,15 @@ export function LeftArrowDirection(props) {
       className={className}
       style={{
         ...style,
+        position: "absolute",
         top: "50%",
-        left: "-20%",
+        left: "-40%",
+        display: "flex",
+        alignItems: "center",
+
         width: "4rem",
         height: "4rem",
-        display: "flex",
         borderRadius: "50%",
-        position: "absolute",
-        alignItems: "center",
         backgroundColor: "#bbb",
         justifyContent: "center",
       }}

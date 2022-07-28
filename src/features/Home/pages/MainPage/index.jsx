@@ -34,8 +34,14 @@ function MainPage(props) {
   const { products } = useSelector((state) => state.products);
   const { loading } = useSelector((state) => state.user);
 
+  const [selectProductDetail, setSelectProductDetail] = useState({
+    selectedSize: null,
+    selectedColor: null,
+    selectedQuantity: 1,
+  });
+
   // Filter Product
-  const [filter, setFilter] = useState({
+  const initialFilter = {
     category: "",
     color: "",
     size: "",
@@ -46,7 +52,11 @@ function MainPage(props) {
     },
     isIncreasePrice: 0,
     selectedProduct: null,
-  });
+    page: 1,
+    limit: 6,
+    totalRow: 44,
+  };
+  const [filter, setFilter] = useState(initialFilter);
 
   const filterProduct = products.filter(
     (product) =>
@@ -84,24 +94,28 @@ function MainPage(props) {
 
   // handle change
 
+  const handlePageChange = (page) => {
+    setFilter({ ...filter, page });
+  };
+
   const handleColorChange = (color) => {
     setFilter({ ...filter, color });
   };
 
   const handleSizeChange = (size) => {
-    setFilter({ ...filter, size });
+    setFilter({ ...filter, size, page: 1 });
   };
 
   const handlePriceChange = (price) => {
-    setFilter({ ...filter, price });
+    setFilter({ ...filter, price, page: 1 });
   };
 
   const handleCategoryChange = (category) => {
-    setFilter({ ...filter, category });
+    setFilter({ ...filter, category, page: 1 });
   };
 
   const handleNameChange = (name) => {
-    setFilter({ ...filter, name });
+    setFilter({ ...filter, name, page: 1 });
   };
 
   const handleInCreasePriceChange = (isIncreasePrice) => {
@@ -111,6 +125,16 @@ function MainPage(props) {
   // take current product
   const handleSelectProduct = (selectedProduct) => {
     setFilter({ ...filter, selectedProduct });
+    setSelectProductDetail({
+      selectedSize: null,
+      selectedColor: null,
+      selectedQuantity: 1,
+    });
+  };
+
+  // handle reset filter
+  const handleResetFilter = () => {
+    setFilter(initialFilter);
   };
 
   // handle sign up add user
@@ -181,10 +205,16 @@ function MainPage(props) {
       />
 
       <ProductList
-        products={sortProductByPrice}
+        products={sortProductByPrice.slice(
+          (filter.page - 1) * filter.limit,
+          filter.page * filter.limit
+        )}
+        totalRow={sortProductByPrice.length}
         filter={filter}
         onInCreasePriceChange={handleInCreasePriceChange}
         onSelectProduct={handleSelectProduct}
+        onPageChange={handlePageChange}
+        onResetFilter={handleResetFilter}
         showModel={showModel}
       />
 
@@ -192,6 +222,8 @@ function MainPage(props) {
         product={
           !filter["selectedProduct"] ? products[0] : filter["selectedProduct"]
         }
+        selectProductDetail={selectProductDetail}
+        setSelectProductDetail={setSelectProductDetail}
         showModel={showModel}
       />
 

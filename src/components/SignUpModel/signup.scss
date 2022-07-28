@@ -11,6 +11,14 @@
       text-align: center;
       font-family: "Pacifico", cursive;
       font-size: 2rem;
+
+      & img {
+        position: relative;
+        top: -4px;
+        width: 28px;
+        height: 28px;
+        object-fit: contain;
+      }
     }
 
     & i {
@@ -19,14 +27,14 @@
       right: 0.5rem;
       padding: 1rem;
       font-size: 2rem;
-      color: #eee;
+      color: #ddd;
       transition: 0.3s;
     }
 
     & i:hover {
       transform: scale(1.1);
       cursor: pointer;
-      color: #ddd;
+      color: #ccc;
     }
 
     & a {

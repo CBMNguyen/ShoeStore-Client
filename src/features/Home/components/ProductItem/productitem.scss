@@ -1,9 +1,10 @@
 .ProductItem {
   position: relative;
-  width: 280px;
+  width: 288px;
   font-family: "Poppins", sans-serif;
   border: 1px solid #eef;
   border-radius: 0.5rem;
+  transition: all ease-in-out 0.2s;
 
   font-size: 0.95rem;
   cursor: pointer;
@@ -25,12 +26,17 @@
     & section div:first-child {
       width: 100%;
       color: #ddd;
+      display: -webkit-box;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 1;
+      overflow: hidden;
     }
   }
   &__image {
     display: block;
-    width: 200px;
+    width: 100%;
     height: 200px;
+    object-fit: contain;
     margin: auto;
     margin-top: 1rem;
     margin-bottom: 1.5rem;
@@ -68,5 +74,9 @@
     & section img .active {
       border: 1px solid cyan;
     }
+  }
+
+  &:hover {
+    transform: translateY(-2px);
   }
 }

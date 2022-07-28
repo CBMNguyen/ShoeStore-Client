@@ -28,4 +28,5 @@ export const STYLE_MODEL = {
   outline: 0,
 
   backgroundColor: "rgba(0, 0, 0, 0.5)",
+  transition: "all 0.2s easy-in-out 0s",
 };

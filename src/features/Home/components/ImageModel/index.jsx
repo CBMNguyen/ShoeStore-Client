@@ -29,7 +29,7 @@ function ImageModel(props) {
   };
 
   return (
-    <div className="ImageModel" style={STYLE_MODEL}>
+    <div className="ImageModel animation-fade-in" style={STYLE_MODEL}>
       <i onClick={() => closeModel()} className="bx bx-x" />
 
       <Slider className="ImageModel__list" {...settings}>

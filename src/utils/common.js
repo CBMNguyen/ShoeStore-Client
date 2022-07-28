@@ -2,7 +2,7 @@ import { unwrapResult } from "@reduxjs/toolkit";
 import { PRODUCT_TOAST_OPTIONS } from "constants/globals";
 import { toast } from "react-toastify";
 
-export function capitalizeFirstLetter(string) {
+export function capitalizeFirstLetter(string = "") {
   return string.charAt(0).toUpperCase() + string.slice(1);
 }
 

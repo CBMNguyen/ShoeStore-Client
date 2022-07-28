@@ -7,7 +7,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { Link, useHistory } from "react-router-dom";
 import { Badge, Input, Tooltip } from "reactstrap";
 import avt from "../../assets/images/avt.jpg";
-import branchLogo from "../../assets/images/brandLogo.png";
+import brandLogo from "../../assets/images/brandLogo.png";
 import "./header.scss";
 
 Header.propTypes = {
@@ -73,7 +73,7 @@ function Header(props) {
       <div className="Header__logo">
         <h2>
           <Link to="/">
-            Shoes Store <img src={branchLogo} alt="branchLogo" />
+            Shoes Store <img src={brandLogo} alt="brandLogo" />
           </Link>
         </h2>
       </div>
@@ -85,7 +85,7 @@ function Header(props) {
           value={value}
           placeholder="Search name product ..."
         />
-        <img src={branchLogo} alt="branchLogo" />
+        <img src={brandLogo} alt="branchLogo" />
       </div>
 
       <div className="Header__info">
@@ -93,6 +93,7 @@ function Header(props) {
           <i
             onClick={() => history.push("/cart")}
             className="bx bx-basket animate__animated animate__swing"
+            key={cart.length}
           >
             <Badge className="bg-danger rounded-circle" size="sm">
               {cart.length}
@@ -119,6 +120,8 @@ function Header(props) {
           className="bx bx-power-off"
           id="TooltipExample"
         />
+
+        {/* <i onClick={handleLogout} className="bx bx-map" /> */}
 
         <Tooltip
           placement="bottom"

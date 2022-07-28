@@ -45,9 +45,6 @@ function MainPage(props) {
   // handle remove product
   const handleRemoveProduct = (id) => {
     dispatch(removeProduct({ id }));
-    toast.success("🧦 deleted a product.", {
-      ...PRODUCT_TOAST_OPTIONS,
-    });
   };
 
   // handle sign up add new user

@@ -75,33 +75,35 @@ function CartList(props) {
       {cart.length !== 0 && (
         <div>
           <header>My Shopping Cart 🛒</header>
-          <Table>
-            <thead>
-              <tr>
-                <th>Product</th>
-                <th>Size</th>
-                <th>Color</th>
-                <th>Quantity</th>
-                <th>Discount</th>
-                <th>FreeShip</th>
-                <th>Subtotal</th>
-                <th>actions</th>
-              </tr>
-            </thead>
+          <div style={{ maxHeight: "460px", overflowY: "auto" }}>
+            <Table>
+              <thead>
+                <tr>
+                  <th>Product</th>
+                  <th>Size</th>
+                  <th>Color</th>
+                  <th>Quantity</th>
+                  <th>Discount</th>
+                  <th>FreeShip</th>
+                  <th>Subtotal</th>
+                  <th>actions</th>
+                </tr>
+              </thead>
 
-            <tbody>
-              {cart.map((product) => (
-                <CartItem
-                  key={product._id}
-                  product={product}
-                  onSizeChange={onSizeChange}
-                  onColorChange={onColorChange}
-                  onQuantityChange={onQuantityChange}
-                  onProductRemove={onProductRemove}
-                />
-              ))}
-            </tbody>
-          </Table>
+              <tbody>
+                {cart.map((product) => (
+                  <CartItem
+                    key={product._id}
+                    product={product}
+                    onSizeChange={onSizeChange}
+                    onColorChange={onColorChange}
+                    onQuantityChange={onQuantityChange}
+                    onProductRemove={onProductRemove}
+                  />
+                ))}
+              </tbody>
+            </Table>
+          </div>
 
           <div className="CartList__payment">
             <div>

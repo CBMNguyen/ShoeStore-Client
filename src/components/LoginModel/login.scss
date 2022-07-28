@@ -12,6 +12,14 @@
       font-size: 2rem;
       text-align: center;
       user-select: none;
+
+      & img {
+        position: relative;
+        top: -4px;
+        width: 28px;
+        height: 28px;
+        object-fit: contain;
+      }
     }
 
     & i {
@@ -20,14 +28,14 @@
       right: 0.5rem;
       padding: 1rem;
       font-size: 2rem;
-      color: #eee;
+      color: #ddd;
       transition: 0.3s;
     }
 
     & i:hover {
       transform: scale(1.1);
       cursor: pointer;
-      color: #ddd;
+      color: #ccc;
     }
 
     & a {

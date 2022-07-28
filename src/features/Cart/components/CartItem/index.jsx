@@ -164,7 +164,7 @@ function CartItem(props) {
         <div className="CartItem__action">
           <i
             onClick={() => handleRemoveProduct(product._id)}
-            className="bx bx-x text-danger"
+            className="bx bx-trash text-danger"
           />
         </div>
       </td>

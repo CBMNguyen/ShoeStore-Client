@@ -1,7 +1,6 @@
 import { PRODUCT_TOAST_OPTIONS } from "constants/globals";
 import { addToCart } from "features/Cart/cartSlice";
 import PropTypes from "prop-types";
-import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Slider from "react-slick";
 import { toast } from "react-toastify";
@@ -11,18 +10,15 @@ import "./productdetail.scss";
 ProductDetail.propTypes = {
   product: PropTypes.object.isRequired,
   showModel: PropTypes.func.isRequired,
+  selectProductDetail: PropTypes.object.isRequired,
+  setSelectProductDetail: PropTypes.func.isRequired,
 };
 
 function ProductDetail(props) {
-  const { product, showModel } = props;
+  const { product, showModel, selectProductDetail, setSelectProductDetail } =
+    props;
 
   const { cart } = useSelector((state) => state.cart);
-
-  const [select, setSelect] = useState({
-    selectedSize: null,
-    selectedColor: null,
-    selectedQuantity: 1,
-  });
 
   const dispatch = useDispatch();
 
@@ -38,31 +34,28 @@ function ProductDetail(props) {
   const handleAddtoCart = async (product) => {
     const index = cart.findIndex((c) => c._id === product._id);
 
-    if (!select.selectedSize) {
-      toast.warning("🧦 Please select size.", {
+    if (!selectProductDetail.selectedSize) {
+      toast.warning("Please select size.", {
         ...PRODUCT_TOAST_OPTIONS,
       });
       return;
     }
 
-    if (!select.selectedColor) {
-      toast.warning("🧦 Please select color.", {
+    if (!selectProductDetail.selectedColor) {
+      toast.warning("Please select color.", {
         ...PRODUCT_TOAST_OPTIONS,
       });
       return;
     }
 
     if (index >= 0) {
-      toast.warning("🧦 Product already in the cart.", {
+      toast.warning("Product already in the cart.", {
         ...PRODUCT_TOAST_OPTIONS,
       });
       return;
     }
 
-    await dispatch(addToCart({ ...product, ...select }));
-    toast.success("🧦 Added a product to the cart 🎀", {
-      ...PRODUCT_TOAST_OPTIONS,
-    });
+    await dispatch(addToCart({ ...product, ...selectProductDetail }));
   };
 
   return (
@@ -96,9 +89,14 @@ function ProductDetail(props) {
             <div
               className="shadow"
               key={s.size}
-              onClick={() => setSelect({ ...select, selectedSize: s.size })}
+              onClick={() =>
+                setSelectProductDetail({
+                  ...selectProductDetail,
+                  selectedSize: s.size,
+                })
+              }
               style={
-                select.selectedSize === s.size
+                selectProductDetail.selectedSize === s.size
                   ? {
                       backgroundColor: "#000",
                       color: "white",
@@ -122,9 +120,14 @@ function ProductDetail(props) {
             <div
               key={c.color}
               className="shadow"
-              onClick={() => setSelect({ ...select, selectedColor: c.color })}
+              onClick={() =>
+                setSelectProductDetail({
+                  ...selectProductDetail,
+                  selectedColor: c.color,
+                })
+              }
               style={
-                select.selectedColor === c.color
+                selectProductDetail.selectedColor === c.color
                   ? {
                       backgroundColor: c.color,
                       border: "2px solid orange",

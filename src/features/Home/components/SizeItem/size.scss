@@ -1,0 +1,15 @@
+.Size {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 2.2rem;
+  height: 2.2rem;
+  margin: 0.5rem 0;
+  border-radius: 0.5rem;
+
+  font-size: 1rem !important;
+  background-color: #eee;
+  cursor: pointer;
+  transition: all 0.2s easy 0s;
+}

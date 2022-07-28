@@ -2,6 +2,7 @@ import classNames from "classnames";
 import PropTypes from "prop-types";
 import React from "react";
 import { Col } from "reactstrap";
+import "./color.scss";
 
 ColorItem.propTypes = {
   color: PropTypes.object.isRequired,
@@ -15,7 +16,7 @@ ColorItem.defaultProps = {
 
 function ColorItem(props) {
   const { color, filter, onColorChange } = props;
-
+  const isSelectedColor = color["color"] === filter.color;
   const handleColorChange = (color) => {
     if (!onColorChange) return;
     onColorChange(color);
@@ -26,16 +27,10 @@ function ColorItem(props) {
       <div
         style={{
           backgroundColor: `${color["color"]}`,
-          width: "2rem",
-          height: "2rem",
-          margin: "0.5rem 0",
-          borderRadius: "0.5rem",
-          cursor: "pointer",
-          transform: color["color"] === filter.color ? "scale(1.1)" : "",
-          transition: "all .3s easy 0s",
+          transform: isSelectedColor ? "scale(1.1)" : "",
         }}
-        className={classNames("border shadow-sm", {
-          "border-secondary border-5": color["color"] === filter.color,
+        className={classNames("Color border shadow-sm", {
+          "shadow-lg": isSelectedColor,
         })}
         onClick={() => handleColorChange(color["color"])}
       />

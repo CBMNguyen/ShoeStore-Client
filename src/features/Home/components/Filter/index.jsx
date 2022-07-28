@@ -92,7 +92,7 @@ function Filter(props) {
       {/* Filter product by size */}
 
       <li>
-        <span className="d-block  mb-2">Size</span>
+        <span className="d-block mb-2">Size</span>
         <Row>
           {size.map((s) => (
             <SizeItem

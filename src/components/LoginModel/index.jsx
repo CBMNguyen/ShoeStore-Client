@@ -10,6 +10,7 @@ import * as yup from "yup";
 import "./login.scss";
 import firebase from "firebase";
 import StyledFirebaseAuth from "react-firebaseui/StyledFirebaseAuth";
+import brandLogo from "../../assets/images/brandLogo.png";
 
 LoginModel.propTypes = {
   showModel: PropTypes.func.isRequired,
@@ -59,9 +60,11 @@ function LoginModel(props) {
   };
 
   return (
-    <div className="LoginModel" style={STYLE_MODEL}>
+    <div className="LoginModel animation-fade-in" style={STYLE_MODEL}>
       <Form className="form" onSubmit={handleSubmit(onSubmit)}>
-        <header>Shoes Store🧦</header>
+        <header>
+          Shoes Store <img src={brandLogo} alt="branchLogo" />
+        </header>
         <i onClick={() => closeModel()} className="bx bx-x" />
         <InputField
           name="email"

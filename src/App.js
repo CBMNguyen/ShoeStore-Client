@@ -1,12 +1,14 @@
-import { fakeUpdateUser } from "app/userSlice";
+import { userLogin } from "app/userSlice";
 import Loading from "components/Loading";
 import NotFound from "components/NotFound";
 import ProtectedRoute from "components/ProtectedRoute";
 import firebase from "firebase";
+import useModel from "hooks/useModel";
 import React, { Suspense, useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { BrowserRouter, Route, Switch } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
+import { showToastError, showToastSuccess } from "utils/common";
 import "./App.scss";
 
 // Configure Firebase.
@@ -19,6 +21,7 @@ const config = {
 firebase.initializeApp(config);
 
 function App() {
+  const loginModel = useModel();
   const dispatch = useDispatch();
   // test login firebase remember remove
   useEffect(() => {
@@ -26,9 +29,12 @@ function App() {
       .auth()
       .onAuthStateChanged(async (user) => {
         if (user) {
-          const token = await user.getIdToken();
-          const image = user.photoURL;
-          dispatch(fakeUpdateUser({ token, user: { image, test: "test" } }));
+          try {
+            dispatch(userLogin({ token: user.getIdToken() }));
+            loginModel.closeModel();
+          } catch (error) {
+            showToastError(error);
+          }
         }
       });
     return () => unregisterAuthObserver();
