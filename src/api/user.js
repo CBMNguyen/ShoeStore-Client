@@ -16,6 +16,11 @@ const userApi = {
     return axiosClient.post(url, data);
   },
 
+  resetPassword: (data) => {
+    const url = `/user/resetPassword`;
+    return axiosClient.post(url, data);
+  },
+
   update: (userId, data) => {
     const url = `/user/${userId}`;
     return axiosClient.patch(url, data);

@@ -8,7 +8,7 @@ import React, { Suspense, useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { BrowserRouter, Route, Switch } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
-import { showToastError, showToastSuccess } from "utils/common";
+import { showToastError } from "utils/common";
 import "./App.scss";
 
 // Configure Firebase.
@@ -38,11 +38,12 @@ function App() {
         }
       });
     return () => unregisterAuthObserver();
-  }, [dispatch]);
+  }, [dispatch, loginModel]);
 
   const Home = React.lazy(() => import("./features/Home"));
   const Cart = React.lazy(() => import("./features/Cart"));
   const Order = React.lazy(() => import("./features/Order"));
+  const ResetPassWord = React.lazy(() => import("./components/ResetPassWord"));
 
   return (
     <div className="App">
@@ -52,6 +53,7 @@ function App() {
             <Route exact path="/" component={Home} />
             <Route path="/cart" component={Cart} />
             <ProtectedRoute path="/order" component={Order} />
+            <Route path="/resetpassword/:email" component={ResetPassWord} />
             <Route component={NotFound} />
           </Switch>
           <ToastContainer />

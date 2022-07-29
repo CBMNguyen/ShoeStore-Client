@@ -11,6 +11,7 @@ import "./login.scss";
 import firebase from "firebase";
 import StyledFirebaseAuth from "react-firebaseui/StyledFirebaseAuth";
 import brandLogo from "../../assets/images/brandLogo.png";
+import { useHistory } from "react-router-dom";
 
 LoginModel.propTypes = {
   showModel: PropTypes.func.isRequired,
@@ -21,6 +22,7 @@ LoginModel.propTypes = {
 function LoginModel(props) {
   const { showModel, closeModel, onLogin } = props;
   const { loading } = useSelector((state) => state.user);
+  const history = useHistory();
 
   const defaultValues = {
     email: "",
@@ -42,6 +44,7 @@ function LoginModel(props) {
     control,
     handleSubmit,
     formState: { errors },
+    getValues,
   } = useForm({ defaultValues, resolver: yupResolver(schema) });
 
   const onSubmit = (data) => {
@@ -57,6 +60,12 @@ function LoginModel(props) {
     callbacks: {
       signInSuccessWithAuthResult: () => closeModel(),
     },
+  };
+
+  const handleResetPassword = (e) => {
+    e.preventDefault();
+    const email = getValues().email || " ";
+    history.push(`/resetpassword/${email}`);
   };
 
   return (
@@ -80,7 +89,9 @@ function LoginModel(props) {
           errors={errors}
           type="password"
         />
-        <a href="/#">Forgot Password ?</a>
+        <a href="/#" onClick={handleResetPassword}>
+          Forgot Password ?
+        </a>
         <Button className="d-block w-100 m-auto mt-2 mb-2 btn">
           Login
           {loading && (

@@ -3,7 +3,6 @@ import Header from "components/Header";
 import LoginModel from "components/LoginModel";
 import Profile from "components/Profile";
 import SignUpModel from "components/SignUpModel";
-import { PRODUCT_TOAST_OPTIONS } from "constants/globals";
 import {
   removeProduct,
   selectColor,
@@ -12,9 +11,7 @@ import {
 } from "features/Cart/cartSlice";
 import CartList from "features/Cart/components/CartList";
 import useModel from "hooks/useModel";
-import React from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { toast } from "react-toastify";
 import { showToastError, showToastSuccess } from "utils/common";
 
 function MainPage(props) {
