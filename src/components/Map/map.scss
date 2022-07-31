@@ -1,0 +1,88 @@
+.Map {
+  &__close {
+    position: absolute;
+    top: 0;
+    right: 0;
+    padding: 0 1.5rem;
+
+    font-size: 3rem;
+    color: #fff;
+    transition: all 0.3s ease-in-out 0s;
+  }
+
+  &__close:hover {
+    cursor: pointer;
+    transform: scale(1.1);
+  }
+
+  &__control {
+    position: absolute;
+    bottom: 110px;
+    right: -8px;
+
+    z-index: 99999999;
+    transform: translateX(-50%);
+    transition: all ease-in-out 0.3s;
+
+    & > div {
+      background-color: #fff;
+
+      padding: 0.3rem 0.4rem;
+      border-radius: 4px;
+
+      &:hover {
+        transform: scale(1.02);
+        cursor: pointer;
+      }
+
+      & i {
+        font-size: 1.6rem;
+        color: #666;
+      }
+    }
+  }
+
+  &__calculateRouteBtn {
+    background-color: deeppink;
+    border: none;
+    border-radius: 4px;
+    color: white;
+    padding: 0 1rem;
+    font-size: 14px;
+
+    &:focus {
+      outline: none;
+      border: none;
+    }
+  }
+
+  &__closeIcon {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0 1rem;
+    font-size: 14px;
+    border-radius: 4px;
+
+    margin-left: 0.5rem;
+    background-color: #000;
+    color: #fff;
+
+    & i {
+      font-size: 1.2rem;
+    }
+  }
+
+  &__navigationIcon {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-left: auto;
+
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: #ddd;
+    cursor: pointer;
+  }
+}
