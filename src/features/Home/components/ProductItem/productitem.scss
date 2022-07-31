@@ -1,6 +1,6 @@
 .ProductItem {
   position: relative;
-  width: 288px;
+  width: 100%;
   font-family: "Poppins", sans-serif;
   border: 1px solid #eef;
   border-radius: 0.5rem;
@@ -48,23 +48,39 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+    font-size: 0.9rem;
 
-    & section div:first-child {
+    & section {
       color: #ccd;
     }
 
     & section div:last-child {
-      font-weight: bold;
+      display: flex;
+
+      & div:last-child {
+        font-weight: bold;
+      }
+
+      & .active {
+        font-weight: normal !important;
+        text-decoration: line-through;
+      }
+
+      & div:first-child {
+        color: #000;
+        font-weight: bold;
+        margin-right: 0.5rem;
+      }
     }
 
     & section img {
       width: 38px;
       height: 38px;
-      margin: 0 0.25rem;
+      margin: 0 0.2rem;
       padding: 0.25rem;
 
       border: 1px solid #eee;
-      border-radius: 0.5rem;
+      border-radius: 8px;
       box-sizing: border-box;
 
       cursor: pointer;

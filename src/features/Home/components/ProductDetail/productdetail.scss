@@ -11,10 +11,11 @@
     position: absolute;
     width: 90%;
     top: -140px;
-    left: 0;
+    left: 5%;
   }
 
   & img {
+    display: block;
     width: 100%;
     object-fit: contain;
     cursor: pointer;
@@ -38,8 +39,9 @@
 
   &__size {
     position: relative;
-    top: 210px;
+    top: 230px;
     margin-left: 1rem;
+    transition: all ease-in-out 0.3s;
 
     & header {
       font-weight: 600;
@@ -53,7 +55,7 @@
         padding: 10px 15px 10px 15px;
         border: 1px solid #eee;
         margin-right: 0.5rem;
-        border-radius: 25%;
+        border-radius: 20%;
         cursor: pointer;
         transition: 0.5s;
       }
@@ -62,7 +64,7 @@
 
   &__color {
     position: relative;
-    top: 230px;
+    top: 210px;
     margin-left: 1rem;
 
     & header {
@@ -97,12 +99,13 @@
 
     & p {
       color: #aaa;
+      font-size: 0.85rem;
     }
   }
 
   &__button {
     position: relative;
-    top: 280px;
+    top: 260px;
     width: 100%;
 
     & button {

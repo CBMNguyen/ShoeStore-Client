@@ -7,8 +7,11 @@
 
   &__product {
     & img {
+      position: relative;
+      top: -16px;
       width: 80px;
       height: 80px;
+      object-fit: contain;
       vertical-align: middle;
     }
   }

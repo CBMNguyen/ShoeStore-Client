@@ -71,7 +71,7 @@ function MainPage(props) {
       sum +
       product.originalPrice *
         product.selectedQuantity *
-        (1 - product.promotionPercent),
+        ((100 - product.promotionPercent) / 100),
     0
   );
 

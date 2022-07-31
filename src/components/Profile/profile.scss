@@ -56,18 +56,29 @@
     }
   }
 
+  &__logout {
+    position: absolute;
+    top: 0;
+    left: 0;
+    padding: 0.6rem 1.5rem;
+
+    font-size: 2rem;
+    transition: all 0.3s ease-in-out 0s;
+    cursor: pointer;
+  }
+
   &__close {
     position: absolute;
     top: 0;
     right: 0;
-    padding: 0.6rem 1.5rem;
+    padding: 0 1.5rem;
 
-    font-size: 2rem;
-    transition: all 0.25 ease-in-out 0s;
+    font-size: 2.5rem;
+    transition: all 0.3s ease-in-out 0s;
   }
 
-  &__close:hover {
-    color: #ccc;
+  &__close:hover,
+  &__logout:hover {
     cursor: pointer;
     transform: scale(1.1);
   }

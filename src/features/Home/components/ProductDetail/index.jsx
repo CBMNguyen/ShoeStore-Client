@@ -34,13 +34,6 @@ function ProductDetail(props) {
   const handleAddtoCart = async (product) => {
     const index = cart.findIndex((c) => c._id === product._id);
 
-    if (!selectProductDetail.selectedSize) {
-      toast.warning("Please select size.", {
-        ...PRODUCT_TOAST_OPTIONS,
-      });
-      return;
-    }
-
     if (!selectProductDetail.selectedColor) {
       toast.warning("Please select color.", {
         ...PRODUCT_TOAST_OPTIONS,
@@ -48,8 +41,26 @@ function ProductDetail(props) {
       return;
     }
 
+    if (!selectProductDetail.selectedSize) {
+      toast("Please select size.", {
+        ...PRODUCT_TOAST_OPTIONS,
+      });
+      return;
+    }
+    const { quantity } = product.productDetail
+      .find((item) => item.color.color === selectProductDetail.selectedColor)
+      .sizeAndQuantity.find(
+        (item) => item.size.size === selectProductDetail.selectedSize
+      );
+    if (quantity === 0) {
+      toast("Current size are currently out of stock", {
+        ...PRODUCT_TOAST_OPTIONS,
+      });
+      return;
+    }
+
     if (index >= 0) {
-      toast.warning("Product already in the cart.", {
+      toast("Product already in the cart.", {
         ...PRODUCT_TOAST_OPTIONS,
       });
       return;
@@ -63,10 +74,10 @@ function ProductDetail(props) {
       {/* Product Image List */}
 
       <Slider className="ProductDetail__list" {...settings}>
-        {product.images.map((img) => (
+        {product.productDetail[0].images.map((img) => (
           <img
             key={img}
-            src={`${process.env.REACT_APP_API_URL}/${img}`}
+            src={img}
             alt={img}
             onClick={() => showModel(product)}
           />
@@ -80,63 +91,68 @@ function ProductDetail(props) {
         <div>{product.name}</div>
       </div>
 
-      {/* Product size */}
-
-      <div className="ProductDetail__size">
-        <header>Select Size</header>
-        <section>
-          {product.size.map((s) => (
-            <div
-              className="shadow"
-              key={s.size}
-              onClick={() =>
-                setSelectProductDetail({
-                  ...selectProductDetail,
-                  selectedSize: s.size,
-                })
-              }
-              style={
-                selectProductDetail.selectedSize === s.size
-                  ? {
-                      backgroundColor: "#000",
-                      color: "white",
-                      transform: "scale(1.08)",
-                    }
-                  : {}
-              }
-            >
-              {s.size}
-            </div>
-          ))}
-        </section>
-      </div>
-
       {/* Product color */}
 
       <div className="ProductDetail__color">
         <header>Select Color</header>
         <section>
-          {product.color.map((c) => (
+          {product.productDetail.map(({ color }) => (
             <div
-              key={c.color}
+              key={color.color}
               className="shadow"
               onClick={() =>
                 setSelectProductDetail({
                   ...selectProductDetail,
-                  selectedColor: c.color,
+                  selectedColor: color.color,
                 })
               }
               style={
-                selectProductDetail.selectedColor === c.color
+                selectProductDetail.selectedColor === color.color
                   ? {
-                      backgroundColor: c.color,
+                      backgroundColor: color.color,
                       border: "2px solid orange",
                       transform: "scale(1.05)",
                     }
-                  : { backgroundColor: c.color }
+                  : { backgroundColor: color.color }
               }
             />
           ))}
+        </section>
+      </div>
+
+      {/* Product size */}
+
+      <div className="ProductDetail__size">
+        <header>Select Size</header>
+        <section>
+          {product?.productDetail
+            .find(
+              (item) => item.color.color === selectProductDetail.selectedColor
+            )
+            .sizeAndQuantity.map(({ size }) => (
+              <div
+                className="shadow"
+                key={size.size}
+                onClick={() =>
+                  setSelectProductDetail({
+                    ...selectProductDetail,
+                    selectedSize: size.size,
+                  })
+                }
+                style={
+                  selectProductDetail?.selectedSize === size.size
+                    ? {
+                        backgroundColor: "#000",
+                        color: "white",
+                        transform: "scale(1.08)",
+                      }
+                    : {}
+                }
+              >
+                {size.size}
+                <span class="icon">&nbsp;</span>
+              </div>
+            ))}
         </section>
       </div>
 

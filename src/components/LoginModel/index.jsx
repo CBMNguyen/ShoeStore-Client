@@ -1,17 +1,16 @@
 import { yupResolver } from "@hookform/resolvers/yup";
 import { STYLE_MODEL } from "constants/globals";
 import InputField from "custom-field/InputField";
+import firebase from "firebase";
 import PropTypes from "prop-types";
-import React from "react";
+import StyledFirebaseAuth from "react-firebaseui/StyledFirebaseAuth";
 import { useForm } from "react-hook-form";
 import { useSelector } from "react-redux";
+import { useHistory } from "react-router-dom";
 import { Button, Form, Spinner } from "reactstrap";
 import * as yup from "yup";
-import "./login.scss";
-import firebase from "firebase";
-import StyledFirebaseAuth from "react-firebaseui/StyledFirebaseAuth";
 import brandLogo from "../../assets/images/brandLogo.png";
-import { useHistory } from "react-router-dom";
+import "./login.scss";
 
 LoginModel.propTypes = {
   showModel: PropTypes.func.isRequired,
@@ -22,6 +21,7 @@ LoginModel.propTypes = {
 function LoginModel(props) {
   const { showModel, closeModel, onLogin } = props;
   const { loading } = useSelector((state) => state.user);
+
   const history = useHistory();
 
   const defaultValues = {
@@ -74,7 +74,9 @@ function LoginModel(props) {
         <header>
           Shoes Store <img src={brandLogo} alt="branchLogo" />
         </header>
+
         <i onClick={() => closeModel()} className="bx bx-x" />
+
         <InputField
           name="email"
           control={control}

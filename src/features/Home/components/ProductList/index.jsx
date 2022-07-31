@@ -72,7 +72,7 @@ function ProductList(props) {
           </Button>
         </div>
       </header>
-      <Row>
+      <Row className="gx-2 gy-2">
         {products.length > 0 &&
           products.map((product) => (
             <ProductItem
@@ -82,7 +82,6 @@ function ProductList(props) {
               setBorder={setBorder}
               onSelectProduct={onSelectProduct}
               selectedProductId={filter.selectedProduct?._id}
-              showModel={showModel}
             />
           ))}
 

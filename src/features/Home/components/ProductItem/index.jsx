@@ -9,38 +9,25 @@ ProductItem.propTypes = {
   border: PropTypes.string.isRequired,
   setBorder: PropTypes.func.isRequired,
   onSelectProduct: PropTypes.func,
-  showModel: PropTypes.func,
 };
 
 ProductItem.defaultProps = {
   onSelectProduct: null,
-  showModel: null,
 };
 
 function ProductItem(props) {
   const [imageIndex, setImageIndex] = useState(0);
 
-  const {
-    product,
-    border,
-    setBorder,
-    selectedProductId,
-    onSelectProduct,
-    showModel,
-  } = props;
+  const { product, border, setBorder, selectedProductId, onSelectProduct } =
+    props;
 
   const handleSelectProduct = (product) => {
     if (!onSelectProduct) return;
     onSelectProduct(product);
   };
 
-  const handleShowModel = (data) => {
-    if (!showModel) return;
-    showModel(data);
-  };
-
   return (
-    <Col md={4} className="mb-3">
+    <Col xl={4} lg={6} md={6} sm={12}>
       <div
         className="ProductItem shadow-sm"
         onClick={() => {
@@ -64,9 +51,8 @@ function ProductItem(props) {
         {/* Product Image */}
 
         <img
-          onClick={() => handleShowModel(product)}
           className="ProductItem__image"
-          src={`${process.env.REACT_APP_API_URL}/${product.images[imageIndex]}`}
+          src={product.productDetail[0].images[imageIndex]}
           alt={product._id}
         />
 
@@ -76,13 +62,20 @@ function ProductItem(props) {
           <section>
             {" "}
             <div>Price</div>
-            <div>{`${product.originalPrice}$`}</div>
+            <div>
+              {product.promotionPercent !== 0 && (
+                <div>${product.salePrice * ((100 - 5) / 100)}</div>
+              )}
+              <div className={`${product.promotionPercent !== 0 && "active"}`}>
+                ${`${product.salePrice}`}
+              </div>
+            </div>
           </section>
 
           {/* Selected Product small image */}
 
           <section>
-            {product.images.map((image, index) => (
+            {product.productDetail[0].images.map((image, index) => (
               <img
                 key={image}
                 style={
@@ -92,7 +85,7 @@ function ProductItem(props) {
                 }
                 id={product._id}
                 onClick={(e) => setImageIndex(index)}
-                src={`${process.env.REACT_APP_API_URL}/${product.images[index]}`}
+                src={product.productDetail[0].images[index]}
                 alt={product._id}
               />
             ))}

@@ -1,11 +1,11 @@
-import { logOut } from "app/userSlice";
-import firebase from "firebase";
+import Map from "components/Map";
+import useModel from "hooks/useModel";
 import jwt from "jsonwebtoken";
 import PropTypes from "prop-types";
-import React, { useRef, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useRef, useState } from "react";
+import { useSelector } from "react-redux";
 import { Link, useHistory } from "react-router-dom";
-import { Badge, Input, Tooltip } from "reactstrap";
+import { Badge, Input } from "reactstrap";
 import avt from "../../assets/images/avt.jpg";
 import brandLogo from "../../assets/images/brandLogo.png";
 import "./header.scss";
@@ -22,19 +22,16 @@ Header.defaultProps = {
 };
 
 function Header(props) {
-  const dispatch = useDispatch();
   const [value, setValue] = useState();
   const history = useHistory();
 
-  // tooltip log out
-  const [tooltipOpen, setTooltipOpen] = useState(false);
-  const toggle = () => setTooltipOpen(!tooltipOpen);
+  const { cart } = useSelector((state) => state.cart);
+  const { token, user } = useSelector((state) => state.user);
 
   const timeoutId = useRef(null);
   const { onNameChange, showModel, showProfileModel } = props;
 
-  const { cart } = useSelector((state) => state.cart);
-  const { token, user } = useSelector((state) => state.user);
+  const mapModel = useModel();
 
   // Search Input filter product
 
@@ -59,13 +56,6 @@ function Header(props) {
     } catch (error) {
       showModel();
     }
-  };
-
-  // handle log out
-
-  const handleLogout = async () => {
-    await firebase.auth().signOut();
-    dispatch(logOut());
   };
 
   return (
@@ -101,6 +91,10 @@ function Header(props) {
           </i>
         </div>
 
+        <div className="p-0 m-0" onClick={() => mapModel.showModel()}>
+          <i className="bx bx-map" />
+        </div>
+
         <img
           onClick={handleProfileClick}
           src={
@@ -114,24 +108,9 @@ function Header(props) {
           }
           alt="#"
         />
-
-        <i
-          onClick={handleLogout}
-          className="bx bx-power-off"
-          id="TooltipExample"
-        />
-
-        {/* <i onClick={handleLogout} className="bx bx-map" /> */}
-
-        <Tooltip
-          placement="bottom"
-          isOpen={tooltipOpen}
-          target="TooltipExample"
-          toggle={toggle}
-        >
-          Log out.
-        </Tooltip>
       </div>
+
+      {mapModel.model.show && <Map onClose={mapModel.closeModel} />}
     </div>
   );
 }

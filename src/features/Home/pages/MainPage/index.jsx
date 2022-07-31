@@ -36,7 +36,7 @@ function MainPage(props) {
 
   const [selectProductDetail, setSelectProductDetail] = useState({
     selectedSize: null,
-    selectedColor: null,
+    selectedColor: "white",
     selectedQuantity: 1,
   });
 
@@ -48,7 +48,7 @@ function MainPage(props) {
     name: "",
     price: {
       minPrice: 42.32,
-      maxPrice: 1082.23,
+      maxPrice: 2000,
     },
     isIncreasePrice: 0,
     selectedProduct: null,
@@ -62,10 +62,14 @@ function MainPage(props) {
     (product) =>
       (filter["color"] === ""
         ? true
-        : product.color.findIndex((c) => c.color === filter["color"]) !== -1) &&
+        : product.productDetail.findIndex(
+            (c) => c.color.color === filter["color"]
+          ) !== -1) &&
       (filter["size"] === ""
         ? true
-        : product.size.findIndex((c) => c.size === filter["size"]) !== -1) &&
+        : product.productDetail.findIndex((s) =>
+            s.sizeAndQuantity.some((s) => s.size.size === filter.size)
+          ) !== -1) &&
       product.originalPrice >= filter["price"]["minPrice"] &&
       product.originalPrice <= filter["price"]["maxPrice"] &&
       product.category.name.indexOf(filter["category"]) !== -1 &&
@@ -99,7 +103,7 @@ function MainPage(props) {
   };
 
   const handleColorChange = (color) => {
-    setFilter({ ...filter, color });
+    setFilter({ ...filter, color, selectedProduct: null });
   };
 
   const handleSizeChange = (size) => {
@@ -127,7 +131,7 @@ function MainPage(props) {
     setFilter({ ...filter, selectedProduct });
     setSelectProductDetail({
       selectedSize: null,
-      selectedColor: null,
+      selectedColor: selectedProduct.productDetail[0].color.color,
       selectedQuantity: 1,
     });
   };
@@ -197,7 +201,7 @@ function MainPage(props) {
         size={size}
         filter={filter}
         minPrice={42.32}
-        maxPrice={1083}
+        maxPrice={2000}
         onColorChange={handleColorChange}
         onSizeChange={handleSizeChange}
         onCategoryChange={handleCategoryChange}

@@ -53,10 +53,14 @@ function CartItem(props) {
     <tr className="CartItem">
       {/* Product name and image column */}
 
-      <td>
+      <td className="pt-3">
         <div className="CartItem__product">
           <img
-            src={`${process.env.REACT_APP_API_URL}/${product.images[0]}`}
+            src={
+              product.productDetail.find(
+                ({ color }) => color.color === product.selectedColor
+              ).images[0]
+            }
             alt={product._id}
           />
           <div className="ps-4">
@@ -75,11 +79,13 @@ function CartItem(props) {
           }
           defaultValue={product.selectedSize}
         >
-          {product.size.map((s) => (
-            <option key={s.size} value={s.size}>
-              {s.size}
-            </option>
-          ))}
+          {product.productDetail
+            .find(({ color }) => color.color === product.selectedColor)
+            .sizeAndQuantity.map(({ size }) => (
+              <option key={size.size} value={size.size}>
+                {size.size}
+              </option>
+            ))}
         </select>
       </td>
 
@@ -90,9 +96,9 @@ function CartItem(props) {
           onChange={(e) => handleColorChange(product._id, e.target.value)}
           defaultValue={product.selectedColor}
         >
-          {product.color.map((c) => (
-            <option key={c.color} value={c.color}>
-              {c.color}
+          {product.productDetail.map(({ color }) => (
+            <option key={color.color} value={color.color}>
+              {color.color}
             </option>
           ))}
         </select>
@@ -153,7 +159,9 @@ function CartItem(props) {
       <td>
         <div className="CartItem__subtotal">
           <Badge className="bg-warning">{`${(
-            product.selectedQuantity * product.originalPrice
+            product.selectedQuantity *
+            product.salePrice *
+            ((100 - product.promotionPercent) / 100)
           ).toFixed(2)}$`}</Badge>
         </div>
       </td>

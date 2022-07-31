@@ -23,7 +23,7 @@ Filter.propTypes = {
 };
 
 function Filter(props) {
-  const [value, setValue] = useState({ min: 200, max: 800 });
+  const [value, setValue] = useState({ min: 180, max: 1600 });
   const {
     color,
     category,

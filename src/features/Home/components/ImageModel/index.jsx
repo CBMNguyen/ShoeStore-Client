@@ -33,12 +33,8 @@ function ImageModel(props) {
       <i onClick={() => closeModel()} className="bx bx-x" />
 
       <Slider className="ImageModel__list" {...settings}>
-        {product.images.map((img) => (
-          <img
-            key={img}
-            src={`${process.env.REACT_APP_API_URL}/${img}`}
-            alt={img}
-          />
+        {product.productDetail[0].images.map((img) => (
+          <img key={img} src={img} alt={img} />
         ))}
       </Slider>
     </div>

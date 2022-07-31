@@ -1,14 +1,25 @@
 import { yupResolver } from "@hookform/resolvers/yup";
+import { logOut } from "app/userSlice";
 import { GENDER_OPTIONS, STYLE_MODEL } from "constants/globals";
 import InputField from "custom-field/InputField";
 import SelectField from "custom-field/SelectField";
 import PropTypes from "prop-types";
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
-import { Col, Form, FormFeedback, Input, Row, Spinner } from "reactstrap";
+import { useDispatch } from "react-redux";
+import {
+  Col,
+  Form,
+  FormFeedback,
+  Input,
+  Row,
+  Spinner,
+  Tooltip,
+} from "reactstrap";
 import { capitalizeFirstLetter } from "utils/common";
 import * as yup from "yup";
 import "./profile.scss";
+import firebase from "firebase";
 
 Profile.propTypes = {
   onSubmit: PropTypes.func,
@@ -23,6 +34,11 @@ Profile.defaultProps = {
 function Profile(props) {
   const { model, closeModel, onSubmit, loading } = props;
   const [readOnly, setReadOnly] = useState(true);
+
+  // tooltip log out
+  const [tooltipOpen, setTooltipOpen] = useState(false);
+  const toggle = () => setTooltipOpen(!tooltipOpen);
+  const dispatch = useDispatch();
 
   // default value
 
@@ -82,6 +98,14 @@ function Profile(props) {
     await onSubmit(data);
   };
 
+  // handle log out
+
+  const handleLogout = async () => {
+    await firebase.auth().signOut();
+    dispatch(logOut());
+    closeModel();
+  };
+
   return (
     <div style={STYLE_MODEL}>
       <Form className="Profile" onSubmit={handleSubmit(onFormSubmit)}>
@@ -106,6 +130,23 @@ function Profile(props) {
               src={`${process.env.REACT_APP_API_URL}/${model.data.image}`}
               alt=""
             />
+          </div>
+
+          <div className="Profile__logout">
+            <i
+              onClick={handleLogout}
+              className="bx bx-power-off"
+              id="TooltipExample"
+            />
+
+            <Tooltip
+              placement="bottom"
+              isOpen={tooltipOpen}
+              target="TooltipExample"
+              toggle={toggle}
+            >
+              Log out.
+            </Tooltip>
           </div>
 
           <div onClick={() => closeModel()} className="Profile__close">

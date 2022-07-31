@@ -4,8 +4,8 @@ import jwt from "jsonwebtoken";
 import PropTypes from "prop-types";
 import React from "react";
 import { useDispatch } from "react-redux";
-import { useHistory } from "react-router-dom";
-import { Badge, Table } from "reactstrap";
+import { Link, useHistory } from "react-router-dom";
+import { Badge, Breadcrumb, BreadcrumbItem, Table } from "reactstrap";
 import CartItem from "../CartItem";
 import "./cartlist.scss";
 CartList.propTypes = {
@@ -74,7 +74,18 @@ function CartList(props) {
 
       {cart.length !== 0 && (
         <div>
-          <header>My Shopping Cart 🛒</header>
+          <header>
+            <h2>My Shopping Cart 🛒</h2>
+            {/* navigation */}
+            <Breadcrumb>
+              <BreadcrumbItem>
+                <Link style={{ textDecoration: "none" }} to="/">
+                  Home
+                </Link>
+              </BreadcrumbItem>
+              <BreadcrumbItem active>Cart</BreadcrumbItem>
+            </Breadcrumb>
+          </header>
           <div style={{ maxHeight: "460px", overflowY: "auto" }}>
             <Table>
               <thead>
