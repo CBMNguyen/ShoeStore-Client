@@ -88,7 +88,7 @@ function CartList(props) {
           </header>
           <div style={{ maxHeight: "460px", overflowY: "auto" }}>
             <Table>
-              <thead>
+              <thead style={{ position: "sticky", top: 0, zIndex: 1000 }}>
                 <tr>
                   <th>Product</th>
                   <th>Size</th>

@@ -80,7 +80,7 @@ function ProductItem(props) {
                 key={image}
                 style={
                   product._id === selectedProductId && imageIndex === index
-                    ? { border: "2px solid black" }
+                    ? { border: "2px solid #ccc" }
                     : {}
                 }
                 id={product._id}

@@ -1,9 +1,8 @@
 .ProductList {
-  width: 60%;
+  flex: 1;
   height: calc(100vh - 4.5rem);
   padding: 1.4rem 0.5rem;
   overflow-y: scroll;
-  float: left;
 
   & header {
     display: flex;

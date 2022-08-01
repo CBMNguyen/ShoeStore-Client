@@ -1,4 +1,5 @@
 import { createUser, updateUser, userLogin } from "app/userSlice";
+import Footer from "components/Footer";
 import Header from "components/Header";
 import Loading from "components/Loading";
 import LoginModel from "components/LoginModel";
@@ -13,7 +14,7 @@ import ProductList from "features/Home/components/ProductList";
 import { fetchProduct } from "features/Home/productSlice";
 import { fetchSize } from "features/Home/sizeSlice";
 import useModel from "hooks/useModel";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { showToastError, showToastSuccess } from "utils/common";
 
@@ -57,6 +58,10 @@ function MainPage(props) {
     totalRow: 44,
   };
   const [filter, setFilter] = useState(initialFilter);
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [filter]);
 
   const filterProduct = products.filter(
     (product) =>
@@ -195,41 +200,43 @@ function MainPage(props) {
         showProfileModel={profileModel.showModel}
       />
 
-      <Filter
-        color={color}
-        category={category}
-        size={size}
-        filter={filter}
-        minPrice={42.32}
-        maxPrice={2000}
-        onColorChange={handleColorChange}
-        onSizeChange={handleSizeChange}
-        onCategoryChange={handleCategoryChange}
-        onPriceChange={handlePriceChange}
-      />
+      <div className="d-flex">
+        <Filter
+          color={color}
+          category={category}
+          size={size}
+          filter={filter}
+          minPrice={42.32}
+          maxPrice={2000}
+          onColorChange={handleColorChange}
+          onSizeChange={handleSizeChange}
+          onCategoryChange={handleCategoryChange}
+          onPriceChange={handlePriceChange}
+        />
 
-      <ProductList
-        products={sortProductByPrice.slice(
-          (filter.page - 1) * filter.limit,
-          filter.page * filter.limit
-        )}
-        totalRow={sortProductByPrice.length}
-        filter={filter}
-        onInCreasePriceChange={handleInCreasePriceChange}
-        onSelectProduct={handleSelectProduct}
-        onPageChange={handlePageChange}
-        onResetFilter={handleResetFilter}
-        showModel={showModel}
-      />
+        <ProductList
+          products={sortProductByPrice.slice(
+            (filter.page - 1) * filter.limit,
+            filter.page * filter.limit
+          )}
+          totalRow={sortProductByPrice.length}
+          filter={filter}
+          onInCreasePriceChange={handleInCreasePriceChange}
+          onSelectProduct={handleSelectProduct}
+          onPageChange={handlePageChange}
+          onResetFilter={handleResetFilter}
+          showModel={showModel}
+        />
 
-      <ProductDetail
-        product={
-          !filter["selectedProduct"] ? products[0] : filter["selectedProduct"]
-        }
-        selectProductDetail={selectProductDetail}
-        setSelectProductDetail={setSelectProductDetail}
-        showModel={showModel}
-      />
+        <ProductDetail
+          product={
+            !filter["selectedProduct"] ? products[0] : filter["selectedProduct"]
+          }
+          selectProductDetail={selectProductDetail}
+          setSelectProductDetail={setSelectProductDetail}
+          showModel={showModel}
+        />
+      </div>
 
       {/* Show image model  */}
       {model.show && (
@@ -261,6 +268,8 @@ function MainPage(props) {
           closeModel={profileModel.closeModel}
         />
       )}
+
+      <Footer />
     </div>
   );
 }

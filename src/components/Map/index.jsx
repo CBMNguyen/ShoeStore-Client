@@ -48,39 +48,36 @@ function Map({ onClose }) {
     libraries: ["places"],
   });
 
-  const onLoad = useCallback(
-    function callback(map) {
-      const bounds = new window.google.maps.LatLngBounds(position);
-      map.fitBounds(bounds);
-      setMap(map);
+  const onLoad = useCallback(function callback(map) {
+    const bounds = new window.google.maps.LatLngBounds(position);
+    map.fitBounds(bounds);
+    setMap(map);
 
-      window.navigator.geolocation.getCurrentPosition(
-        (position) => {
-          calculateRoute(
-            {
-              lat: position.coords.latitude,
-              lng: position.coords.longitude,
-            },
-            {
-              lat: 10.070928,
-              lng: 105.795405,
-            }
-          );
-        },
-        (error) => toast(error.message, { autoClose: 2000 }),
-        { timeout: 2000 }
-      );
+    window.navigator.geolocation.getCurrentPosition(
+      (position) => {
+        calculateRoute(
+          {
+            lat: position.coords.latitude,
+            lng: position.coords.longitude,
+          },
+          {
+            lat: 10.070928,
+            lng: 105.795405,
+          }
+        );
+      },
+      (error) => toast(error.message, { autoClose: 2000 }),
+      { timeout: 2000 }
+    );
 
-      map.addListener("click", (mapsMouseEvent) => {
-        console.log(mapsMouseEvent.latLng);
-        calculateRoute(mapsMouseEvent.latLng, {
-          lat: 10.070928,
-          lng: 105.795405,
-        });
+    map.addListener("click", (mapsMouseEvent) => {
+      console.log(mapsMouseEvent.latLng);
+      calculateRoute(mapsMouseEvent.latLng, {
+        lat: 10.070928,
+        lng: 105.795405,
       });
-    },
-    [position, calculateRoute]
-  );
+    });
+  }, []);
 
   const onUnmount = useCallback(function callback(map) {
     setMap(null);
@@ -131,7 +128,7 @@ function Map({ onClose }) {
           )}
           <div className="Map__control">
             <div onClick={toggle}>
-              <i class="bx bx-search-alt-2"></i>
+              <i className="bx bx-search-alt-2"></i>
             </div>
 
             <Modal size="lg" isOpen={modal} toggle={toggle}>

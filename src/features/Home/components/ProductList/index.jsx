@@ -25,7 +25,6 @@ function ProductList(props) {
     onSelectProduct,
     onPageChange,
     onResetFilter,
-    showModel,
   } = props;
 
   const [border, setBorder] = useState(products[0]?._id || "");

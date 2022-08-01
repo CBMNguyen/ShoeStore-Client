@@ -1,14 +1,18 @@
 @import url("https://fonts.googleapis.com/css2?family=Pacifico&display=swap");
 .Header {
-  position: relative;
+  position: sticky;
+  top: 0;
+  left: 0;
+  right: 0;
   z-index: 1000;
   display: flex;
   justify-content: space-between;
   align-items: center;
 
+  height: 4.5rem;
   padding: 0 1.5rem;
   border-bottom: 1px solid #eef;
-  height: 4.5rem;
+  background-color: #fff;
 
   &__map-container {
     width: 100%;

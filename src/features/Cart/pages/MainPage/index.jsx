@@ -1,4 +1,5 @@
 import { createUser, updateUser, userLogin } from "app/userSlice";
+import Footer from "components/Footer";
 import Header from "components/Header";
 import LoginModel from "components/LoginModel";
 import Profile from "components/Profile";
@@ -11,6 +12,7 @@ import {
 } from "features/Cart/cartSlice";
 import CartList from "features/Cart/components/CartList";
 import useModel from "hooks/useModel";
+import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { showToastError, showToastSuccess } from "utils/common";
 
@@ -18,6 +20,8 @@ function MainPage(props) {
   const { cart } = useSelector((state) => state.cart);
   const { token, user } = useSelector((state) => state.user);
   const { loading } = useSelector((state) => state.user);
+
+  useEffect(() => window.scrollTo(0, 0), []);
 
   const loginModel = useModel();
   const signupModel = useModel();
@@ -106,17 +110,19 @@ function MainPage(props) {
         showProfileModel={profileModel.showModel}
       />
 
-      <CartList
-        cart={cart}
-        total={total}
-        token={token}
-        user={user}
-        showModel={loginModel.showModel}
-        onColorChange={handleColorChange}
-        onSizeChange={handleSizeChange}
-        onQuantityChange={handleQuantityChange}
-        onProductRemove={handleRemoveProduct}
-      />
+      <div style={{ minHeight: "calc(100vh - 4.5rem)", padding: "4rem 0" }}>
+        <CartList
+          cart={cart}
+          total={total}
+          token={token}
+          user={user}
+          showModel={loginModel.showModel}
+          onColorChange={handleColorChange}
+          onSizeChange={handleSizeChange}
+          onQuantityChange={handleQuantityChange}
+          onProductRemove={handleRemoveProduct}
+        />
+      </div>
 
       {/* Login Model */}
       {loginModel.model.show && (
@@ -144,6 +150,8 @@ function MainPage(props) {
           closeModel={profileModel.closeModel}
         />
       )}
+
+      <Footer />
     </div>
   );
 }

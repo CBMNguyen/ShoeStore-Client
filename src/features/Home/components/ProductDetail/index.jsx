@@ -150,7 +150,7 @@ function ProductDetail(props) {
                 }
               >
                 {size.size}
-                <span class="icon">&nbsp;</span>
+                <span className="icon">&nbsp;</span>
               </div>
             ))}
         </section>

@@ -53,7 +53,7 @@ function CartItem(props) {
     <tr className="CartItem">
       {/* Product name and image column */}
 
-      <td className="pt-3">
+      <td>
         <div className="CartItem__product">
           <img
             src={

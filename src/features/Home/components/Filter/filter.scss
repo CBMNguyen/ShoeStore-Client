@@ -1,10 +1,9 @@
 @import url("https://fonts.googleapis.com/css2?family=Poppins&display=swap");
 .Filter {
-  width: 20%;
+  flex-basis: 20%;
   list-style-type: none;
   padding: 0;
   margin: 0;
-  float: left;
   overflow: scroll;
 
   & li {

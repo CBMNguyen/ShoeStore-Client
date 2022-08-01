@@ -37,3 +37,7 @@ code {
 ::-webkit-scrollbar-thumb {
   background-color: #ddd;
 }
+
+* {
+  scroll-behavior: smooth;
+}
