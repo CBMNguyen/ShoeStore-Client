@@ -11,25 +11,28 @@ import brandLogo from "../../assets/images/brandLogo.png";
 import "./header.scss";
 
 Header.propTypes = {
+  home: PropTypes.string,
   onNameChange: PropTypes.func,
   showModel: PropTypes.func.isRequired,
   showProfileModel: PropTypes.func,
 };
 
 Header.defaultProps = {
+  home: null,
   onNameChange: null,
   showProfileModel: null,
 };
 
 function Header(props) {
-  const [value, setValue] = useState();
+  const { onNameChange, showModel, showProfileModel, home } = props;
+
   const history = useHistory();
+  const [value, setValue] = useState();
 
   const { cart } = useSelector((state) => state.cart);
   const { token, user } = useSelector((state) => state.user);
 
   const timeoutId = useRef(null);
-  const { onNameChange, showModel, showProfileModel } = props;
 
   const mapModel = useModel();
 
@@ -37,7 +40,7 @@ function Header(props) {
 
   const handleInputChange = (e) => {
     const productName = e.target.value;
-    setValue(e.target.value);
+    setValue(productName);
 
     if (!onNameChange) return;
     if (timeoutId.current) clearTimeout(timeoutId.current);
@@ -63,20 +66,23 @@ function Header(props) {
       <div className="Header__logo">
         <h2>
           <Link to="/">
-            Shoes Store <img src={brandLogo} alt="brandLogo" />
+            Shoes Store{" "}
+            <img className="img-fluid" src={brandLogo} alt="brandLogo" />
           </Link>
         </h2>
       </div>
 
-      <div className="Header__input">
-        <i className="bx bx-search" />
-        <Input
-          onChange={handleInputChange}
-          value={value}
-          placeholder="Search name product ..."
-        />
-        <img src={brandLogo} alt="branchLogo" />
-      </div>
+      {home && (
+        <div className="Header__input">
+          <i className="bx bx-search" />
+          <Input
+            onChange={handleInputChange}
+            value={value}
+            placeholder="Search name product ..."
+          />
+          <img className="img-fluid" src={brandLogo} alt="branchLogo" />
+        </div>
+      )}
 
       <div className="Header__info">
         <div>
@@ -96,16 +102,9 @@ function Header(props) {
         </div>
 
         <img
+          className="img-fluid"
           onClick={handleProfileClick}
-          src={
-            !token
-              ? avt
-              : user.image
-              ? !user.test // test login firebase remember remove
-                ? `${process.env.REACT_APP_API_URL}/${user.image}`
-                : user.image
-              : user.imageUrl
-          }
+          src={!token ? avt : user.image}
           alt="#"
         />
       </div>

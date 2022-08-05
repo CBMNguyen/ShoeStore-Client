@@ -1,8 +1,6 @@
 .Pagination {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  width: 220px;
 
   & i {
     font-size: 1.4rem;
@@ -21,6 +19,7 @@
     border: none;
 
     text-align: center;
+    background-color: #ddd;
     color: black;
     cursor: pointer;
     user-select: none;
@@ -32,6 +31,10 @@
 
     &:disabled {
       cursor: not-allowed;
+    }
+
+    & + & {
+      margin-left: 1rem;
     }
   }
 }

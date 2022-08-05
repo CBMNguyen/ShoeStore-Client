@@ -25,21 +25,25 @@ function Pagination(props) {
 
   // fake array to render number item
   let filterList = [];
-  if (totalPage >= 4) {
-    filterList = [1, 2, 3, 4];
-  } else if (totalPage === 3) {
-    filterList = [1, 2, 3];
-  } else if (totalPage === 2) {
-    filterList = [1, 2];
+  for (let index = 0; index < totalPage; index++) {
+    filterList[index] = index + 1;
+  }
+
+  if ((page > 4) & ((page - 1) % 4 === 0)) {
+    filterList.splice(0, page - 1);
+    filterList = filterList.slice(0, 4);
+  } else if (page > 4 && (page - 1) % 4 !== 0) {
+    filterList.splice(0, page - (page % 4 === 0 ? 4 : page % 4));
+    filterList = filterList.slice(0, 4);
   } else {
-    filterList = [1];
+    filterList = filterList.slice(0, 4);
   }
 
   return (
     <div className="Pagination">
       {/* previous button */}
       <Button
-        className="btn btn-sm"
+        className="btn btn-sm me-4"
         type="button"
         color="light"
         disabled={page <= 1}
@@ -53,17 +57,17 @@ function Pagination(props) {
           disabled={totalPage < item}
           key={item}
           className={classNames("Pagination__number", {
-            "Pagination__number--active": page === item || page === item + 4,
+            "Pagination__number--active": page === item,
           })}
           onClick={() => handlePageChange(item)}
         >
-          {page > 4 ? item + 4 : item}
+          {item}
         </button>
       ))}
 
       {/* Next Button */}
       <Button
-        className="btn btn-sm"
+        className="btn btn-sm ms-4"
         type="button"
         color="light"
         disabled={page >= totalPage}

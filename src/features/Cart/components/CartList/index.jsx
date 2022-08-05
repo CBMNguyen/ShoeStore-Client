@@ -12,13 +12,13 @@ CartList.propTypes = {
   cart: PropTypes.array.isRequired,
   total: PropTypes.number.isRequired,
   token: PropTypes.string,
-  user: PropTypes.object,
 
   onSizeChange: PropTypes.func.isRequired,
   onColorChange: PropTypes.func.isRequired,
   onQuantityChange: PropTypes.func.isRequired,
   onProductRemove: PropTypes.func.isRequired,
   showModel: PropTypes.func.isRequired,
+  showCartEditModal: PropTypes.func.isRequired,
 };
 
 CartList.defaultProps = {
@@ -40,6 +40,7 @@ function CartList(props) {
     onQuantityChange,
     onProductRemove,
     showModel,
+    showCartEditModal,
   } = props;
 
   // handle click when go to check out
@@ -88,28 +89,32 @@ function CartList(props) {
           </header>
           <div style={{ maxHeight: "460px", overflowY: "auto" }}>
             <Table>
-              <thead style={{ position: "sticky", top: 0, zIndex: 1000 }}>
+              <thead style={{ position: "sticky", top: 0, zIndex: 1 }}>
                 <tr>
+                  <th className="text-center">#</th>
                   <th>Product</th>
-                  <th>Size</th>
-                  <th>Color</th>
+                  <th className="text-center">Size</th>
+                  <th className="text-center">Color</th>
                   <th>Quantity</th>
                   <th>Discount</th>
                   <th>FreeShip</th>
-                  <th>Subtotal</th>
-                  <th>actions</th>
+                  <th>Price</th>
+                  <th className="text-end">actions</th>
                 </tr>
               </thead>
 
               <tbody>
-                {cart.map((product) => (
+                {cart.map((product, index) => (
                   <CartItem
-                    key={product._id}
+                    key={index}
+                    index={index}
+                    cart={cart}
                     product={product}
                     onSizeChange={onSizeChange}
                     onColorChange={onColorChange}
                     onQuantityChange={onQuantityChange}
                     onProductRemove={onProductRemove}
+                    showCartEditModal={showCartEditModal}
                   />
                 ))}
               </tbody>
@@ -119,7 +124,7 @@ function CartList(props) {
           <div className="CartList__payment">
             <div>
               <div>Total: </div>
-              <div className="ms-3">{`${total.toFixed(2)}$`}</div>
+              <div className="ms-3">{`$${total.toFixed(2)}`}</div>
               <div onClick={handleCheckOutClick}>Check out</div>
             </div>
           </div>

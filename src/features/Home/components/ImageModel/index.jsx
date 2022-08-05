@@ -10,11 +10,12 @@ import "./imagemodel.scss";
 
 ImageModel.propTypes = {
   product: PropTypes.object.isRequired,
+  selectProductDetail: PropTypes.object.isRequired,
   closeModel: PropTypes.func.isRequired,
 };
 
 function ImageModel(props) {
-  const { product, closeModel } = props;
+  const { product, selectProductDetail, closeModel } = props;
 
   const settings = {
     dots: true,
@@ -33,9 +34,13 @@ function ImageModel(props) {
       <i onClick={() => closeModel()} className="bx bx-x" />
 
       <Slider className="ImageModel__list" {...settings}>
-        {product.productDetail[0].images.map((img) => (
-          <img key={img} src={img} alt={img} />
-        ))}
+        {product.productDetail
+          .find(
+            ({ color }) => color.color === selectProductDetail.selectedColor
+          )
+          .images.map((img) => (
+            <img key={img} src={img} alt={img} />
+          ))}
       </Slider>
     </div>
   );

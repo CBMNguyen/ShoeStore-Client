@@ -103,10 +103,12 @@
     }
 
     & img {
+      display: block;
       width: 38px;
       height: 38px;
       border: 2px solid#e81224;
       border-radius: 50%;
+      object-fit: cover;
       cursor: pointer;
     }
   }

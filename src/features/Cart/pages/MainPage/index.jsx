@@ -10,6 +10,7 @@ import {
   selectQuantity,
   selectSize,
 } from "features/Cart/cartSlice";
+import CartEditModal from "features/Cart/components/CartEditModal";
 import CartList from "features/Cart/components/CartList";
 import useModel from "hooks/useModel";
 import { useEffect } from "react";
@@ -26,6 +27,7 @@ function MainPage(props) {
   const loginModel = useModel();
   const signupModel = useModel();
   const profileModel = useModel();
+  const cartModal = useModel();
 
   const dispatch = useDispatch();
 
@@ -39,8 +41,8 @@ function MainPage(props) {
     dispatch(selectColor({ id, color }));
   };
 
-  const handleQuantityChange = (id, quantity) => {
-    dispatch(selectQuantity({ id, quantity }));
+  const handleQuantityChange = (data) => {
+    dispatch(selectQuantity(data));
   };
 
   // handle remove product
@@ -90,6 +92,7 @@ function MainPage(props) {
     formData.append("gender", data.gender.value);
     formData.append("image", data.image);
     formData.append("address", data.address);
+    formData.append("birthdate", data.birthdate);
     try {
       await showToastSuccess(
         dispatch(
@@ -117,6 +120,7 @@ function MainPage(props) {
           token={token}
           user={user}
           showModel={loginModel.showModel}
+          showCartEditModal={cartModal.showModel}
           onColorChange={handleColorChange}
           onSizeChange={handleSizeChange}
           onQuantityChange={handleQuantityChange}
@@ -151,6 +155,14 @@ function MainPage(props) {
         />
       )}
 
+      {/* Profile Model */}
+      {cartModal.model.show && (
+        <CartEditModal
+          cart={cart}
+          model={cartModal.model}
+          closeModel={cartModal.closeModel}
+        />
+      )}
       <Footer />
     </div>
   );

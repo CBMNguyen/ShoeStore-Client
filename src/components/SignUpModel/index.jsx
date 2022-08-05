@@ -10,6 +10,7 @@ import { Button, Col, Form, Row, Spinner } from "reactstrap";
 import * as yup from "yup";
 import "./signup.scss";
 import brandLogo from "../../assets/images/brandLogo.png";
+import DateInputField from "custom-field/DateInputField";
 
 SignUpModel.propTypes = {
   closeModel: PropTypes.func.isRequired,
@@ -33,6 +34,7 @@ function SignUpModel(props) {
     phone: "",
     gender: "",
     address: "",
+    birthdate: "",
   };
 
   // yup schema
@@ -60,11 +62,13 @@ function SignUpModel(props) {
       .matches(/^0[0-9]{9}$/, "Please enter correct phone number!"),
     gender: yup.object().required("This field is require.").nullable(),
     address: yup.string().required("This field is require."),
+    birthdate: yup.date().required("This field is require."),
   });
 
   const {
     control,
     handleSubmit,
+    setValue,
     formState: { errors },
   } = useForm({ defaultValues, resolver: yupResolver(schema) });
 
@@ -72,7 +76,9 @@ function SignUpModel(props) {
 
   const onSubmit = (data) => {
     if (!onCreateUser) return;
-    onCreateUser({ ...data, gender: data.gender.value });
+    data.gender = data.gender.value;
+    data.birthdate = data.birthdate.setDate(data.birthdate.getDate() + 1);
+    onCreateUser(data);
   };
 
   return (
@@ -107,7 +113,6 @@ function SignUpModel(props) {
               control={control}
               label="Phone"
               errors={errors}
-              type="number"
             />
           </Col>
 
@@ -122,13 +127,24 @@ function SignUpModel(props) {
             />
           </Col>
 
-          <Col md={12}>
+          <Col md={6}>
             <InputField
               name="email"
               control={control}
               label="Email"
               errors={errors}
               type="email"
+            />
+          </Col>
+
+          <Col md={6}>
+            <DateInputField
+              name="birthdate"
+              control={control}
+              setValue={setValue}
+              label="Date of Birth"
+              placeholder="dd/mm/yy"
+              errors={errors}
             />
           </Col>
 
@@ -151,7 +167,10 @@ function SignUpModel(props) {
           </Col>
         </Row>
 
-        <Button className="d-block w-100" disabled={loading}>
+        <Button
+          className="d-block w-100 SignUpModel__button"
+          disabled={loading}
+        >
           Sign Up
           {loading && (
             <Spinner

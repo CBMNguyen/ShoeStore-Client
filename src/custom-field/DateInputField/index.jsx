@@ -25,7 +25,7 @@ function DateInputField(props) {
       control={control}
       name={name}
       render={({ field }) => {
-        const showError = !!errors[name];
+        const showError = !!errors[name]?.message;
         return (
           <FormGroup className="mb-1 mt-1">
             <div>
@@ -48,8 +48,9 @@ function DateInputField(props) {
               customInput={<StyledInput errors={errors} />}
               showYearDropdown
             />
+            <div className="is-invalid"></div>
             {showError && (
-              <FormFeedback>{errors[name]["message"]}</FormFeedback>
+              <FormFeedback>{errors[name]?.["message"]}</FormFeedback>
             )}
           </FormGroup>
         );

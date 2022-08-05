@@ -14,15 +14,19 @@ const cartSlice = createSlice({
       state.cart.push(action.payload);
     },
 
+    updateToCart: (state, action) => {
+      const { cartItemIndex, color, size } = action.payload;
+      state.cart[cartItemIndex].selectedColor = color;
+      state.cart[cartItemIndex].selectedSize = size;
+    },
+
     resetCart: (state, action) => {
       state.cart = [];
     },
 
     selectSize: (state, action) => {
-      const { id, size } = action.payload;
-      const index = state.cart.findIndex((product) => product._id === id);
-      if (index < 0) return;
-      state.cart[index].selectedSize = size;
+      const { cartItemIndex, size } = action.payload;
+      state.cart[cartItemIndex].selectedSize = size;
     },
 
     selectColor: (state, action) => {
@@ -33,10 +37,11 @@ const cartSlice = createSlice({
     },
 
     selectQuantity: (state, action) => {
-      const { id, quantity } = action.payload;
-      const index = state.cart.findIndex((product) => product._id === id);
-      if (index < 0) return;
-      state.cart[index].selectedQuantity = quantity;
+      const { cartItemIndex, quantity, currentProductIndex } = action.payload;
+      state.cart[cartItemIndex].selectedQuantity = quantity;
+      if (currentProductIndex !== undefined) {
+        state.cart.splice(currentProductIndex, 1);
+      }
     },
 
     removeProduct: (state, action) => {
@@ -51,6 +56,7 @@ const cartSlice = createSlice({
 const { reducer, actions } = cartSlice;
 export const {
   addToCart,
+  updateToCart,
   selectColor,
   selectSize,
   selectQuantity,

@@ -41,27 +41,26 @@
       text-decoration: none;
       font-size: 0.85rem;
     }
+  }
+  &__button {
+    position: relative;
+    margin-top: 1rem;
+    border: none;
+    padding: 0.6rem 0;
+    font-weight: bold;
+    letter-spacing: 0.2rem;
+    background-color: deeppink;
+    border-radius: 0.4rem;
+    transition: all 0.3s ease-in-out 0s;
+  }
 
-    & button {
-      position: relative;
-      margin-top: 1rem;
-      border: none;
-      padding: 0.6rem 0;
-      font-weight: bold;
-      letter-spacing: 0.2rem;
-      background-color: deeppink;
-      border-radius: 0.4rem;
-      transition: all 0.3s ease-in-out 0s;
-    }
+  &__button:hover {
+    background-color: rgb(236, 22, 137);
+  }
 
-    & button:hover {
-      background-color: rgb(236, 22, 137);
-    }
-
-    & button:focus {
-      background-color: rgb(236, 22, 137);
-      box-shadow: none !important;
-      outline: none;
-    }
+  &__button:focus {
+    background-color: rgb(236, 22, 137);
+    box-shadow: none !important;
+    outline: none;
   }
 }

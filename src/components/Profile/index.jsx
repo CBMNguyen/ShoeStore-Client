@@ -1,25 +1,19 @@
 import { yupResolver } from "@hookform/resolvers/yup";
 import { logOut } from "app/userSlice";
 import { GENDER_OPTIONS, STYLE_MODEL } from "constants/globals";
+import DateInputField from "custom-field/DateInputField";
 import InputField from "custom-field/InputField";
 import SelectField from "custom-field/SelectField";
+import firebase from "firebase";
 import PropTypes from "prop-types";
-import React, { useState } from "react";
+import { useEffect } from "react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch } from "react-redux";
-import {
-  Col,
-  Form,
-  FormFeedback,
-  Input,
-  Row,
-  Spinner,
-  Tooltip,
-} from "reactstrap";
+import { Col, Form, FormFeedback, Input, Row, Spinner } from "reactstrap";
 import { capitalizeFirstLetter } from "utils/common";
 import * as yup from "yup";
 import "./profile.scss";
-import firebase from "firebase";
 
 Profile.propTypes = {
   onSubmit: PropTypes.func,
@@ -34,17 +28,23 @@ Profile.defaultProps = {
 function Profile(props) {
   const { model, closeModel, onSubmit, loading } = props;
   const [readOnly, setReadOnly] = useState(true);
+  const [avatar, setAvatar] = useState();
 
-  // tooltip log out
-  const [tooltipOpen, setTooltipOpen] = useState(false);
-  const toggle = () => setTooltipOpen(!tooltipOpen);
+  useEffect(() => {
+    return () => {
+      avatar && URL.revokeObjectURL(avatar.review);
+    };
+  }, [avatar]);
+
   const dispatch = useDispatch();
+  // convert date from string to date value
+  const birthdate = new Date(model.data.birthdate);
 
   // default value
-
   const defaultValues = {
     firstname: model.data.firstname,
     lastname: model.data.lastname,
+    birthdate,
     email: model.data.email,
     phone: model.data.phone,
     password: "",
@@ -81,6 +81,7 @@ function Profile(props) {
     gender: yup.object().required("This field is require.").nullable(),
     image: yup.mixed().required("This file is required"),
     address: yup.string().required("This field is require."),
+    birthdate: yup.date().required("This field is require."),
   });
 
   // UseForm control
@@ -106,8 +107,15 @@ function Profile(props) {
     closeModel();
   };
 
+  const handleAvatarChange = (e) => {
+    const file = e.target.files[0];
+    file.preview = URL.createObjectURL(file);
+    setAvatar(file);
+    setValue("image", file);
+  };
+
   return (
-    <div style={STYLE_MODEL}>
+    <div className="animation-fade-in" style={STYLE_MODEL}>
       <Form className="Profile" onSubmit={handleSubmit(onFormSubmit)}>
         <div className="Profile__header">
           {/* Input opacity  */}
@@ -118,7 +126,7 @@ function Profile(props) {
               className="mt-1"
               {...register("image")}
               type="file"
-              onChange={(e) => setValue("image", e.target.files[0])}
+              onChange={handleAvatarChange}
               invalid={!!errors["image"]}
             />
             {errors["image"] && (
@@ -126,8 +134,8 @@ function Profile(props) {
             )}
 
             <img
-              className="shadow-sm"
-              src={`${process.env.REACT_APP_API_URL}/${model.data.image}`}
+              className="shadow-sm img-fluid"
+              src={avatar ? avatar.preview : model.data.image}
               alt=""
             />
           </div>
@@ -138,15 +146,6 @@ function Profile(props) {
               className="bx bx-power-off"
               id="TooltipExample"
             />
-
-            <Tooltip
-              placement="bottom"
-              isOpen={tooltipOpen}
-              target="TooltipExample"
-              toggle={toggle}
-            >
-              Log out.
-            </Tooltip>
           </div>
 
           <div onClick={() => closeModel()} className="Profile__close">
@@ -234,11 +233,22 @@ function Profile(props) {
             />
           </Col>
 
-          <Col>
+          <Col md={6}>
             <InputField
               name="address"
               control={control}
               label="Address"
+              errors={errors}
+            />
+          </Col>
+
+          <Col md={6}>
+            <DateInputField
+              name="birthdate"
+              control={control}
+              setValue={setValue}
+              label="Date of Birth"
+              placeholder="dd/mm/yy"
               errors={errors}
             />
           </Col>

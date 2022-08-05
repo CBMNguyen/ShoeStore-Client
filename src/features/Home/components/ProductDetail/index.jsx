@@ -1,10 +1,10 @@
 import { PRODUCT_TOAST_OPTIONS } from "constants/globals";
-import { addToCart } from "features/Cart/cartSlice";
+import { addToCart, selectQuantity } from "features/Cart/cartSlice";
 import PropTypes from "prop-types";
 import { useDispatch, useSelector } from "react-redux";
 import Slider from "react-slick";
 import { toast } from "react-toastify";
-import { capitalizeFirstLetter } from "utils/common";
+import { capitalizeFirstLetter, sliderSettings } from "utils/common";
 import "./productdetail.scss";
 
 ProductDetail.propTypes = {
@@ -22,18 +22,7 @@ function ProductDetail(props) {
 
   const dispatch = useDispatch();
 
-  const settings = {
-    dots: true,
-    infinite: true,
-    speed: 500,
-    autoplay: true,
-    slidesToShow: 1,
-    slidesToScroll: 1,
-  };
-
   const handleAddtoCart = async (product) => {
-    const index = cart.findIndex((c) => c._id === product._id);
-
     if (!selectProductDetail.selectedColor) {
       toast.warning("Please select color.", {
         ...PRODUCT_TOAST_OPTIONS,
@@ -47,11 +36,13 @@ function ProductDetail(props) {
       });
       return;
     }
+
     const { quantity } = product.productDetail
       .find((item) => item.color.color === selectProductDetail.selectedColor)
       .sizeAndQuantity.find(
         (item) => item.size.size === selectProductDetail.selectedSize
       );
+
     if (quantity === 0) {
       toast("Current size are currently out of stock", {
         ...PRODUCT_TOAST_OPTIONS,
@@ -59,29 +50,46 @@ function ProductDetail(props) {
       return;
     }
 
-    if (index >= 0) {
-      toast("Product already in the cart.", {
+    const cartItemIndex = cart.findIndex(
+      (productItem) =>
+        productItem._id === product._id &&
+        productItem.selectedColor === selectProductDetail.selectedColor &&
+        productItem.selectedSize === selectProductDetail.selectedSize
+    );
+
+    if (cartItemIndex >= 0) {
+      const quantity = cart[cartItemIndex].selectedQuantity + 1;
+      dispatch(selectQuantity({ cartItemIndex, quantity }));
+      toast("Product added to cart", {
         ...PRODUCT_TOAST_OPTIONS,
       });
+
       return;
     }
 
     await dispatch(addToCart({ ...product, ...selectProductDetail }));
+    toast("Product added to cart", {
+      ...PRODUCT_TOAST_OPTIONS,
+    });
   };
 
   return (
     <div className="ProductDetail">
       {/* Product Image List */}
 
-      <Slider className="ProductDetail__list" {...settings}>
-        {product.productDetail[0].images.map((img) => (
-          <img
-            key={img}
-            src={img}
-            alt={img}
-            onClick={() => showModel(product)}
-          />
-        ))}
+      <Slider className="ProductDetail__list" {...sliderSettings}>
+        {product.productDetail
+          .find(
+            ({ color }) => color.color === selectProductDetail.selectedColor
+          )
+          .images.map((img) => (
+            <img
+              key={img}
+              src={img}
+              alt={img}
+              onClick={() => showModel(product)}
+            />
+          ))}
       </Slider>
 
       {/* Product title */}
@@ -170,7 +178,7 @@ function ProductDetail(props) {
         <button>
           <div>
             <i className="bx bx-basket" />
-            {`${product.originalPrice}$ - Add to Cart`}
+            {`$${product.originalPrice} - Add to Cart`}
           </div>
         </button>
       </div>

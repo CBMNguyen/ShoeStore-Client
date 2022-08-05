@@ -108,7 +108,7 @@ function MainPage(props) {
   };
 
   const handleColorChange = (color) => {
-    setFilter({ ...filter, color, selectedProduct: null });
+    setFilter({ ...filter, color, page: 1 });
   };
 
   const handleSizeChange = (size) => {
@@ -144,6 +144,10 @@ function MainPage(props) {
   // handle reset filter
   const handleResetFilter = () => {
     setFilter(initialFilter);
+    setSelectProductDetail({
+      ...selectProductDetail,
+      selectedColor: "white",
+    });
   };
 
   // handle sign up add user
@@ -178,6 +182,7 @@ function MainPage(props) {
     formData.append("gender", data.gender.value);
     formData.append("image", data.image);
     formData.append("address", data.address);
+    formData.append("birthdate", data.birthdate);
     try {
       await showToastSuccess(
         dispatch(
@@ -190,11 +195,15 @@ function MainPage(props) {
     }
   };
 
+  const start = (filter["page"] - 1) * filter["limit"];
+  const end = filter["page"] * filter["limit"];
+
   return products.length === 0 ? (
     <Loading />
   ) : (
     <div>
       <Header
+        home="home"
         showModel={loginModel.showModel}
         onNameChange={handleNameChange}
         showProfileModel={profileModel.showModel}
@@ -215,10 +224,7 @@ function MainPage(props) {
         />
 
         <ProductList
-          products={sortProductByPrice.slice(
-            (filter.page - 1) * filter.limit,
-            filter.page * filter.limit
-          )}
+          products={sortProductByPrice.slice(start, end)}
           totalRow={sortProductByPrice.length}
           filter={filter}
           onInCreasePriceChange={handleInCreasePriceChange}
@@ -240,7 +246,11 @@ function MainPage(props) {
 
       {/* Show image model  */}
       {model.show && (
-        <ImageModel product={model.data} closeModel={closeModel} />
+        <ImageModel
+          product={model.data}
+          selectProductDetail={selectProductDetail}
+          closeModel={closeModel}
+        />
       )}
 
       {/* Show login model */}

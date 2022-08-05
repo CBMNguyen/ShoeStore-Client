@@ -47,7 +47,7 @@ export function dataURLtoFile(dataurl, filename) {
 export const showToastSuccess = async (asyncAction) => {
   const result = await asyncAction;
   if (!unwrapResult(result)) return;
-  toast.success("🧦 " + result.payload.message, {
+  toast(result.payload.message, {
     ...PRODUCT_TOAST_OPTIONS,
   });
   return result.payload;
@@ -56,7 +56,16 @@ export const showToastSuccess = async (asyncAction) => {
 // Show Toast Error
 
 export const showToastError = (error) => {
-  toast.error("🧦 " + error.message, {
+  toast(error.message, {
     ...PRODUCT_TOAST_OPTIONS,
   });
+};
+
+export const sliderSettings = {
+  dots: true,
+  infinite: true,
+  speed: 500,
+  autoplay: true,
+  slidesToShow: 1,
+  slidesToScroll: 1,
 };

@@ -4,11 +4,14 @@ import { Badge, Input } from "reactstrap";
 import "./cartitem.scss";
 
 CartItem.propTypes = {
+  index: PropTypes.number.isRequired,
+  cart: PropTypes.array.isRequired,
   product: PropTypes.object.isRequired,
   onColorChange: PropTypes.func,
   onSizeChange: PropTypes.func,
   onQuantityChange: PropTypes.func,
   onProductRemove: PropTypes.func,
+  showCartEditModal: PropTypes.func.isRequired,
 };
 
 CartItem.defaultProps = {
@@ -20,39 +23,53 @@ CartItem.defaultProps = {
 
 function CartItem(props) {
   const {
+    index,
+    cart,
     product,
-    onSizeChange,
-    onColorChange,
     onQuantityChange,
     onProductRemove,
+    showCartEditModal,
   } = props;
 
-  // handle change attribute
+  const { selectedColor, selectedSize, selectedQuantity } = product;
 
-  const handleColorChange = (id, color) => {
-    if (!onColorChange) return;
-    onColorChange(id, color);
-  };
+  // current cart item index
+  const cartItemIndex = cart.findIndex(
+    (item) =>
+      item._id === product._id &&
+      item.selectedColor === product.selectedColor &&
+      item.selectedSize === product.selectedSize
+  );
 
-  const handleSizeChange = (id, size) => {
-    if (!onSizeChange) return;
-    onSizeChange(id, size);
-  };
-
-  const handleQuantityChange = (id, quantity) => {
+  const handleQuantityChange = (quantity) => {
     if (!onQuantityChange) return;
-    onQuantityChange(id, quantity);
+    onQuantityChange({
+      cartItemIndex,
+      quantity,
+    });
   };
 
-  const handleRemoveProduct = (id) => {
+  const handleRemoveProduct = () => {
     if (!onProductRemove) return;
-    onProductRemove(id);
+    onProductRemove(product._id);
+  };
+
+  const handleShowEditProductModal = () => {
+    if (!showCartEditModal) return;
+    const selectProductDetail = {
+      selectedColor,
+      selectedSize,
+      selectedQuantity,
+    };
+    showCartEditModal({ product, selectProductDetail });
   };
 
   return (
     <tr className="CartItem">
+      <td style={{ fontWeight: "bold" }} className="text-center">
+        {index + 1}
+      </td>
       {/* Product name and image column */}
-
       <td>
         <div className="CartItem__product">
           <img
@@ -72,37 +89,11 @@ function CartItem(props) {
 
       {/* Size Column */}
 
-      <td>
-        <select
-          onChange={(e) =>
-            handleSizeChange(product._id, parseInt(e.target.value))
-          }
-          defaultValue={product.selectedSize}
-        >
-          {product.productDetail
-            .find(({ color }) => color.color === product.selectedColor)
-            .sizeAndQuantity.map(({ size }) => (
-              <option key={size.size} value={size.size}>
-                {size.size}
-              </option>
-            ))}
-        </select>
-      </td>
+      <td className="text-center">{product.selectedSize}</td>
 
       {/* Color column */}
 
-      <td>
-        <select
-          onChange={(e) => handleColorChange(product._id, e.target.value)}
-          defaultValue={product.selectedColor}
-        >
-          {product.productDetail.map(({ color }) => (
-            <option key={color.color} value={color.color}>
-              {color.color}
-            </option>
-          ))}
-        </select>
-      </td>
+      <td className="text-center">{product.selectedColor}</td>
 
       {/* Quantity Column */}
 
@@ -110,9 +101,7 @@ function CartItem(props) {
         <div className="CartItem__quantity">
           <button className="btn" disabled={product.selectedQuantity === 1}>
             <i
-              onClick={() =>
-                handleQuantityChange(product._id, product.selectedQuantity - 1)
-              }
+              onClick={() => handleQuantityChange(selectedQuantity - 1)}
               className="bx bx-minus"
             />
           </button>
@@ -123,9 +112,7 @@ function CartItem(props) {
           >
             {" "}
             <i
-              onClick={() =>
-                handleQuantityChange(product._id, product.selectedQuantity + 1)
-              }
+              onClick={() => handleQuantityChange(selectedQuantity + 1)}
               className="bx bx-plus"
             />
           </button>
@@ -158,22 +145,30 @@ function CartItem(props) {
 
       <td>
         <div className="CartItem__subtotal">
-          <Badge className="bg-warning">{`${(
+          <Badge className="bg-warning">{`$${(
             product.selectedQuantity *
             product.salePrice *
             ((100 - product.promotionPercent) / 100)
-          ).toFixed(2)}$`}</Badge>
+          ).toFixed(2)}`}</Badge>
         </div>
       </td>
 
       {/* Action column */}
 
       <td>
-        <div className="CartItem__action">
-          <i
-            onClick={() => handleRemoveProduct(product._id)}
-            className="bx bx-trash text-danger"
-          />
+        <div className="CartItem__controls">
+          <div className="CartItem__action">
+            <i
+              onClick={handleShowEditProductModal}
+              className="bx bx-edit text-info"
+            />
+          </div>
+          <div className="CartItem__action">
+            <i
+              onClick={handleRemoveProduct}
+              className="bx bx-trash text-danger"
+            />
+          </div>
         </div>
       </td>
     </tr>
