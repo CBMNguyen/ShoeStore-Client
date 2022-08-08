@@ -55,9 +55,9 @@ function ProductList(props) {
             <div className="d-flex align-items-center">
               <span>Sort by Price</span>
               {filter.isIncreasePrice > 0 ? (
-                <i className="bx bx-chevron-down" />
-              ) : (
                 <i className="bx bx-chevron-up" />
+              ) : (
+                <i className="bx bx-chevron-down" />
               )}
             </div>
           </Button>

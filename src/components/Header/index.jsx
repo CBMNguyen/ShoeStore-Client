@@ -85,6 +85,10 @@ function Header(props) {
       )}
 
       <div className="Header__info">
+        <div className="p-0 m-0" onClick={() => mapModel.showModel()}>
+          <i className="bx bx-map" />
+        </div>
+
         <div>
           <i
             onClick={() => history.push("/cart")}
@@ -97,9 +101,15 @@ function Header(props) {
           </i>
         </div>
 
-        <div className="p-0 m-0" onClick={() => mapModel.showModel()}>
-          <i className="bx bx-map" />
-        </div>
+        {token && (
+          <div>
+            <i
+              onClick={() => history.push(`/order/:${user._id}`)}
+              className="bx bxl-shopify"
+              key={cart.length}
+            ></i>
+          </div>
+        )}
 
         <img
           className="img-fluid"

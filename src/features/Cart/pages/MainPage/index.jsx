@@ -12,10 +12,13 @@ import {
 } from "features/Cart/cartSlice";
 import CartEditModal from "features/Cart/components/CartEditModal";
 import CartList from "features/Cart/components/CartList";
+import { getOrderWithCart } from "features/Order/orderSlice";
 import useModel from "hooks/useModel";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { showToastError, showToastSuccess } from "utils/common";
+import jwt from "jsonwebtoken";
+import { useHistory } from "react-router-dom";
 
 function MainPage(props) {
   const { cart } = useSelector((state) => state.cart);
@@ -30,6 +33,7 @@ function MainPage(props) {
   const cartModal = useModel();
 
   const dispatch = useDispatch();
+  const history = useHistory();
 
   // handle change attribute
 
@@ -46,8 +50,19 @@ function MainPage(props) {
   };
 
   // handle remove product
-  const handleRemoveProduct = (id) => {
-    dispatch(removeProduct({ id }));
+  const handleRemoveProduct = (product) => {
+    dispatch(removeProduct({ id: product._id }));
+    const order = cart
+      .filter(
+        (item) =>
+          !(
+            item._id === product._id &&
+            item.selectedColor === product.selectedColor &&
+            item.selectedSize === product.selectedSize
+          )
+      )
+      .map((cart) => ({ ...cart, state: "" }));
+    dispatch(getOrderWithCart({ order, userId: user._id }));
   };
 
   // handle sign up add new user
@@ -71,11 +86,25 @@ function MainPage(props) {
     }
   };
 
+  // handle click when go to check out
+
+  const handleCheckOutClick = async () => {
+    try {
+      await jwt.verify(token, process.env.REACT_APP_JWT_KEY);
+      const order = cart.map((cart) => ({ ...cart, state: "" }));
+      dispatch(getOrderWithCart({ order, userId: user._id }));
+
+      history.push("/order/");
+    } catch (error) {
+      loginModel.showModel();
+    }
+  };
+
   // total price cart
   const total = cart.reduce(
     (sum, product) =>
       sum +
-      product.originalPrice *
+      product.salePrice *
         product.selectedQuantity *
         ((100 - product.promotionPercent) / 100),
     0
@@ -117,13 +146,11 @@ function MainPage(props) {
         <CartList
           cart={cart}
           total={total}
-          token={token}
-          user={user}
-          showModel={loginModel.showModel}
           showCartEditModal={cartModal.showModel}
           onColorChange={handleColorChange}
           onSizeChange={handleSizeChange}
           onQuantityChange={handleQuantityChange}
+          onCheckoutClick={handleCheckOutClick}
           onProductRemove={handleRemoveProduct}
         />
       </div>

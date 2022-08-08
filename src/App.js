@@ -52,7 +52,7 @@ function App() {
           <Switch>
             <Route exact path="/" component={Home} />
             <Route path="/cart" component={Cart} />
-            <ProtectedRoute path="/order" component={Order} />
+            <ProtectedRoute path="/order/" component={Order} />
             <Route path="/resetpassword/:email" component={ResetPassWord} />
             <Route component={NotFound} />
           </Switch>

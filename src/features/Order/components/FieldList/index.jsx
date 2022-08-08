@@ -103,7 +103,7 @@ function FieldList(props) {
 
       {/* handle commune change */}
 
-      <FormGroup className="mb-2 mt-2">
+      <FormGroup className="mt-2 mb-3">
         <Label className="mb-1" for={"commune"}>
           Commune
         </Label>

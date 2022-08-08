@@ -94,7 +94,10 @@ function LoginModel(props) {
         <a href="/#" onClick={handleResetPassword}>
           Forgot Password ?
         </a>
-        <Button className="d-block w-100 m-auto mt-2 mb-2 btn">
+        <Button
+          disabled={loading}
+          className="d-block w-100 m-auto mt-2 mb-2 btn"
+        >
           Login
           {loading && (
             <Spinner
@@ -106,6 +109,7 @@ function LoginModel(props) {
             </Spinner>
           )}
         </Button>
+        {/* Login with social media */}
         <StyledFirebaseAuth
           uiConfig={uiConfig}
           firebaseAuth={firebase.auth()}

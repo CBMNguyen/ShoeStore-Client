@@ -8,6 +8,7 @@ function Order(props) {
   return (
     <Switch>
       <Route exact path={match.url} component={MainPage} />
+      <Route path={`${match.url}/:userId`} component={MainPage} />
       <Route component={NotFound} />
     </Switch>
   );

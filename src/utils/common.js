@@ -61,6 +61,7 @@ export const showToastError = (error) => {
   });
 };
 
+// Slidee Settings
 export const sliderSettings = {
   dots: true,
   infinite: true,
@@ -68,4 +69,100 @@ export const sliderSettings = {
   autoplay: true,
   slidesToShow: 1,
   slidesToScroll: 1,
+};
+
+// handle total price order
+export const total = (order) => {
+  return order.reduce(
+    (sum, product) =>
+      sum +
+      product.salePrice *
+        product.selectedQuantity *
+        ((100 - product.promotionPercent) / 100),
+    0
+  );
+};
+
+// handle logic checkout
+
+export const checkout = (cloneOrder, order) => {
+  return cloneOrder.map((item, i) => {
+    let productDetail = item.productDetail.slice(); // clone product detail
+
+    productDetail.forEach(({ color }, index) => {
+      if (color.color === item.selectedColor) {
+        // check if same color
+        productDetail[index] = {
+          ...productDetail[index],
+          sizeAndQuantity: productDetail[index].sizeAndQuantity.map(
+            ({ size, quantity }) => {
+              if (size.size === item.selectedSize) {
+                // check if same color and size
+                return { size, quantity: quantity - item.selectedQuantity }; // update quantity
+              } else {
+                // orther color
+                const quantityProductInCart = order // check item in cart find quantity of exist product
+                  .slice(0, i)
+                  .find(
+                    ({ _id, selectedColor, selectedSize }) =>
+                      _id === item._id &&
+                      selectedColor === color.color &&
+                      selectedSize === size.size
+                  );
+                const newQuantity =
+                  quantityProductInCart?.selectedQuantity || 0; // if product does not exist => 0
+                return { size, quantity: quantity - newQuantity };
+              }
+            }
+          ),
+        };
+      } else {
+        // check other case
+        productDetail[index] = {
+          ...productDetail[index],
+          sizeAndQuantity: productDetail[index].sizeAndQuantity.map(
+            ({ size, quantity }) => {
+              const quantityProductInCart = order
+                .slice(0, i)
+                .find(
+                  ({ _id, selectedColor, selectedSize }) =>
+                    _id === item._id &&
+                    selectedColor === color.color &&
+                    selectedSize === size.size
+                );
+
+              const newQuantity = quantityProductInCart?.selectedQuantity || 0;
+              return { size, quantity: quantity - newQuantity };
+            }
+          ),
+        };
+      }
+    });
+
+    let selectedQuantity = item.selectedQuantity;
+    cloneOrder.slice(0, i).forEach((product) => {
+      if (product._id === item._id) {
+        selectedQuantity += product.selectedQuantity;
+      }
+    });
+
+    return {
+      ...item,
+      productDetail,
+      quantityStock: item.quantityStock - selectedQuantity,
+    };
+  });
+};
+
+// Order message
+
+export const getMessageOrderByState = (state) => {
+  switch (state) {
+    case "pending":
+      return "Cancel and Clear Checkout";
+    case "processing":
+      return "The order is being processed irrevocably";
+    default:
+      return "Order has been sent successfully";
+  }
 };

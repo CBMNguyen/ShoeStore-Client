@@ -1,12 +1,19 @@
 .Order {
   &__checkout {
     width: 1050px;
-    padding: 1.5rem;
-    margin: 0 auto;
-    margin-top: 1.2rem;
+
+    padding: 0 1.5rem;
+    padding-bottom: 2rem;
+    margin: 3rem auto;
 
     background-color: deeppink;
     border-radius: 1.5rem;
+
+    & header {
+      & h1 {
+        margin: 0;
+      }
+    }
 
     & .empty {
       display: flex;
@@ -15,7 +22,7 @@
       align-items: center;
 
       width: 100%;
-      height: 500px;
+      height: 100%;
       background-color: pink;
 
       & i {
@@ -31,6 +38,8 @@
       }
 
       & .button {
+        display: flex;
+        align-items: center;
         margin-top: 2rem;
         padding: 1rem 2rem;
         color: white;
@@ -51,7 +60,7 @@
 
       & i {
         position: absolute;
-        top: 0;
+        top: 4px;
         right: 1rem;
         font-size: 2.5rem;
         color: #fff;
@@ -70,9 +79,9 @@
 
     & .FieldList {
       width: 100%;
-      height: 540px;
+      height: 100%;
+      overflow-y: scroll;
       padding: 1rem 1.2rem;
-      overflow: scroll;
 
       border-radius: 1rem;
       font-weight: bold;
@@ -82,11 +91,6 @@
 
     & .FieldList::-webkit-scrollbar {
       display: none;
-    }
-
-    & img {
-      width: 80px;
-      height: 80px;
     }
 
     & footer {
@@ -138,8 +142,34 @@
       background-color: black;
     }
   }
+
+  &__list {
+    padding: 0.5rem 1rem;
+    width: 100%;
+    max-height: 380px;
+    overflow-y: scroll;
+
+    & div:first-child {
+      max-height: 440px;
+    }
+
+    & table {
+      padding: 0;
+      margin: 0;
+    }
+
+    & table thead {
+      position: sticky;
+      top: -0.5rem;
+      padding: 1rem;
+      z-index: 1;
+      background-color: #fff;
+    }
+  }
 }
 
-.list::-webkit-scrollbar {
-  display: none;
+.none-scroll::-webkit-scrollbar {
+  display: none !important;
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none;
 }

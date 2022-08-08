@@ -51,7 +51,7 @@ function CartItem(props) {
 
   const handleRemoveProduct = () => {
     if (!onProductRemove) return;
-    onProductRemove(product._id);
+    onProductRemove(product);
   };
 
   const handleShowEditProductModal = () => {

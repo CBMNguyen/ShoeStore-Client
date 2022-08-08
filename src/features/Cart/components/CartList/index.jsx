@@ -1,11 +1,7 @@
 import classNames from "classnames";
-import { getOrderWithCart } from "features/Order/orderSlice";
-import jwt from "jsonwebtoken";
 import PropTypes from "prop-types";
-import React from "react";
-import { useDispatch } from "react-redux";
 import { Link, useHistory } from "react-router-dom";
-import { Badge, Breadcrumb, BreadcrumbItem, Table } from "reactstrap";
+import { Badge, Breadcrumb, BreadcrumbItem, Button, Table } from "reactstrap";
 import CartItem from "../CartItem";
 import "./cartlist.scss";
 CartList.propTypes = {
@@ -17,7 +13,7 @@ CartList.propTypes = {
   onColorChange: PropTypes.func.isRequired,
   onQuantityChange: PropTypes.func.isRequired,
   onProductRemove: PropTypes.func.isRequired,
-  showModel: PropTypes.func.isRequired,
+  onCheckoutClick: PropTypes.func.isRequired,
   showCartEditModal: PropTypes.func.isRequired,
 };
 
@@ -28,33 +24,20 @@ CartList.defaultProps = {
 
 function CartList(props) {
   const history = useHistory();
-  const dispatch = useDispatch();
   const {
     cart,
     total,
-    token,
-    user,
-
     onSizeChange,
     onColorChange,
     onQuantityChange,
     onProductRemove,
-    showModel,
+    onCheckoutClick,
     showCartEditModal,
   } = props;
 
-  // handle click when go to check out
-
-  const handleCheckOutClick = async () => {
-    try {
-      await jwt.verify(token, process.env.REACT_APP_JWT_KEY);
-      const order = cart.map((cart) => ({ ...cart, state: "" }));
-      dispatch(getOrderWithCart({ order, userId: user._id }));
-
-      history.push("/order");
-    } catch (error) {
-      showModel();
-    }
+  const handleCheckOutClick = () => {
+    if (!onCheckoutClick) return;
+    onCheckoutClick();
   };
 
   return (
@@ -65,11 +48,14 @@ function CartList(props) {
       {cart.length === 0 && (
         <div className="CartList__empty">
           <i className="bx bx-basket animate__animated animate__swing">
-            <Badge className="bg-danger rounded-circle">0</Badge>
+            <Badge className="bg-warning rounded-circle">0</Badge>
           </i>
-          <div onClick={() => history.push("/")} className="button">
+          <Button
+            onClick={() => history.push("/")}
+            className="button shadow-lg"
+          >
             Go Back Shop
-          </div>
+          </Button>
         </div>
       )}
 

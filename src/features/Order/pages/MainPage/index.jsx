@@ -1,13 +1,15 @@
 import { yupResolver } from "@hookform/resolvers/yup";
 import { createUser, getMe, updateUser, userLogin } from "app/userSlice";
 import axios from "axios";
+import Footer from "components/Footer";
 import Header from "components/Header";
 import LoginModel from "components/LoginModel";
 import Profile from "components/Profile";
 import SignUpModel from "components/SignUpModel";
 import { resetCart } from "features/Cart/cartSlice";
-import { updateProduct } from "features/Home/productSlice";
+import CheckoutModal from "features/Order/components/CheckoutModal";
 import FieldList from "features/Order/components/FieldList";
+import OrderHistory from "features/Order/components/OrderHistory";
 import OrderList from "features/Order/components/OrderList";
 import {
   createOrder,
@@ -15,25 +17,29 @@ import {
   getOrderById,
 } from "features/Order/orderSlice";
 import useModel from "hooks/useModel";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import ReactLoading from "react-loading";
 import { useDispatch, useSelector } from "react-redux";
-import { useHistory, withRouter } from "react-router-dom";
+import { useHistory, useParams, withRouter } from "react-router-dom";
 import { Badge, Button, Col, Form, Row, Spinner, Table } from "reactstrap";
 import {
   capitalizeFirstLetter,
+  checkout,
+  getMessageOrderByState,
   showToastError,
   showToastSuccess,
+  total,
 } from "utils/common";
 import * as yup from "yup";
-import "./order.scss";
 import "../../../Cart/components/CartList/cartlist.scss";
-import OrderHistory from "features/Order/components/OrderHistory";
+import "./order.scss";
 
 function MainPage(props) {
   const dispatch = useDispatch();
-  const [showOrderHistory, setShowOrderHistory] = useState(false);
+  const { userId } = useParams();
+  const [showOrderHistory, setShowOrderHistory] = useState(!!userId);
+
   const { order, id, loading, state } = useSelector((state) => state.order);
 
   const { user } = useSelector((state) => state.user);
@@ -52,6 +58,7 @@ function MainPage(props) {
   const loginModel = useModel();
   const signupModel = useModel();
   const profileModel = useModel();
+  const checkoutModal = useModel();
 
   const [city, setCity] = useState([]);
   const [district, setDistrict] = useState([]);
@@ -140,16 +147,6 @@ function MainPage(props) {
     }
   };
 
-  // handle total price cart
-  const total = order.reduce(
-    (sum, product) =>
-      sum +
-      product.originalPrice *
-        product.selectedQuantity *
-        (1 - product.promotionPercent),
-    0
-  );
-
   const defaultValues = {
     fullName: user.orderAddress.fullName,
     isFullDay: user.orderAddress.isFullDay,
@@ -179,8 +176,9 @@ function MainPage(props) {
   } = useForm({ defaultValues, resolver: yupResolver(schema) });
 
   // handle form submit
-
   const onSubmit = async (Data) => {
+    const cloneOrder = order.slice().map((item) => ({ ...item })); // clone order
+
     const orderAddress = {};
     orderAddress.city = Data.city.label;
     orderAddress.commune = Data.commune.label;
@@ -192,7 +190,8 @@ function MainPage(props) {
 
     const data = {
       user: user._id,
-      products: order,
+      products: checkout(cloneOrder, order),
+      total: parseFloat(total(order).toFixed(2)),
     };
 
     try {
@@ -202,22 +201,7 @@ function MainPage(props) {
           user: { orderAddress: orderAddress },
         })
       );
-
       await showToastSuccess(dispatch(createOrder(data)));
-
-      const updateProductQuantity = async () => {
-        order.forEach(async (product) => {
-          await dispatch(
-            updateProduct({
-              _id: product._id,
-              quantityStock: product.quantityStock - product.selectedQuantity,
-            })
-          );
-        });
-      };
-
-      await updateProductQuantity();
-
       dispatch(resetCart());
     } catch (error) {
       showToastError(error);
@@ -228,19 +212,6 @@ function MainPage(props) {
   const handleRemoveClick = async () => {
     try {
       await showToastSuccess(dispatch(deleteOrder(id)));
-
-      const updateProductQuantity = async () => {
-        order.forEach(async (product) => {
-          await dispatch(
-            updateProduct({
-              _id: product._id,
-              quantityStock: product.quantityStock,
-            })
-          );
-        });
-      };
-
-      await updateProductQuantity();
     } catch (error) {
       showToastError(error);
     }
@@ -257,6 +228,7 @@ function MainPage(props) {
     formData.append("gender", data.gender.value);
     formData.append("image", data.image);
     formData.append("address", data.address);
+    formData.append("birthdate", data.birthdate);
     try {
       await showToastSuccess(
         dispatch(
@@ -276,11 +248,11 @@ function MainPage(props) {
         showProfileModel={profileModel.showModel}
       />
       <Form onSubmit={handleSubmit(onSubmit)} className="Order">
-        <Row className="Order__checkout shadow-lg">
+        <Row className="Order__checkout shadow">
           <header>
-            <h1>Check out 🎀</h1>
+            <h1>Check out 🗃️</h1>
             <i
-              className="bx bx-shopping-bag"
+              className="bx bxl-shopify"
               onClick={() => setShowOrderHistory(!showOrderHistory)}
             />
           </header>
@@ -316,68 +288,83 @@ function MainPage(props) {
                 <i className="bx bx-basket animate__animated animate__swing">
                   <Badge className="bg-warning rounded-circle">0</Badge>
                 </i>
-                <div onClick={() => history.push("/")} className="button">
+                <div
+                  onClick={() => history.push("/")}
+                  className="button shadow-lg"
+                >
                   Go Back Shop
                 </div>
               </div>
             ) : (
               <div
-                className="list"
+                className="none-scroll"
                 style={{
+                  height: "100%",
+                  backgroundColor: "#fff",
                   borderRadius: "1rem",
-                  backgroundColor: "white",
-                  padding: "0.5rem 1rem",
-                  width: "100%",
-                  height: "540px",
-                  overflow: "scroll",
+                  overflowY: "scroll",
                 }}
               >
-                {/* Product List check out */}
-
                 {showOrderHistory && (
                   <OrderHistory showOrderHistory={showOrderHistory} />
                 )}
+                <div
+                  className="Order__list"
+                  style={
+                    !state && !showOrderHistory
+                      ? { height: "100% !important" }
+                      : {}
+                  }
+                >
+                  <div>
+                    {/* Product List check out */}
 
+                    {!showOrderHistory && (
+                      <div>
+                        {" "}
+                        <Table className="table table-sm">
+                          <thead>
+                            <tr className="p-1">
+                              <th>Product</th>
+                              <th className="text-center">Size</th>
+                              <th>Quantity</th>
+                              <th>Price</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {order.map((product, index) => (
+                              <OrderList key={index} product={product} />
+                            ))}
+                          </tbody>
+                        </Table>
+                      </div>
+                    )}
+                  </div>
+                </div>
                 {!showOrderHistory && (
                   <div>
-                    {" "}
-                    <Table>
-                      <thead>
-                        <tr>
-                          <th>Product</th>
-                          <th>Quantity</th>
-                          <th>SubTotal</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {order.map((product) => (
-                          <OrderList key={product._id} product={product} />
-                        ))}
-                      </tbody>
-                    </Table>
-                    <footer>
-                      <div>Total</div>
-                      <div>{total.toFixed(2)}$</div>
+                    {/* Total */}
+                    <footer className="mt-4">
+                      <div>Total:</div>
+                      <div>${total(order).toFixed(2)}</div>
                     </footer>
-                    {/* Check out button */}
+
                     {!state && (
-                      <Button>
+                      /* Check out button */
+                      <Button style={{ position: "relative" }} type="submit">
                         Check out
                         {loading && (
                           <Spinner
-                            color="light"
-                            size="sm"
                             style={{
                               position: "absolute",
-                              top: "1rem",
-                              right: "1rem",
+                              bottom: "4px",
+                              right: "4px",
                             }}
+                            color="light"
+                            size="sm"
                           >
                             {" "}
                           </Spinner>
-                        )}
-                        {state === "pending" && (
-                          <small>"Cancel and Clear Checkout"</small>
                         )}
                       </Button>
                     )}
@@ -394,31 +381,16 @@ function MainPage(props) {
                               : "green",
                           color: "white",
                           cursor:
-                            state === "processing" || state === "deliveried"
+                            state === "processing" || state === "delivered"
                               ? "default"
                               : "pointer",
-                          opacity: state !== "pending" ? "0.5" : "1",
                         }}
                       >
                         <div>
                           {capitalizeFirstLetter(state)}
-                          {loading && (
-                            <Spinner
-                              color="light"
-                              size="sm"
-                              style={{
-                                position: "absolute",
-                                top: "1rem",
-                                right: "1rem",
-                              }}
-                            >
-                              {" "}
-                            </Spinner>
-                          )}
-
                           {/* React loading */}
 
-                          {state !== "deliveried" && (
+                          {state !== "delivered" && (
                             <ReactLoading
                               type="balls"
                               color="white"
@@ -427,9 +399,8 @@ function MainPage(props) {
                             />
                           )}
                         </div>
-                        {state === "pending" && (
-                          <small>Cancel and Clear Checkout</small>
-                        )}
+
+                        <small>{getMessageOrderByState(state)}</small>
                       </section>
                     )}
                   </div>
@@ -466,6 +437,17 @@ function MainPage(props) {
           closeModel={profileModel.closeModel}
         />
       )}
+
+      {/* handle show checkout modal */}
+      {checkoutModal.model.show && (
+        <CheckoutModal
+          loading={false}
+          onSubmit={() => {}}
+          closeModel={profileModel.closeModel}
+        />
+      )}
+
+      <Footer />
     </div>
   );
 }

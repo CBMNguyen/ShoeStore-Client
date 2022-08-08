@@ -29,10 +29,6 @@
       color: white;
     }
 
-    &:disabled {
-      cursor: not-allowed;
-    }
-
     & + & {
       margin-left: 1rem;
     }

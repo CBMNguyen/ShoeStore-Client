@@ -1,6 +1,7 @@
 import PropTypes from "prop-types";
 import React from "react";
 import { Badge } from "reactstrap";
+import "./orderlist.scss";
 
 OrderList.propTypes = {
   product: PropTypes.object.isRequired,
@@ -9,15 +10,19 @@ OrderList.propTypes = {
 function OrderList(props) {
   const { product } = props;
   return (
-    <tr>
+    <tr className="OrderList">
       <td>
-        <div className="d-flex align-items-center">
+        <div
+          className="d-flex align-items-center"
+          style={{ overflow: "hidden" }}
+        >
           <img
-            src={`${process.env.REACT_APP_API_URL}/${product.images[0]}`}
+            className="OrderList__img"
+            src={`${product.productDetail[0].images[0]}`}
             alt={product._id}
           />
 
-          <div className="ms-4 mt-3">
+          <div className="ms-4 mt-2">
             <Badge className="bg-dark d-block">{product.name}</Badge>
             <Badge className="bg-warning">{product.originalPrice}$</Badge>
           </div>
@@ -25,12 +30,20 @@ function OrderList(props) {
       </td>
 
       <td>
-        <Badge className="bg-secondary ms-3">{product.selectedQuantity}</Badge>
+        <Badge className="bg-dark ms-3">{product.selectedSize}</Badge>
+      </td>
+
+      <td>
+        <Badge className="bg-info ms-3">{product.selectedQuantity}</Badge>
       </td>
 
       <td>
         <Badge className="bg-warning">
-          {product.selectedQuantity * product.originalPrice}$
+          {`$${(
+            product.selectedQuantity *
+            product.salePrice *
+            ((100 - product.promotionPercent) / 100)
+          ).toFixed(2)}`}
         </Badge>
       </td>
     </tr>

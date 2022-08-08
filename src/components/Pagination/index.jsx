@@ -43,7 +43,7 @@ function Pagination(props) {
     <div className="Pagination">
       {/* previous button */}
       <Button
-        className="btn btn-sm me-4"
+        className="btn btn-sm me-4 Pagination__button"
         type="button"
         color="light"
         disabled={page <= 1}
@@ -67,7 +67,7 @@ function Pagination(props) {
 
       {/* Next Button */}
       <Button
-        className="btn btn-sm ms-4"
+        className="btn btn-sm ms-4 Pagination__button"
         type="button"
         color="light"
         disabled={page >= totalPage}
