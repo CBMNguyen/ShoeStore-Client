@@ -60,8 +60,30 @@ function CartEditModal({ cart, model, closeModel }) {
       product.selectedColor === selectProductDetail.selectedColor &&
       product.selectedSize !== selectProductDetail.selectedSize
     ) {
-      const size = selectProductDetail.selectedSize;
-      dispatch(selectSize({ cartItemIndex, size }));
+      // cart item index exist in cart
+      const cartItemExistIndex = cart.findIndex(
+        (productItem) =>
+          productItem._id === product._id &&
+          productItem.selectedColor === selectProductDetail.selectedColor &&
+          productItem.selectedSize === selectProductDetail.selectedSize
+      );
+
+      if (cartItemExistIndex >= 0) {
+        // change when has the same item
+        // update cart item exist and remove item changed
+        dispatch(
+          selectQuantity({
+            cartItemIndex: cartItemExistIndex,
+            quantity:
+              cart[cartItemIndex].selectedQuantity +
+              cart[cartItemExistIndex].selectedQuantity,
+            currentProductIndex: cartItemIndex,
+          })
+        );
+      } else {
+        const size = selectProductDetail.selectedSize;
+        dispatch(selectSize({ cartItemIndex, size }));
+      }
     }
 
     if (product.selectedColor !== selectProductDetail.selectedColor) {

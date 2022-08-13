@@ -1,4 +1,7 @@
 import { yupResolver } from "@hookform/resolvers/yup";
+import { unwrapResult } from "@reduxjs/toolkit";
+import pavementApi from "api/payment";
+import orderApi from "api/order";
 import { createUser, getMe, updateUser, userLogin } from "app/userSlice";
 import axios from "axios";
 import Footer from "components/Footer";
@@ -7,7 +10,6 @@ import LoginModel from "components/LoginModel";
 import Profile from "components/Profile";
 import SignUpModel from "components/SignUpModel";
 import { resetCart } from "features/Cart/cartSlice";
-import CheckoutModal from "features/Order/components/CheckoutModal";
 import FieldList from "features/Order/components/FieldList";
 import OrderHistory from "features/Order/components/OrderHistory";
 import OrderList from "features/Order/components/OrderList";
@@ -17,15 +19,19 @@ import {
   getOrderById,
 } from "features/Order/orderSlice";
 import useModel from "hooks/useModel";
+import useQuery from "hooks/useQuery";
+import { useRef } from "react";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import ReactLoading from "react-loading";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory, useParams, withRouter } from "react-router-dom";
+import { toast } from "react-toastify";
 import { Badge, Button, Col, Form, Row, Spinner, Table } from "reactstrap";
 import {
   capitalizeFirstLetter,
   checkout,
+  EXCHANGE_RATE,
   getMessageOrderByState,
   showToastError,
   showToastSuccess,
@@ -54,11 +60,26 @@ function MainPage(props) {
   }, [dispatch, user._id, state]);
 
   const history = useHistory();
+  const checkoutLinkRef = useRef();
+
+  const [linkMoMo, setLinkMoMo] = useState("");
+  const [momo, setMoMo] = useState(false);
+
+  const query = useQuery();
+
+  useEffect(() => {
+    if (query.get("resultCode")) {
+      if (Number(query.get("resultCode")) === 0) {
+        orderApi.update(query.get("orderId"), { payment: true });
+      } else {
+        toast("There was an error while paying");
+      }
+    }
+  }, [query]);
 
   const loginModel = useModel();
   const signupModel = useModel();
   const profileModel = useModel();
-  const checkoutModal = useModel();
 
   const [city, setCity] = useState([]);
   const [district, setDistrict] = useState([]);
@@ -175,7 +196,7 @@ function MainPage(props) {
     formState: { errors },
   } = useForm({ defaultValues, resolver: yupResolver(schema) });
 
-  // handle form submit
+  // handle form submit  normal
   const onSubmit = async (Data) => {
     const cloneOrder = order.slice().map((item) => ({ ...item })); // clone order
 
@@ -192,6 +213,7 @@ function MainPage(props) {
       user: user._id,
       products: checkout(cloneOrder, order),
       total: parseFloat(total(order).toFixed(2)),
+      paymentMethod: momo ? "momo" : "normal",
     };
 
     try {
@@ -201,9 +223,27 @@ function MainPage(props) {
           user: { orderAddress: orderAddress },
         })
       );
-      await showToastSuccess(dispatch(createOrder(data)));
+      // return order from server
+      const actionResult = await dispatch(createOrder(data));
+      const { newOrder } = unwrapResult(actionResult);
+
+      if (momo) {
+        // post to server get momo link
+        const { shortLink } = await pavementApi.post({
+          _id: newOrder._id,
+          total: Math.ceil(Number(newOrder.total) * EXCHANGE_RATE),
+        });
+        // riderect to momo website
+        setLinkMoMo(shortLink);
+        checkoutLinkRef.current.click();
+        // show toast when success
+      }
+
+      !momo && showToastSuccess(actionResult);
+      // reset cart
       dispatch(resetCart());
     } catch (error) {
+      dispatch(resetCart());
       showToastError(error);
     }
   };
@@ -258,7 +298,7 @@ function MainPage(props) {
           </header>
 
           {/* render field list */}
-
+          {/* personal infor to checkout*/}
           <Col md={5}>
             <FieldList
               defaultValues={defaultValues}
@@ -278,9 +318,10 @@ function MainPage(props) {
           </Col>
 
           {/* Render product list */}
+          {/* order infor to check out */}
           <Col md={7}>
             {/* handle when order empty */}
-            {order.length === 0 && !showOrderHistory ? (
+            {order.length === 0 && !showOrderHistory ? ( // show empty cart when not order
               <div
                 className="empty mt-0"
                 style={{ backgroundColor: "transparent" }}
@@ -296,6 +337,7 @@ function MainPage(props) {
                 </div>
               </div>
             ) : (
+              // show order list item
               <div
                 className="none-scroll"
                 style={{
@@ -350,23 +392,53 @@ function MainPage(props) {
                     </footer>
 
                     {!state && (
-                      /* Check out button */
-                      <Button style={{ position: "relative" }} type="submit">
-                        Check out
-                        {loading && (
-                          <Spinner
-                            style={{
-                              position: "absolute",
-                              bottom: "4px",
-                              right: "4px",
-                            }}
-                            color="light"
-                            size="sm"
-                          >
-                            {" "}
-                          </Spinner>
-                        )}
-                      </Button>
+                      <div>
+                        {/* Check out button */}
+                        <Button
+                          style={{ position: "relative", marginBottom: 0 }}
+                          type="submit"
+                        >
+                          Check out
+                          {loading && !momo && (
+                            <Spinner
+                              style={{
+                                position: "absolute",
+                                bottom: "4px",
+                                right: "4px",
+                              }}
+                              color="light"
+                              size="sm"
+                            >
+                              {" "}
+                            </Spinner>
+                          )}
+                        </Button>
+                        {/* Check out button with momo */}
+                        <Button
+                          style={{
+                            position: "relative",
+                            marginTop: "8px",
+                            backgroundColor: "deeppink",
+                          }}
+                          onClick={() => setMoMo(true)}
+                          type="submit"
+                        >
+                          Check out with MoMo
+                          {loading && momo && (
+                            <Spinner
+                              style={{
+                                position: "absolute",
+                                bottom: "4px",
+                                right: "4px",
+                              }}
+                              color="light"
+                              size="sm"
+                            >
+                              {" "}
+                            </Spinner>
+                          )}
+                        </Button>
+                      </div>
                     )}
                     {/* Button when await check out */}
                     {state && (
@@ -411,6 +483,10 @@ function MainPage(props) {
         </Row>
       </Form>
 
+      <a ref={checkoutLinkRef} style={{ display: "none" }} href={linkMoMo}>
+        checkout momo
+      </a>
+
       {/* handle show login model */}
       {loginModel.model.show && (
         <LoginModel
@@ -437,16 +513,6 @@ function MainPage(props) {
           closeModel={profileModel.closeModel}
         />
       )}
-
-      {/* handle show checkout modal */}
-      {checkoutModal.model.show && (
-        <CheckoutModal
-          loading={false}
-          onSubmit={() => {}}
-          closeModel={profileModel.closeModel}
-        />
-      )}
-
       <Footer />
     </div>
   );

@@ -66,9 +66,7 @@ function CartItem(props) {
 
   return (
     <tr className="CartItem">
-      <td style={{ fontWeight: "bold" }} className="text-center">
-        {index + 1}
-      </td>
+      <td className="text-center">{index + 1}</td>
       {/* Product name and image column */}
       <td>
         <div className="CartItem__product">

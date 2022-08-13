@@ -166,3 +166,6 @@ export const getMessageOrderByState = (state) => {
       return "Order has been sent successfully";
   }
 };
+
+// tỷ giá dolar
+export const EXCHANGE_RATE = 23000;

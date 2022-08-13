@@ -18,7 +18,11 @@ function OrderList(props) {
         >
           <img
             className="OrderList__img"
-            src={`${product.productDetail[0].images[0]}`}
+            src={`${
+              product.productDetail.find(
+                ({ color }) => color.color === product.selectedColor
+              ).images[0]
+            }`}
             alt={product._id}
           />
 

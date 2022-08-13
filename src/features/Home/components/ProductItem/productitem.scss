@@ -32,6 +32,48 @@
       overflow: hidden;
     }
   }
+
+  &__discount {
+    position: absolute;
+    top: 6px;
+    right: -4px;
+
+    width: 70px;
+    padding-right: 4px;
+    border-top-right-radius: 3px;
+    border-bottom-right-radius: 3px;
+
+    color: orange;
+    font-size: 10px;
+    text-align: center;
+
+    background-color: orange;
+    font-weight: 500;
+  }
+
+  &__discount::before {
+    content: "";
+    position: absolute;
+    bottom: -2px;
+    right: 0px;
+    border-top: 3px solid currentColor;
+    border-right: 3px solid transparent;
+
+    filter: brightness(60%);
+  }
+
+  &__discount span,
+  &__discount i {
+    display: inline-block;
+    color: #fff;
+    text-align: center;
+  }
+
+  &__discount i {
+    font-size: 0.9rem;
+    margin: 0 2px 0 5px;
+  }
+
   &__image {
     display: block;
     width: 100%;

@@ -1,5 +1,5 @@
 import PropTypes from "prop-types";
-import React, { useState } from "react";
+import { useState } from "react";
 import { Col } from "reactstrap";
 import { capitalizeFirstLetter } from "utils/common";
 import "./productitem.scss";
@@ -56,11 +56,18 @@ function ProductItem(props) {
           alt={product._id}
         />
 
+        {/* Discount */}
+
+        {product.promotionPercent !== 0 && (
+          <div className="ProductItem__discount">
+            <span>discount 5%</span>
+          </div>
+        )}
+
         {/* Product Price */}
 
         <div className="ProductItem__price">
           <section>
-            {" "}
             <div>Price</div>
             <div>
               {product.promotionPercent !== 0 && (
