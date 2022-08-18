@@ -13,7 +13,7 @@ CategoryItem.defaultProps = {
 };
 
 function CategoryItem(props) {
-  const { index, category, onCategoryChange } = props;
+  const { index, category, currentCategory, onCategoryChange } = props;
 
   const handleCategoryChange = (id) => {
     if (!onCategoryChange) return;
@@ -29,7 +29,7 @@ function CategoryItem(props) {
             id="all"
             type="radio"
             name="category"
-            defaultChecked={true}
+            checked={currentCategory === "" ? true : false}
             onChange={() => handleCategoryChange("")}
           />
           <label className="ms-1" htmlFor="all">

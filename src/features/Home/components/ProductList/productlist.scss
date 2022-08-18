@@ -1,6 +1,5 @@
 .ProductList {
   flex: 1;
-  height: calc(100vh - 4.5rem);
   padding: 1.4rem 0.5rem;
   overflow-y: scroll;
 
@@ -14,7 +13,6 @@
     & div {
       display: flex;
       align-items: center;
-      cursor: pointer;
     }
 
     & div i {

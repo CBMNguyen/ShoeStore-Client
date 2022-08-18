@@ -40,6 +40,8 @@ import {
 import * as yup from "yup";
 import "../../../Cart/components/CartList/cartlist.scss";
 import "./order.scss";
+import Loading from "components/Loading";
+import { STYLE_MODEL } from "constants/globals";
 
 function MainPage(props) {
   const dispatch = useDispatch();
@@ -64,6 +66,7 @@ function MainPage(props) {
 
   const [linkMoMo, setLinkMoMo] = useState("");
   const [momo, setMoMo] = useState(false);
+  const [loadingMoMo, setLoadingMoMo] = useState(false);
 
   const query = useQuery();
 
@@ -228,6 +231,7 @@ function MainPage(props) {
       const { newOrder } = unwrapResult(actionResult);
 
       if (momo) {
+        setLoadingMoMo(true);
         // post to server get momo link
         const { shortLink } = await pavementApi.post({
           _id: newOrder._id,
@@ -236,7 +240,7 @@ function MainPage(props) {
         // riderect to momo website
         setLinkMoMo(shortLink);
         checkoutLinkRef.current.click();
-        // show toast when success
+        setLoadingMoMo(false);
       }
 
       !momo && showToastSuccess(actionResult);
@@ -245,6 +249,7 @@ function MainPage(props) {
     } catch (error) {
       dispatch(resetCart());
       showToastError(error);
+      setLoadingMoMo(false);
     }
   };
 
@@ -486,6 +491,12 @@ function MainPage(props) {
       <a ref={checkoutLinkRef} style={{ display: "none" }} href={linkMoMo}>
         checkout momo
       </a>
+
+      {loadingMoMo && (
+        <div style={{ ...STYLE_MODEL }}>
+          <Loading />
+        </div>
+      )}
 
       {/* handle show login model */}
       {loginModel.model.show && (

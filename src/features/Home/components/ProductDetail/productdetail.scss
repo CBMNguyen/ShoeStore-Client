@@ -97,8 +97,11 @@
     }
 
     & p {
+      max-height: 124px;
+      overflow-y: scroll;
       color: #aaa;
       font-size: 0.85rem;
+      margin-bottom: 4px;
     }
   }
 

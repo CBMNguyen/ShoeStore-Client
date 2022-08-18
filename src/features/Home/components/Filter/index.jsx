@@ -45,6 +45,7 @@ function Filter(props) {
           <CategoryItem
             key={c.name}
             index={i}
+            currentCategory={filter.category}
             category={c}
             onCategoryChange={onCategoryChange}
           />
@@ -94,14 +95,17 @@ function Filter(props) {
       <li>
         <span className="d-block mb-2">Size</span>
         <Row>
-          {size.map((s) => (
-            <SizeItem
-              key={s.size}
-              size={s}
-              filter={filter}
-              onSizeChange={onSizeChange}
-            />
-          ))}
+          {size
+            .slice()
+            .sort((a, b) => a.size - b.size)
+            .map((s) => (
+              <SizeItem
+                key={s.size}
+                size={s}
+                filter={filter}
+                onSizeChange={onSizeChange}
+              />
+            ))}
         </Row>
         <span className="d-block mb-1" />
       </li>
