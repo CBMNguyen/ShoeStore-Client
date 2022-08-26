@@ -15,16 +15,27 @@ Header.propTypes = {
   onNameChange: PropTypes.func,
   showModel: PropTypes.func.isRequired,
   showProfileModel: PropTypes.func,
+  showInputMobile: PropTypes.bool,
+  setShowInputMobile: PropTypes.func,
 };
 
 Header.defaultProps = {
   home: null,
   onNameChange: null,
   showProfileModel: null,
+  showInputMobile: false,
+  setShowInputMobile: null,
 };
 
 function Header(props) {
-  const { onNameChange, showModel, showProfileModel, home } = props;
+  const {
+    onNameChange,
+    showModel,
+    showProfileModel,
+    home,
+    showInputMobile,
+    setShowInputMobile,
+  } = props;
 
   const history = useHistory();
   const [value, setValue] = useState();
@@ -73,7 +84,11 @@ function Header(props) {
       </div>
 
       {home && (
-        <div className="Header__input">
+        <div
+          className={
+            showInputMobile ? "Header__input d-block" : "Header__input"
+          }
+        >
           <i className="bx bx-search" />
           <Input
             onChange={handleInputChange}
@@ -85,6 +100,15 @@ function Header(props) {
       )}
 
       <div className="Header__info">
+        {home && (
+          <div className="p-0 m-0 d-md-none">
+            <i
+              className="bx bx-search"
+              onClick={() => setShowInputMobile?.(!showInputMobile)}
+            ></i>
+          </div>
+        )}
+
         <div className="p-0 m-0" onClick={() => mapModel.showModel()}>
           <i className="bx bx-map" />
         </div>
@@ -112,7 +136,7 @@ function Header(props) {
         )}
 
         <img
-          className="img-fluid"
+          className="img-fluid Header__avatar"
           onClick={handleProfileClick}
           src={!token ? avt : user.image}
           alt="#"

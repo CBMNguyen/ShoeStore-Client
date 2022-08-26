@@ -64,7 +64,7 @@ function CartList(props) {
           <header>
             <h2>My Shopping Cart 🛒</h2>
             {/* navigation */}
-            <Breadcrumb>
+            <Breadcrumb className="mt-2">
               <BreadcrumbItem>
                 <Link style={{ textDecoration: "none" }} to="/">
                   Home

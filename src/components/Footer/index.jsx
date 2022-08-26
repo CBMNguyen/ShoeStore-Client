@@ -21,7 +21,7 @@ function Footer(props) {
     <div className="Footer">
       <Container>
         <Row>
-          <Col>
+          <Col md={6} lg={3}>
             <div className="Footer__about">
               <h2>
                 Shoes Store <img src={brandLogo} alt="brandLogo" />
@@ -50,7 +50,7 @@ function Footer(props) {
               </ul>
             </div>
           </Col>
-          <Col>
+          <Col md={6} lg={3}>
             <div className="Footer__Brand">
               <h2>Brand Category</h2>
 
@@ -73,7 +73,7 @@ function Footer(props) {
               </ul>
             </div>
           </Col>
-          <Col>
+          <Col md={6} lg={3} className="mb-4">
             <div className="Footer__pavement text-center">
               <h2>Pavement Method</h2>
 
@@ -100,7 +100,7 @@ function Footer(props) {
               </div>
             </div>
           </Col>
-          <Col>
+          <Col md={6} lg={3}>
             <div className="Footer__socials text-center">
               <h2>Follow us on</h2>
 
@@ -141,8 +141,9 @@ function Footer(props) {
               <div>
                 <a href="http://online.gov.vn/" target="blank">
                   <img
+                    className="Footer__legal"
                     style={{ marginTop: "80px" }}
-                    width="60%"
+                    width="180"
                     src={legalImage}
                     alt="momo-logo"
                   />

@@ -35,10 +35,15 @@ function Filter(props) {
     onSizeChange,
     onCategoryChange,
     onPriceChange,
+    showFilterModal,
   } = props;
 
   return (
-    <ul className="Filter">
+    <ul
+      className={
+        showFilterModal ? "Filter d-block" : "Filter d-none d-lg-block"
+      }
+    >
       <li>
         <span className="d-block">Brand</span>
         {category.map((c, i) => (

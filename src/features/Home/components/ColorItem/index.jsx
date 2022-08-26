@@ -23,7 +23,7 @@ function ColorItem(props) {
   };
 
   return (
-    <Col md="3">
+    <Col className="col-md-auto col-lg-3">
       <div
         style={{
           backgroundColor: `${color["color"]}`,

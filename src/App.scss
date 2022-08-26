@@ -6,3 +6,63 @@
 .App {
   background-color: #fff;
 }
+
+.nav__mobile-btn {
+  cursor: pointer;
+}
+
+.nav__over-lay {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 1;
+  display: none;
+
+  background-color: rgba(0, 0, 0, 0.3);
+  animation: fadeIn linear 0.2s;
+}
+
+.nav__mobile {
+  position: fixed;
+  top: 4.5rem;
+  left: 0;
+  z-index: 1;
+  bottom: 0;
+  width: 270px;
+  max-width: 100%;
+  background-color: #fff;
+  opacity: 1;
+  transform: translateX(-100%);
+  transition: all linear 0.2s;
+}
+
+.nav_mobile-close {
+  font-size: 1.4rem;
+  color: #666;
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  cursor: pointer;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes mobileSearchSlideIn {
+  from {
+    top: 0;
+    opacity: 0;
+  }
+  to {
+    top: 4.5rem;
+    opacity: 1;
+  }
+}

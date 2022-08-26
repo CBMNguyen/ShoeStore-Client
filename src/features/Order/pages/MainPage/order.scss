@@ -1,13 +1,14 @@
 .Order {
   &__checkout {
     width: 1050px;
+    max-width: 100%;
 
     padding: 0 1.5rem;
     padding-bottom: 2rem;
     margin: 3rem auto;
 
     background-color: deeppink;
-    border-radius: 1.5rem;
+    border-radius: 8px;
 
     & header {
       & h1 {
@@ -83,7 +84,7 @@
       overflow-y: scroll;
       padding: 1rem 1.2rem;
 
-      border-radius: 1rem;
+      border-radius: 8px;
       font-weight: bold;
       color: black;
       background-color: white;
@@ -172,4 +173,26 @@
   display: none !important;
   -ms-overflow-style: none; /* IE and Edge */
   scrollbar-width: none;
+}
+
+@media (max-width: 768px) {
+  .mgb-4 {
+    margin-bottom: 16px;
+  }
+}
+
+@media (max-width: 900px) {
+  .Order {
+    &__checkout {
+      width: 100%;
+      margin: 0;
+      padding-left: 0.5rem;
+      padding-right: 0.5rem;
+      border-radius: 0;
+
+      & button {
+        font-size: 100%;
+      }
+    }
+  }
 }

@@ -24,7 +24,7 @@ function SizeItem(props) {
   };
 
   return (
-    <Col key={size["size"]} md="3">
+    <Col key={size["size"]} className="col-md-auto col-lg-3">
       <div
         className={classNames("Size border shadow-sm", {
           "bg-dark text-white shadow-lg": isSelectedSize,

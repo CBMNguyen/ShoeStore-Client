@@ -28,3 +28,13 @@
     }
   }
 }
+
+@media (max-width: 768px) {
+  .ImageModel {
+    & i {
+      top: -1rem;
+      right: -1rem;
+      z-index: 2;
+    }
+  }
+}

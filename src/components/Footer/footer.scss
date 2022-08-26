@@ -73,3 +73,11 @@
     }
   }
 }
+
+@media (max-width: 768px) {
+  .Footer {
+    &__legal {
+      margin-top: 38px !important;
+    }
+  }
+}

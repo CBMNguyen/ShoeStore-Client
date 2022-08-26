@@ -82,3 +82,11 @@
     }
   }
 }
+
+@media (max-width: 970px) {
+  .CartItem {
+    &__controls {
+      margin-left: 2rem;
+    }
+  }
+}

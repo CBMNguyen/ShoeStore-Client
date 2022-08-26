@@ -153,7 +153,7 @@ function Profile(props) {
           </div>
         </div>
         <Row>
-          <Col md={6}>
+          <Col xs={6} md={6}>
             <InputField
               className="mb-2"
               name="firstname"
@@ -163,7 +163,7 @@ function Profile(props) {
             />
           </Col>
 
-          <Col md={6}>
+          <Col xs={6} md={6}>
             <InputField
               className="mb-2"
               name="lastname"
@@ -195,7 +195,7 @@ function Profile(props) {
           </Col>
 
           {
-            <Col md={6}>
+            <Col md={6} xs={6}>
               <div
                 style={{
                   position: "relative",
@@ -223,7 +223,7 @@ function Profile(props) {
             </Col>
           }
 
-          <Col md={6}>
+          <Col md={6} xs={6}>
             <SelectField
               name="gender"
               control={control}

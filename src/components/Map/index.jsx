@@ -16,12 +16,11 @@ function Map({ onClose }) {
 
       <iframe
         title="map"
-        width="90%"
-        height="90%"
-        frameborder="0"
-        style={{ border: 0 }}
+        width="100%"
+        height="100%"
+        style={{ border: 0, borderRadius: "4px" }}
         src={`https://www.google.com/maps/embed/v1/place?key=${process.env.REACT_APP_GOOGLE_MAP_API_KEY}&q=Cầu+Thành+Lợi,+Vĩnh+Long,+Vietnam`}
-        allowfullscreen
+        allowFullScreen
       />
     </div>
   );

@@ -78,7 +78,7 @@ function CartItem(props) {
             }
             alt={product._id}
           />
-          <div className="ps-4">
+          <div className="ps-4 d-none d-md-block">
             <Badge className="bg-dark d-block">{product.name}</Badge>
             <Badge className="bg-warning">{`${product.originalPrice}$`}</Badge>
           </div>

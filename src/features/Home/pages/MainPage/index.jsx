@@ -5,6 +5,7 @@ import Loading from "components/Loading";
 import LoginModel from "components/LoginModel";
 import Profile from "components/Profile";
 import SignUpModel from "components/SignUpModel";
+import { STYLE_MODEL } from "constants/globals";
 import { fetchCategory } from "features/Home/categorySlice";
 import { fetchColor } from "features/Home/colorSlice";
 import Filter from "features/Home/components/Filter";
@@ -34,6 +35,9 @@ function MainPage(props) {
   const { size } = useSelector((state) => state.size);
   const { products } = useSelector((state) => state.products);
   const { loading } = useSelector((state) => state.user);
+
+  const [showFilterModal, setShowFilterModal] = useState(false);
+  const [showInputMobile, setShowInputMobile] = useState(false);
 
   const [selectProductDetail, setSelectProductDetail] = useState({
     selectedSize: null,
@@ -98,6 +102,7 @@ function MainPage(props) {
 
   const { model, showModel, closeModel } = useModel();
   const loginModel = useModel();
+  const productDetailModel = useModel();
   const signupModel = useModel();
   const profileModel = useModel();
 
@@ -207,9 +212,75 @@ function MainPage(props) {
         showModel={loginModel.showModel}
         onNameChange={handleNameChange}
         showProfileModel={profileModel.showModel}
+        showInputMobile={showInputMobile}
+        setShowInputMobile={setShowInputMobile}
       />
 
       <div className="d-flex">
+        {!showFilterModal && (
+          <Filter
+            color={color}
+            category={category}
+            size={size}
+            filter={filter}
+            minPrice={42.32}
+            maxPrice={2000}
+            onColorChange={handleColorChange}
+            onSizeChange={handleSizeChange}
+            onCategoryChange={handleCategoryChange}
+            onPriceChange={handlePriceChange}
+            showFilterModal={showFilterModal}
+          />
+        )}
+
+        <ProductList
+          products={sortProductByPrice.slice(start, end)}
+          totalRow={sortProductByPrice.length}
+          filter={filter}
+          onInCreasePriceChange={handleInCreasePriceChange}
+          onSelectProduct={handleSelectProduct}
+          onPageChange={handlePageChange}
+          onResetFilter={handleResetFilter}
+          showProductDetailModel={productDetailModel.showModel}
+          showFilterModal={showFilterModal}
+          setShowFilterModal={setShowFilterModal}
+        />
+
+        {!productDetailModel.model.show && (
+          <ProductDetail
+            product={
+              !filter["selectedProduct"]
+                ? products[0]
+                : filter["selectedProduct"]
+            }
+            selectProductDetail={selectProductDetail}
+            setSelectProductDetail={setSelectProductDetail}
+            showModel={showModel}
+            productDetailModel={productDetailModel}
+          />
+        )}
+      </div>
+
+      {/* Show filter modal */}
+
+      <div
+        className="nav__mobile"
+        style={
+          showFilterModal ? { transform: "translateX(0)", opacity: 1 } : {}
+        }
+      >
+        <label
+          htmlFor="nav-mobile-input"
+          className="nav_mobile-close"
+          onClick={() => setShowFilterModal(false)}
+        >
+          <div className="ImageModel">
+            <i
+              className="bx bx-x"
+              style={{ top: "-20px", right: "-24px", fontSize: "38px" }}
+            />
+          </div>
+        </label>
         <Filter
           color={color}
           category={category}
@@ -221,28 +292,32 @@ function MainPage(props) {
           onSizeChange={handleSizeChange}
           onCategoryChange={handleCategoryChange}
           onPriceChange={handlePriceChange}
-        />
-
-        <ProductList
-          products={sortProductByPrice.slice(start, end)}
-          totalRow={sortProductByPrice.length}
-          filter={filter}
-          onInCreasePriceChange={handleInCreasePriceChange}
-          onSelectProduct={handleSelectProduct}
-          onPageChange={handlePageChange}
-          onResetFilter={handleResetFilter}
-          showModel={showModel}
-        />
-
-        <ProductDetail
-          product={
-            !filter["selectedProduct"] ? products[0] : filter["selectedProduct"]
-          }
-          selectProductDetail={selectProductDetail}
-          setSelectProductDetail={setSelectProductDetail}
-          showModel={showModel}
+          showFilterModal={showFilterModal}
         />
       </div>
+
+      {/* Show productDetail modal  */}
+      {productDetailModel.model.show && (
+        <div style={{ ...STYLE_MODEL }}>
+          <div className="ImageModel">
+            <i
+              onClick={() => productDetailModel.closeModel()}
+              className="bx bx-x"
+            />
+          </div>
+          <ProductDetail
+            product={
+              !filter["selectedProduct"]
+                ? products[0]
+                : filter["selectedProduct"]
+            }
+            selectProductDetail={selectProductDetail}
+            setSelectProductDetail={setSelectProductDetail}
+            showModel={showModel}
+            productDetailModel={productDetailModel}
+          />
+        </div>
+      )}
 
       {/* Show image model  */}
       {model.show && (

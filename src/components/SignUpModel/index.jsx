@@ -89,7 +89,7 @@ function SignUpModel(props) {
         </header>
         <i onClick={() => closeModel()} className="bx bx-x" />
         <Row>
-          <Col md={6}>
+          <Col md={6} xs={6}>
             <InputField
               name="firstname"
               control={control}
@@ -98,7 +98,7 @@ function SignUpModel(props) {
             />
           </Col>
 
-          <Col md={6}>
+          <Col md={6} xs={6}>
             <InputField
               name="lastname"
               control={control}
@@ -107,7 +107,7 @@ function SignUpModel(props) {
             />
           </Col>
 
-          <Col md={6}>
+          <Col md={6} xs={6}>
             <InputField
               name="phone"
               control={control}
@@ -116,7 +116,7 @@ function SignUpModel(props) {
             />
           </Col>
 
-          <Col md={6}>
+          <Col md={6} xs={6}>
             <SelectField
               name="gender"
               className="me-2"

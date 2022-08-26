@@ -113,3 +113,11 @@
     transform: scale(1.05);
   }
 }
+
+@media (max-width: 768px) {
+  .Profile {
+    width: 100%;
+    height: 100%;
+    border-radius: 0;
+  }
+}

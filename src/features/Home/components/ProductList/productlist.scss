@@ -26,3 +26,15 @@
 .ProductList::-webkit-scrollbar {
   display: none;
 }
+
+@media (max-width: 768px) {
+  .ProductList {
+    & h3 {
+      margin-left: -8px;
+    }
+
+    &__button {
+      margin: 0 4px !important;
+    }
+  }
+}

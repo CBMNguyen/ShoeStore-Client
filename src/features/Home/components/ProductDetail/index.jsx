@@ -12,11 +12,17 @@ ProductDetail.propTypes = {
   showModel: PropTypes.func.isRequired,
   selectProductDetail: PropTypes.object.isRequired,
   setSelectProductDetail: PropTypes.func.isRequired,
+  productDetailModel: PropTypes.object.isRequired,
 };
 
 function ProductDetail(props) {
-  const { product, showModel, selectProductDetail, setSelectProductDetail } =
-    props;
+  const {
+    product,
+    showModel,
+    selectProductDetail,
+    setSelectProductDetail,
+    productDetailModel,
+  } = props;
 
   const { cart } = useSelector((state) => state.cart);
 
@@ -71,10 +77,20 @@ function ProductDetail(props) {
     toast("Product added to cart", {
       ...PRODUCT_TOAST_OPTIONS,
     });
+
+    if (productDetailModel.model.show) {
+      productDetailModel.closeModel();
+    }
   };
 
   return (
-    <div className="ProductDetail">
+    <div
+      className={
+        productDetailModel.model.show
+          ? "ProductDetail ProductDetail__modal d-block"
+          : "ProductDetail d-none d-xl-block"
+      }
+    >
       {/* Product Image List */}
 
       <Slider className="ProductDetail__list" {...sliderSettings}>
@@ -87,7 +103,9 @@ function ProductDetail(props) {
               key={img}
               src={img}
               alt={img}
-              onClick={() => showModel(product)}
+              onClick={() =>
+                !productDetailModel.model.show && showModel(product)
+              }
             />
           ))}
       </Slider>

@@ -304,7 +304,7 @@ function MainPage(props) {
 
           {/* render field list */}
           {/* personal infor to checkout*/}
-          <Col md={5}>
+          <Col md={5} className="mgb-4">
             <FieldList
               defaultValues={defaultValues}
               register={register}
@@ -348,7 +348,7 @@ function MainPage(props) {
                 style={{
                   height: "100%",
                   backgroundColor: "#fff",
-                  borderRadius: "1rem",
+                  borderRadius: "8px",
                   overflowY: "scroll",
                 }}
               >

@@ -9,6 +9,7 @@ ProductItem.propTypes = {
   border: PropTypes.string.isRequired,
   setBorder: PropTypes.func.isRequired,
   onSelectProduct: PropTypes.func,
+  showProductDetailModel: PropTypes.func.isRequired,
 };
 
 ProductItem.defaultProps = {
@@ -18,21 +19,33 @@ ProductItem.defaultProps = {
 function ProductItem(props) {
   const [imageIndex, setImageIndex] = useState(0);
 
-  const { product, border, setBorder, selectedProductId, onSelectProduct } =
-    props;
+  const {
+    product,
+    border,
+    setBorder,
+    selectedProductId,
+    onSelectProduct,
+    showProductDetailModel,
+  } = props;
 
   const handleSelectProduct = (product) => {
     if (!onSelectProduct) return;
     onSelectProduct(product);
   };
 
+  const handleShowProductDetailModel = (e) => {
+    if (!showProductDetailModel || document.body.offsetWidth > 1195) return;
+    showProductDetailModel();
+  };
+
   return (
-    <Col xl={4} lg={6} md={6} sm={12}>
+    <Col xl={4} lg={4} md={4} sm={6} xs={6}>
       <div
         className="ProductItem shadow-sm"
         onClick={() => {
           setBorder(product._id);
           handleSelectProduct(product);
+          handleShowProductDetailModel();
         }}
       >
         {/* Product header */}
@@ -81,7 +94,7 @@ function ProductItem(props) {
 
           {/* Selected Product small image */}
 
-          <section>
+          <section className="d-none d-sm-block">
             {product.productDetail[0].images.map((image, index) => (
               <img
                 key={image}
@@ -91,7 +104,10 @@ function ProductItem(props) {
                     : {}
                 }
                 id={product._id}
-                onClick={(e) => setImageIndex(index)}
+                onClick={(e) => {
+                  setImageIndex(index);
+                  e.stopPropagation();
+                }}
                 src={product.productDetail[0].images[index]}
                 alt={product._id}
               />

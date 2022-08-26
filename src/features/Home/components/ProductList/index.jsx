@@ -14,6 +14,7 @@ ProductList.propTypes = {
   onSelectProduct: PropTypes.func.isRequired,
   onPageChange: PropTypes.func.isRequired,
   onResetFilter: PropTypes.func.isRequired,
+  showProductDetailModel: PropTypes.func.isRequired,
 };
 
 function ProductList(props) {
@@ -25,6 +26,9 @@ function ProductList(props) {
     onSelectProduct,
     onPageChange,
     onResetFilter,
+    showProductDetailModel,
+    showFilterModal,
+    setShowFilterModal,
   } = props;
 
   const [border, setBorder] = useState(products[0]?._id || "");
@@ -39,17 +43,37 @@ function ProductList(props) {
   return (
     <div className="ProductList">
       <header>
-        <h3>New Arrivals</h3>
+        <div className="d-flex align-items-center">
+          <label htmlFor="nav-mobile-input" className="nav__mobile-btn me-2">
+            <i
+              onClick={() => setShowFilterModal(true)}
+              className="bx bx-menu d-lg-none"
+              style={{ fontSize: "2.2rem", marginLeft: "-4px" }}
+            />
+
+            <label
+              onClick={() => setShowFilterModal(false)}
+              htmlFor="nav-mobile-input"
+              className={
+                showFilterModal ? "nav__over-lay d-block" : "nav__over-lay"
+              }
+            ></label>
+          </label>
+
+          <h3 className="mb-1">New Arrivals</h3>
+        </div>
         <div>
-          <Pagination
-            filter={filter}
-            totalRow={totalRow}
-            onPageChange={onPageChange}
-          />
+          <div className="d-none d-md-block">
+            <Pagination
+              filter={filter}
+              totalRow={totalRow}
+              onPageChange={onPageChange}
+            />
+          </div>
 
           <Button
             type="button"
-            className="btn btn-light btn-sm mx-4"
+            className="btn btn-light btn-sm mx-4 ProductList__button"
             onClick={handleSortPriceClick}
           >
             <div className="d-flex align-items-center">
@@ -75,6 +99,7 @@ function ProductList(props) {
         {products.length > 0 &&
           products.map((product) => (
             <ProductItem
+              showProductDetailModel={showProductDetailModel}
               key={product._id}
               product={product}
               border={border}
@@ -83,6 +108,14 @@ function ProductList(props) {
               selectedProductId={filter.selectedProduct?._id}
             />
           ))}
+        {/*  */}
+        <div className="d-md-none d-flex justify-content-center mt-4">
+          <Pagination
+            filter={filter}
+            totalRow={totalRow}
+            onPageChange={onPageChange}
+          />
+        </div>
 
         {products.length === 0 && (
           <img

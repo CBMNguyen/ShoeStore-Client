@@ -142,18 +142,16 @@ function MainPage(props) {
         showProfileModel={profileModel.showModel}
       />
 
-      <div style={{ minHeight: "calc(100vh - 4.5rem)", padding: "4rem 0" }}>
-        <CartList
-          cart={cart}
-          total={total}
-          showCartEditModal={cartModal.showModel}
-          onColorChange={handleColorChange}
-          onSizeChange={handleSizeChange}
-          onQuantityChange={handleQuantityChange}
-          onCheckoutClick={handleCheckOutClick}
-          onProductRemove={handleRemoveProduct}
-        />
-      </div>
+      <CartList
+        cart={cart}
+        total={total}
+        showCartEditModal={cartModal.showModel}
+        onColorChange={handleColorChange}
+        onSizeChange={handleSizeChange}
+        onQuantityChange={handleQuantityChange}
+        onCheckoutClick={handleCheckOutClick}
+        onProductRemove={handleRemoveProduct}
+      />
 
       {/* Login Model */}
       {loginModel.model.show && (
