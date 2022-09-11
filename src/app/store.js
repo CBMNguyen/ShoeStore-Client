@@ -12,23 +12,25 @@ import {
   REHYDRATE,
 } from "redux-persist";
 
-import colorReducer from "../features/Home/colorSlice";
+import colorReducer from "../features/Product/colorSlice";
+import favouriteReducer from "../features/Favourite/FavouriteSlice";
 import cartReducer from "../features/Cart/cartSlice";
-import categoryReducer from "../features/Home/categorySlice";
-import sizeReducer from "../features/Home/sizeSlice";
-import productReducer from "../features/Home/productSlice";
+import categoryReducer from "../features/Product/categorySlice";
+import sizeReducer from "../features/Product/sizeSlice";
+import productReducer from "../features/Product/productSlice";
 import orderReducer from "../features/Order/orderSlice";
 import userReducer from "./userSlice";
 
 const persistConfig = {
   key: "cart",
   storage,
-  whitelist: ["cart", "user", "order"],
+  whitelist: ["cart", "user", "favourite", "order"],
 };
 
 const rootReducer = combineReducers({
   cart: cartReducer,
   color: colorReducer,
+  favourite: favouriteReducer,
   category: categoryReducer,
   size: sizeReducer,
   products: productReducer,

@@ -29,7 +29,7 @@ function Footer(props) {
 
               <ul className="Footer__about-list text-center">
                 <li>
-                  Điện thoại:&nbsp;
+                  Phone:&nbsp;
                   <a href="tel: 0362.446.521"> 0362446521</a>
                 </li>
                 <li>
@@ -39,8 +39,8 @@ function Footer(props) {
                   </a>
                 </li>
                 <li>
-                  Địa chỉ: Ấp Thành Phú, Xã Thành Lợi, Thị Xã Bình Minh, Tỉnh
-                  Vĩnh Long{" "}
+                  Address: Thanh Phu Hamlet, Thanh Loi Commune, Binh Minh Town,
+                  Vinh Long Province
                 </li>
                 <li>
                   <a href="https://www.dmca.com/" target="blank">

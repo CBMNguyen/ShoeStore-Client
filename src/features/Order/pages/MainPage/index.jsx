@@ -1,98 +1,43 @@
-import { yupResolver } from "@hookform/resolvers/yup";
-import { unwrapResult } from "@reduxjs/toolkit";
-import pavementApi from "api/payment";
-import orderApi from "api/order";
-import { createUser, getMe, updateUser, userLogin } from "app/userSlice";
 import axios from "axios";
-import Footer from "components/Footer";
-import Header from "components/Header";
-import LoginModel from "components/LoginModel";
-import Profile from "components/Profile";
-import SignUpModel from "components/SignUpModel";
-import { resetCart } from "features/Cart/cartSlice";
-import FieldList from "features/Order/components/FieldList";
-import OrderHistory from "features/Order/components/OrderHistory";
-import OrderList from "features/Order/components/OrderList";
+import React, { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
+import { Link } from "react-router-dom";
 import {
-  createOrder,
-  deleteOrder,
-  getOrderById,
-} from "features/Order/orderSlice";
-import useModel from "hooks/useModel";
-import useQuery from "hooks/useQuery";
-import { useRef } from "react";
-import { useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
-import ReactLoading from "react-loading";
-import { useDispatch, useSelector } from "react-redux";
-import { useHistory, useParams, withRouter } from "react-router-dom";
-import { toast } from "react-toastify";
-import { Badge, Button, Col, Form, Row, Spinner, Table } from "reactstrap";
-import {
-  capitalizeFirstLetter,
-  checkout,
-  EXCHANGE_RATE,
-  getMessageOrderByState,
-  showToastError,
-  showToastSuccess,
-  total,
-} from "utils/common";
-import * as yup from "yup";
-import "../../../Cart/components/CartList/cartlist.scss";
+  Breadcrumb,
+  BreadcrumbItem,
+  Button,
+  Col,
+  Container,
+  Form,
+  FormGroup,
+  Input,
+  Label,
+  Row,
+  Spinner,
+} from "reactstrap";
+import { total } from "utils/common";
+import brandLogo from "../../../../assets/images/brandLogo.png";
+import OrderItem from "../components/OrderItem";
 import "./order.scss";
+import cod from "../../../../assets/images/cod.svg";
+import other from "../../../../assets/images/other.svg";
 import Loading from "components/Loading";
-import { STYLE_MODEL } from "constants/globals";
 
 function MainPage(props) {
-  const dispatch = useDispatch();
-  const { userId } = useParams();
-  const [showOrderHistory, setShowOrderHistory] = useState(!!userId);
-
   const { order, id, loading, state } = useSelector((state) => state.order);
 
   const { user } = useSelector((state) => state.user);
-  const userState = useSelector((state) => state.user);
-
-  // hanle fetch user and order when user login
-  useEffect(() => {
-    if (state) {
-      dispatch(getMe(user._id));
-      dispatch(getOrderById(user._id));
-    }
-  }, [dispatch, user._id, state]);
-
-  const history = useHistory();
-  const checkoutLinkRef = useRef();
-
-  const [linkMoMo, setLinkMoMo] = useState("");
-  const [momo, setMoMo] = useState(false);
-  const [loadingMoMo, setLoadingMoMo] = useState(false);
-
-  const query = useQuery();
-
-  useEffect(() => {
-    if (query.get("resultCode")) {
-      if (Number(query.get("resultCode")) === 0) {
-        orderApi.update(query.get("orderId"), { payment: true });
-      } else {
-        toast("There was an error while paying");
-      }
-    }
-  }, [query]);
-
-  const loginModel = useModel();
-  const signupModel = useModel();
-  const profileModel = useModel();
-
-  const [city, setCity] = useState([]);
-  const [district, setDistrict] = useState([]);
-  const [commune, setCommune] = useState([]);
 
   // Set filter when change
   const [filter, setFilter] = useState({
     cityCode: null,
     districtCode: null,
   });
+
+  const [city, setCity] = useState([]);
+  const [district, setDistrict] = useState([]);
+  const [commune, setCommune] = useState([]);
+  const [loadAddress, setLoadAddress] = useState(false);
 
   // Fetch city on Province page
   useEffect(() => {
@@ -114,6 +59,7 @@ function MainPage(props) {
   useEffect(() => {
     const fetchDistrict = async () => {
       if (filter.cityCode === null) return;
+      setLoadAddress(true);
 
       const District = await axios.get(
         `https://provinces.open-api.vn/api/p/${filter.cityCode}/?depth=2`
@@ -125,6 +71,7 @@ function MainPage(props) {
         value: ct.code,
       }));
 
+      setLoadAddress(false);
       setDistrict(districtOptions);
     };
     fetchDistrict();
@@ -134,7 +81,7 @@ function MainPage(props) {
   useEffect(() => {
     const fetchCommune = async () => {
       if (filter.districtCode === null) return;
-
+      setLoadAddress(true);
       const Commune = await axios.get(
         `https://provinces.open-api.vn/api/d/${filter.districtCode}/?depth=2`
       );
@@ -144,389 +91,279 @@ function MainPage(props) {
         label: ct.name,
         value: ct.code,
       }));
-
+      setLoadAddress(false);
       setCommune(communeOptions);
     };
     fetchCommune();
   }, [filter]);
 
-  // handle signup and add new user
-  const handleCreateUser = async (data) => {
-    try {
-      await showToastSuccess(dispatch(createUser(data)));
-      signupModel.closeModel();
-      loginModel.showModel();
-    } catch (error) {
-      showToastError(error);
-    }
-  };
-
-  // handle login
-  const handleLogin = async (data) => {
-    try {
-      await showToastSuccess(dispatch(userLogin(data)));
-      loginModel.closeModel();
-    } catch (error) {
-      showToastError(error);
-    }
-  };
-
-  const defaultValues = {
-    fullName: user.orderAddress.fullName,
-    isFullDay: user.orderAddress.isFullDay,
-    phone: user.orderAddress.phone,
-    city: { label: user.orderAddress.city, value: 0 },
-    district: { label: user.orderAddress.district, value: 0 },
-    commune: { label: user.orderAddress.commune, value: 0 },
-    description: user.orderAddress.description,
-  };
-
-  const schema = yup.object().shape({
-    fullName: yup.string().required("This field is require."),
-    isFullDay: yup.boolean().default(true),
-    phone: yup.string().required("This field is require."),
-    city: yup.object().required("This field is require.").nullable(),
-    district: yup.object().required("This field is require.").nullable(),
-    commune: yup.object().required("This field is require.").nullable(),
-    description: yup.string().required("This field is require."),
-  });
-
-  const {
-    register,
-    control,
-    setValue,
-    handleSubmit,
-    formState: { errors },
-  } = useForm({ defaultValues, resolver: yupResolver(schema) });
-
-  // handle form submit  normal
-  const onSubmit = async (Data) => {
-    const cloneOrder = order.slice().map((item) => ({ ...item })); // clone order
-
-    const orderAddress = {};
-    orderAddress.city = Data.city.label;
-    orderAddress.commune = Data.commune.label;
-    orderAddress.description = Data.description;
-    orderAddress.district = Data.district.label;
-    orderAddress.fullName = Data.fullName;
-    orderAddress.isFullDay = Data.isFullDay;
-    orderAddress.phone = Data.phone;
-
-    const data = {
-      user: user._id,
-      products: checkout(cloneOrder, order),
-      total: parseFloat(total(order).toFixed(2)),
-      paymentMethod: momo ? "momo" : "normal",
-    };
-
-    try {
-      await dispatch(
-        updateUser({
-          _id: user._id,
-          user: { orderAddress: orderAddress },
-        })
-      );
-      // return order from server
-      const actionResult = await dispatch(createOrder(data));
-      const { newOrder } = unwrapResult(actionResult);
-
-      if (momo) {
-        setLoadingMoMo(true);
-        // post to server get momo link
-        const { shortLink } = await pavementApi.post({
-          _id: newOrder._id,
-          total: Math.ceil(Number(newOrder.total) * EXCHANGE_RATE),
-        });
-        // riderect to momo website
-        setLinkMoMo(shortLink);
-        checkoutLinkRef.current.click();
-        setLoadingMoMo(false);
-      }
-
-      !momo && showToastSuccess(actionResult);
-      // reset cart
-      dispatch(resetCart());
-    } catch (error) {
-      dispatch(resetCart());
-      showToastError(error);
-      setLoadingMoMo(false);
-    }
-  };
-
-  // handle remove order
-  const handleRemoveClick = async () => {
-    try {
-      await showToastSuccess(dispatch(deleteOrder(id)));
-    } catch (error) {
-      showToastError(error);
-    }
-  };
-
-  // handle profile change
-  const handleProfileChange = async (data) => {
-    const formData = new FormData();
-    formData.append("firstname", data.firstname);
-    formData.append("lastname", data.lastname);
-    formData.append("email", data.email);
-    formData.append("phone", data.phone);
-    formData.append("password", data.password);
-    formData.append("gender", data.gender.value);
-    formData.append("image", data.image);
-    formData.append("address", data.address);
-    formData.append("birthdate", data.birthdate);
-    try {
-      await showToastSuccess(
-        dispatch(
-          updateUser({ _id: profileModel.model.data._id, user: formData })
-        )
-      );
-      profileModel.closeModel();
-    } catch (error) {
-      showToastError(error);
-    }
-  };
-
   return (
-    <div>
-      <Header
-        showModel={loginModel.showModel}
-        showProfileModel={profileModel.showModel}
-      />
-      <Form onSubmit={handleSubmit(onSubmit)} className="Order">
-        <Row className="Order__checkout shadow">
-          <header>
-            <h1>Check out 🗃️</h1>
-            <i
-              className="bx bxl-shopify"
-              onClick={() => setShowOrderHistory(!showOrderHistory)}
-            />
-          </header>
+    <div className="Order">
+      <Container>
+        <Row style={{ marginTop: "45px" }}>
+          <Col lg={6}>
+            <div className="Order__logo">
+              <h2>
+                <Link to="/">
+                  Shoes Store{" "}
+                  <img className="img-fluid" src={brandLogo} alt="brandLogo" />
+                </Link>
+              </h2>
+            </div>
 
-          {/* render field list */}
-          {/* personal infor to checkout*/}
-          <Col md={5} className="mgb-4">
-            <FieldList
-              defaultValues={defaultValues}
-              register={register}
-              control={control}
-              errors={errors}
-              filter={filter}
-              setFilter={setFilter}
-              setValue={setValue}
-              selectedCity={defaultValues.city}
-              selectedDistrict={defaultValues.district}
-              selectedCommune={defaultValues.commune}
-              city={city}
-              district={district}
-              commune={commune}
-            />
+            <Breadcrumb>
+              <BreadcrumbItem>
+                <Link to="/cart" className="text-decoration-none">
+                  <code>Cart</code>
+                </Link>
+              </BreadcrumbItem>
+              <BreadcrumbItem active>
+                <code>Order information</code>
+              </BreadcrumbItem>
+              <BreadcrumbItem>
+                <Link className="text-decoration-none">
+                  <code>Payment method</code>
+                </Link>
+              </BreadcrumbItem>
+            </Breadcrumb>
+
+            <h4 className="mb-3">
+              <code className="text-secondary">Order Information</code>
+            </h4>
+
+            <Form>
+              <Row>
+                <Col md={12}>
+                  <FormGroup floating>
+                    <Input id="fullname" name="fullname" type="text" />
+                    <Label for="fullname">Full Name</Label>
+                  </FormGroup>
+                </Col>
+              </Row>
+              <Row>
+                <Col md={8}>
+                  <FormGroup floating>
+                    <Input id="email" name="email" type="email" />
+                    <Label for="email">Email</Label>
+                  </FormGroup>
+                </Col>
+                <Col md={4}>
+                  <FormGroup floating>
+                    <Input id="number" name="number" type="number" />
+                    <Label for="number">Number</Label>
+                  </FormGroup>
+                </Col>
+              </Row>
+              <FormGroup floating>
+                <Input id="address" name="address" />
+                <Label for="address">Address</Label>
+              </FormGroup>
+              <Row className="position-relative">
+                {loadAddress && (
+                  <div className="position-absolute" style={{ top: "12px" }}>
+                    <Loading />
+                  </div>
+                )}
+
+                <Col md={4}>
+                  {/* City */}
+                  <FormGroup floating>
+                    <Input
+                      id="city"
+                      name="city"
+                      onChange={(e) =>
+                        setFilter({ ...filter, cityCode: e.target.value })
+                      }
+                      type="select"
+                    >
+                      {!filter.cityCode && (
+                        <option value="">Select Provice / City</option>
+                      )}
+                      {city.map((item) => (
+                        <option value={item.value}>{item.label}</option>
+                      ))}
+                    </Input>
+                    <Label for="city">City / Province</Label>
+                  </FormGroup>
+                </Col>
+
+                {/* District */}
+                <Col md={4}>
+                  <FormGroup floating>
+                    <Input
+                      id="district"
+                      name="district"
+                      onChange={(e) =>
+                        setFilter({ ...filter, districtCode: e.target.value })
+                      }
+                      type="select"
+                    >
+                      {!filter.cityCode && (
+                        <option value="">Select District</option>
+                      )}
+                      {district.map((item) => (
+                        <option value={item.value}>{item.label}</option>
+                      ))}
+                    </Input>
+                    <Label for="district">District</Label>
+                  </FormGroup>
+                </Col>
+
+                {/* Commune */}
+                <Col md={4}>
+                  <FormGroup floating>
+                    <Input id="commune" name="select" type="select">
+                      {!filter.districtCode && (
+                        <option value="">Select Provice / City</option>
+                      )}
+                      {commune.map((item) => (
+                        <option value={item.value}>{item.label}</option>
+                      ))}
+                    </Input>
+                    <Label for="commune">Wards / Commune</Label>
+                  </FormGroup>
+                </Col>
+              </Row>
+
+              {/* Payment method */}
+              <FormGroup row tag="fieldset">
+                <h4 className="mb-3">
+                  <code className="text-secondary">Payment Method</code>
+                </h4>
+                <FormGroup check>
+                  <Input
+                    defaultChecked
+                    style={{ cursor: "pointer" }}
+                    id="paymentMethodDelivery"
+                    name="paymentMethod"
+                    className="mt-3 me-4"
+                    type="radio"
+                  />
+                  <Label
+                    check
+                    for="paymentMethodDelivery"
+                    className="mt-1"
+                    style={{ cursor: "pointer" }}
+                  >
+                    {" "}
+                    <img src={cod} alt="cod" />
+                    <code className="text-secondary fs-6 ms-3">
+                      Payment on delivery
+                    </code>
+                  </Label>
+                </FormGroup>
+
+                {/* Payment online method */}
+                <FormGroup check>
+                  <Input
+                    id="paymentMethodOnline"
+                    name="paymentMethod"
+                    className="mt-3 me-4"
+                    type="radio"
+                    style={{ cursor: "pointer" }}
+                  />
+                  <Label
+                    check
+                    for="paymentMethodOnline"
+                    className="mt-1"
+                    style={{ cursor: "pointer" }}
+                  >
+                    {" "}
+                    <img src={other} alt="other" />
+                    <code className="text-secondary fs-6 ms-3">
+                      Online Payment
+                    </code>
+                  </Label>
+                </FormGroup>
+              </FormGroup>
+
+              <Row className="mt-2">
+                <Col md={2}>
+                  <Link to="/cart" className="text-decoration-none fs-4">
+                    <code>Cart</code>
+                  </Link>
+                </Col>
+                <Col md={10}>
+                  <Button
+                    disabled={order.length === 0}
+                    style={{ backgroundColor: "deeppink" }}
+                    className="text-white rounded-1 float-end p-3 border-0"
+                  >
+                    Complete payment
+                  </Button>
+                </Col>
+              </Row>
+            </Form>
           </Col>
 
-          {/* Render product list */}
-          {/* order infor to check out */}
-          <Col md={7}>
-            {/* handle when order empty */}
-            {order.length === 0 && !showOrderHistory ? ( // show empty cart when not order
-              <div
-                className="empty mt-0"
-                style={{ backgroundColor: "transparent" }}
-              >
-                <i className="bx bx-basket animate__animated animate__swing">
-                  <Badge className="bg-warning rounded-circle">0</Badge>
-                </i>
-                <div
-                  onClick={() => history.push("/")}
-                  className="button shadow-lg"
-                >
-                  Go Back Shop
-                </div>
-              </div>
-            ) : (
-              // show order list item
-              <div
-                className="none-scroll"
-                style={{
-                  height: "100%",
-                  backgroundColor: "#fff",
-                  borderRadius: "8px",
-                  overflowY: "scroll",
-                }}
-              >
-                {showOrderHistory && (
-                  <OrderHistory showOrderHistory={showOrderHistory} />
-                )}
-                <div
-                  className="Order__list"
-                  style={
-                    !state && !showOrderHistory
-                      ? { height: "100% !important" }
-                      : {}
-                  }
-                >
-                  <div>
-                    {/* Product List check out */}
+          {/* Order Information side */}
+          <Col lg={6}>
+            <div
+              style={{
+                borderLeft: "2px solid #dedede",
+                height: "88vh",
+                overflowY: "scroll",
+              }}
+            >
+              <Container>
+                <div className="w-75 m-auto">
+                  <Row className="mt-3">
+                    {order.map((orderItem) => (
+                      <OrderItem order={orderItem} />
+                    ))}
+                  </Row>
 
-                    {!showOrderHistory && (
-                      <div>
-                        {" "}
-                        <Table className="table table-sm">
-                          <thead>
-                            <tr className="p-1">
-                              <th>Product</th>
-                              <th className="text-center">Size</th>
-                              <th>Quantity</th>
-                              <th>Price</th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            {order.map((product, index) => (
-                              <OrderList key={index} product={product} />
-                            ))}
-                          </tbody>
-                        </Table>
+                  <Row
+                    className="my-3 pb-4"
+                    style={{ borderBottom: "1px solid #dedede" }}
+                  >
+                    <Col md={9}>
+                      <FormGroup floating>
+                        <Input
+                          id="discountCode"
+                          name="discountCode"
+                          type="text"
+                        />
+                        <Label for="discountCode">Discount code</Label>
+                      </FormGroup>
+                    </Col>
+                    <Col md={3}>
+                      <Button className="w-100 h-75 bg-info border-0">
+                        Apply
+                      </Button>
+                    </Col>
+                  </Row>
+
+                  <Row style={{ borderBottom: "1px solid #dedede" }}>
+                    <div className="py-3">
+                      <div className="d-flex justify-content-between text-secondary">
+                        <div>Provisional Price</div>
+                        <div>${total(order).toFixed(2)}</div>
                       </div>
-                    )}
+                      <div className="d-flex justify-content-between my-2 text-secondary">
+                        <div>Transport Fee</div>
+                        <div>$5</div>
+                      </div>
+                      <div className="d-flex justify-content-between text-secondary">
+                        <div>Discount</div>
+                        <div>$5</div>
+                      </div>
+                    </div>
+                  </Row>
+                  <div className="d-flex justify-content-between mt-3 text-secondary fs-5">
+                    <div>Total Amount:</div>
+                    <div className="text-dark fw-bold">
+                      ${total(order).toFixed(2)}
+                    </div>
                   </div>
                 </div>
-                {!showOrderHistory && (
-                  <div>
-                    {/* Total */}
-                    <footer className="mt-4">
-                      <div>Total:</div>
-                      <div>${total(order).toFixed(2)}</div>
-                    </footer>
-
-                    {!state && (
-                      <div>
-                        {/* Check out button */}
-                        <Button
-                          style={{ position: "relative", marginBottom: 0 }}
-                          type="submit"
-                        >
-                          Check out
-                          {loading && !momo && (
-                            <Spinner
-                              style={{
-                                position: "absolute",
-                                bottom: "4px",
-                                right: "4px",
-                              }}
-                              color="light"
-                              size="sm"
-                            >
-                              {" "}
-                            </Spinner>
-                          )}
-                        </Button>
-                        {/* Check out button with momo */}
-                        <Button
-                          style={{
-                            position: "relative",
-                            marginTop: "8px",
-                            backgroundColor: "deeppink",
-                          }}
-                          onClick={() => setMoMo(true)}
-                          type="submit"
-                        >
-                          Check out with MoMo
-                          {loading && momo && (
-                            <Spinner
-                              style={{
-                                position: "absolute",
-                                bottom: "4px",
-                                right: "4px",
-                              }}
-                              color="light"
-                              size="sm"
-                            >
-                              {" "}
-                            </Spinner>
-                          )}
-                        </Button>
-                      </div>
-                    )}
-                    {/* Button when await check out */}
-                    {state && (
-                      <section
-                        onClick={state === "pending" ? handleRemoveClick : null}
-                        style={{
-                          backgroundColor:
-                            state === "pending"
-                              ? "#f72a8d"
-                              : state === "processing"
-                              ? "cyan"
-                              : "green",
-                          color: "white",
-                          cursor:
-                            state === "processing" || state === "delivered"
-                              ? "default"
-                              : "pointer",
-                        }}
-                      >
-                        <div>
-                          {capitalizeFirstLetter(state)}
-                          {/* React loading */}
-
-                          {state !== "delivered" && (
-                            <ReactLoading
-                              type="balls"
-                              color="white"
-                              width="30px"
-                              height="30px"
-                            />
-                          )}
-                        </div>
-
-                        <small>{getMessageOrderByState(state)}</small>
-                      </section>
-                    )}
-                  </div>
-                )}
-              </div>
-            )}
+              </Container>
+            </div>
           </Col>
         </Row>
-      </Form>
-
-      <a ref={checkoutLinkRef} style={{ display: "none" }} href={linkMoMo}>
-        checkout momo
-      </a>
-
-      {loadingMoMo && (
-        <div style={{ ...STYLE_MODEL }}>
-          <Loading />
-        </div>
-      )}
-
-      {/* handle show login model */}
-      {loginModel.model.show && (
-        <LoginModel
-          onLogin={handleLogin}
-          closeModel={loginModel.closeModel}
-          showModel={signupModel.showModel}
-        />
-      )}
-
-      {/* handle show signup model */}
-      {signupModel.model.show && (
-        <SignUpModel
-          onCreateUser={handleCreateUser}
-          closeModel={signupModel.closeModel}
-        />
-      )}
-
-      {/* handle show profile model */}
-      {profileModel.model.show && (
-        <Profile
-          loading={userState.loading}
-          onSubmit={handleProfileChange}
-          model={profileModel.model}
-          closeModel={profileModel.closeModel}
-        />
-      )}
-      <Footer />
+      </Container>
     </div>
   );
 }
 
-export default withRouter(MainPage);
+export default MainPage;

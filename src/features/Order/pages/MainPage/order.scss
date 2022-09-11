@@ -1,198 +1,25 @@
+@import url("https://fonts.googleapis.com/css2?family=Pacifico&display=swap");
 .Order {
-  &__checkout {
-    width: 1050px;
-    max-width: 100%;
-
-    padding: 0 1.5rem;
-    padding-bottom: 2rem;
-    margin: 3rem auto;
-
-    background-color: deeppink;
-    border-radius: 8px;
-
-    & header {
-      & h1 {
-        margin: 0;
-      }
-    }
-
-    & .empty {
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-
-      width: 100%;
-      height: 100%;
-      background-color: pink;
-
-      & i {
-        position: relative;
-        font-size: 15rem;
-
-        & span {
-          position: absolute;
-          top: 11rem;
-          left: 12.6rem;
-          font-size: 1.5rem;
-        }
-      }
-
-      & .button {
-        display: flex;
-        align-items: center;
-        margin-top: 2rem;
-        padding: 1rem 2rem;
-        color: white;
-        border: none;
-        border-radius: 0.4rem;
-
-        background-color: cyan;
-        font-weight: bold;
-        cursor: pointer;
-      }
-    }
-
-    & header {
+  &__logo {
+    & h2 {
       position: relative;
-      margin: 1rem 0;
-      text-transform: uppercase;
-      color: white;
-
-      & i {
-        position: absolute;
-        top: 4px;
-        right: 1rem;
-        font-size: 2.5rem;
-        color: #fff;
-        transition: all 0.3s ease-in-out 0s;
-      }
-
-      & i:hover {
-        transform: scale(1.05);
-        cursor: pointer;
-      }
-    }
-
-    & tr {
-      vertical-align: middle;
-    }
-
-    & .FieldList {
-      width: 100%;
-      height: 100%;
-      overflow-y: scroll;
-      padding: 1rem 1.2rem;
-
-      border-radius: 8px;
-      font-weight: bold;
-      color: black;
-      background-color: white;
-    }
-
-    & .FieldList::-webkit-scrollbar {
-      display: none;
-    }
-
-    & footer {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      width: 100%;
-      padding: 0 2.4rem 0 1rem;
-
-      & > div {
-        font-weight: bold;
-      }
-    }
-
-    & button,
-    & section {
-      position: relative;
-      display: block;
-      width: 85%;
-      padding: 0.5rem;
-      margin: 1.6rem auto;
-
-      border-radius: 0.2rem;
-      font-size: 1.5rem;
-      font-weight: bold;
-      text-transform: uppercase;
-      letter-spacing: 0.2rem;
-
-      background-color: black;
-      border: none;
+      top: 2px;
+      font-family: "Pacifico", cursive;
       cursor: pointer;
-
-      & div {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-      }
-
-      & small {
-        display: block;
-        text-align: center;
-        color: #fee;
-        font-size: 0.5rem;
-      }
+      user-select: none;
     }
 
-    & button:hover,
-    & button:focus {
-      background-color: black;
-    }
-  }
-
-  &__list {
-    padding: 0.5rem 1rem;
-    width: 100%;
-    max-height: 320px;
-    overflow-y: scroll;
-
-    & div:first-child {
-      max-height: 440px;
+    & a {
+      color: black;
+      text-decoration: none;
     }
 
-    & table {
-      padding: 0;
-      margin: 0;
-    }
-
-    & table thead {
-      position: sticky;
-      top: -0.5rem;
-      padding: 1rem;
-      z-index: 1;
-      background-color: #fff;
-    }
-  }
-}
-
-.none-scroll::-webkit-scrollbar {
-  display: none !important;
-  -ms-overflow-style: none; /* IE and Edge */
-  scrollbar-width: none;
-}
-
-@media (max-width: 768px) {
-  .mgb-4 {
-    margin-bottom: 16px;
-  }
-}
-
-@media (max-width: 900px) {
-  .Order {
-    &__checkout {
-      width: 100%;
-      margin: 0;
-      padding-left: 0.5rem;
-      padding-right: 0.5rem;
-      border-radius: 0;
-
-      & button {
-        font-size: 100%;
-      }
+    & img {
+      position: relative;
+      top: -4px;
+      width: 32px;
+      height: 32px;
+      object-fit: cover;
     }
   }
 }

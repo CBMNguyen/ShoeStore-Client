@@ -1,4 +1,8 @@
 import { unwrapResult } from "@reduxjs/toolkit";
+import {
+  LeftArrowDirection,
+  RightArrowDirection,
+} from "components/ArrowDirection";
 import { PRODUCT_TOAST_OPTIONS } from "constants/globals";
 import { toast } from "react-toastify";
 
@@ -69,6 +73,8 @@ export const sliderSettings = {
   autoplay: true,
   slidesToShow: 1,
   slidesToScroll: 1,
+  prevArrow: <LeftArrowDirection />,
+  nextArrow: <RightArrowDirection />,
 };
 
 // handle total price order
@@ -169,3 +175,33 @@ export const getMessageOrderByState = (state) => {
 
 // tỷ giá dolar
 export const EXCHANGE_RATE = 23000;
+
+// get star
+
+export const getStarNumbers = (star, reviews) => {
+  const starNumbers = [];
+  Array.from(Array(5).keys()).forEach((key) => {
+    const reviewItem = reviews.filter((review) => review.star === key + 1);
+    starNumbers.push(reviewItem.length);
+  });
+  return starNumbers[star - 1];
+};
+
+// get average star
+export const getAverageStar = (reviews) => {
+  const starNumbers = Array.from(Array(5).keys()).map((key) =>
+    getStarNumbers(key + 1, reviews)
+  );
+
+  let totalReviewNumber = 0;
+  let totalStarNumber = 0;
+
+  starNumbers.forEach((item, index) => {
+    totalReviewNumber += item;
+    totalStarNumber += item * (index + 1);
+  });
+
+  if (totalReviewNumber === 0) return 0;
+
+  return totalStarNumber / totalReviewNumber;
+};

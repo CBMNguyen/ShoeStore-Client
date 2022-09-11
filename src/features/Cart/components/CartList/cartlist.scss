@@ -1,5 +1,4 @@
 .CartList {
-  max-width: 80%;
   margin: 2.5rem auto;
   max-height: 600px;
   padding: 1rem;
@@ -71,13 +70,17 @@
     }
 
     & .button {
+      display: block;
+      width: 300px;
       margin-top: 2rem;
       padding: 1rem 2rem;
+
+      background-color: deeppink;
       color: white;
       border: none;
       border-radius: 0.4rem;
+      text-align: center;
 
-      background-color: cyan;
       font-weight: bold;
       cursor: pointer;
     }
@@ -85,7 +88,7 @@
 
   &__payment {
     display: block;
-    width: 325px;
+    width: 400px;
     margin-left: auto;
 
     & > div {
@@ -98,7 +101,7 @@
       font-weight: bold;
     }
 
-    & > div div:last-child {
+    & > div div:nth-child(3) {
       padding: 0.4rem 0.8rem;
       border: none;
       border-radius: 0.2rem;

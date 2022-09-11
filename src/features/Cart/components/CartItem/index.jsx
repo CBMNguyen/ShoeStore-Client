@@ -1,6 +1,7 @@
 import PropTypes from "prop-types";
 import React from "react";
 import { Badge, Input } from "reactstrap";
+import { capitalizeFirstLetter } from "utils/common";
 import "./cartitem.scss";
 
 CartItem.propTypes = {
@@ -91,7 +92,9 @@ function CartItem(props) {
 
       {/* Color column */}
 
-      <td className="text-center">{product.selectedColor}</td>
+      <td className="text-center">
+        {capitalizeFirstLetter(product.selectedColor)}
+      </td>
 
       {/* Quantity Column */}
 
@@ -122,20 +125,6 @@ function CartItem(props) {
       <td>
         <div className="CartItem__discount">
           <Badge className="bg-info">{`${product.promotionPercent} %`}</Badge>
-        </div>
-      </td>
-
-      {/* FreeShip column */}
-
-      <td>
-        <div className="CartItem__freeship">
-          <Input
-            className="d-block ms-4"
-            style={{ backgroundColor: "#34ae11" }}
-            type="checkbox"
-            checked={product.isFreeShip}
-            readOnly
-          />
         </div>
       </td>
 

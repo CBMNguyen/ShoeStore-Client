@@ -1,0 +1,104 @@
+.ProductDetailImage {
+  &__title {
+    & div:first-child {
+      font-size: 2rem;
+      font-weight: bold;
+    }
+
+    & div:last-child {
+      color: #ccc;
+      margin-bottom: 8px;
+      font-size: 1.2rem;
+    }
+
+    & i:hover {
+      transform: scale(1.05);
+    }
+  }
+
+  &__size {
+    transition: all ease-in-out 0.3s;
+    margin-bottom: 1rem;
+
+    & header {
+      font-weight: 600;
+      margin-bottom: 0.75rem;
+    }
+
+    & section {
+      display: flex;
+
+      & > div {
+        padding: 10px 15px 10px 15px;
+        border: 1px solid #eee;
+        margin-right: 0.5rem;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: 0.5s;
+      }
+    }
+  }
+
+  &__color {
+    margin-bottom: 1rem;
+
+    & header {
+      font-weight: 600;
+      margin-bottom: 0.75rem;
+    }
+
+    & section {
+      display: flex;
+
+      & > div {
+        width: 38px;
+        height: 38px;
+        margin-right: 0.5rem;
+        border-radius: 50%;
+        border: 2px solid #eee;
+        cursor: pointer;
+        transition: 0.5s;
+      }
+    }
+  }
+
+  &__quantity {
+    & header {
+      font-weight: 600;
+      margin-bottom: 0.75rem;
+    }
+  }
+
+  &__button {
+    width: 100%;
+    margin-top: 1rem;
+
+    & button {
+      position: relative;
+      display: block;
+      width: 100%;
+      padding: 0.8rem 1.2rem;
+
+      font-weight: 600;
+      border: none;
+      border-radius: 8px;
+      background-color: black;
+      color: white;
+
+      & i {
+        position: absolute;
+        left: 10px;
+        top: 0.85rem;
+        font-size: 1.4rem;
+      }
+    }
+  }
+
+  & {
+    input[type="number"]::-webkit-inner-spin-button,
+    input[type="number"]::-webkit-outer-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+  }
+}
