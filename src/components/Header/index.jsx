@@ -1,7 +1,6 @@
 import CartModal from "components/CartModal";
 import Map from "components/Map";
 import { removeProduct } from "features/Cart/cartSlice";
-import { getOrderWithCart } from "features/Order/orderSlice";
 import useModel from "hooks/useModel";
 import jwt from "jsonwebtoken";
 import PropTypes from "prop-types";
@@ -76,17 +75,6 @@ function Header(props) {
   // handle remove cart item
   const handleRemoveCartItem = (product) => {
     dispatch(removeProduct({ id: product._id }));
-    const order = cart
-      .filter(
-        (item) =>
-          !(
-            item._id === product._id &&
-            item.selectedColor === product.selectedColor &&
-            item.selectedSize === product.selectedSize
-          )
-      )
-      .map((cart) => ({ ...cart, state: "" }));
-    dispatch(getOrderWithCart({ order, userId: user._id }));
   };
 
   // handle click when go to check out
@@ -94,10 +82,8 @@ function Header(props) {
   const handleCheckOutClick = async () => {
     try {
       await jwt.verify(token, process.env.REACT_APP_JWT_KEY);
-      const order = cart.map((cart) => ({ ...cart, state: "" }));
-      dispatch(getOrderWithCart({ order, userId: user._id }));
 
-      history.push("/order/");
+      history.push("/order/" + user._id);
     } catch (error) {
       showModel();
     }

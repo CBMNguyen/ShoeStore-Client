@@ -5,9 +5,6 @@ const initialState = {
   order: [],
   error: "",
   loading: false,
-  state: "",
-  id: "",
-  userId: "",
 };
 
 export const getOrderById = createAsyncThunk(
@@ -49,14 +46,7 @@ export const deleteOrder = createAsyncThunk(
 const orderSlice = createSlice({
   name: "order",
   initialState,
-  reducers: {
-    getOrderWithCart: (state, action) => {
-      const { order, userId } = action.payload;
-      state.order = order;
-      state.state = "";
-      state.userId = userId;
-    },
-  },
+  reducers: {},
 
   // handle get order
   extraReducers: {
@@ -65,18 +55,12 @@ const orderSlice = createSlice({
     },
     [getOrderById.rejected]: (state, action) => {
       state.loading = false;
-      state.order = [];
-      state.userId = "";
-      state.id = "";
       state.error = action.payload.message;
     },
     [getOrderById.fulfilled]: (state, action) => {
       const { order } = action.payload;
       state.loading = false;
-      state.state = order[order.length - 1].state;
-      state.order = order[order.length - 1].products;
-      state.id = order[order.length - 1]._id;
-      state.userId = order[order.length - 1].user._id;
+      state.order = order;
       state.error = "";
     },
 
@@ -91,9 +75,7 @@ const orderSlice = createSlice({
     [createOrder.fulfilled]: (state, action) => {
       const { newOrder } = action.payload;
       state.loading = false;
-      state.state = newOrder.state;
-      state.id = newOrder._id;
-      state.order = newOrder.products;
+      state.order.push(newOrder);
       state.error = "";
     },
 
@@ -105,17 +87,13 @@ const orderSlice = createSlice({
       state.loading = false;
       state.error = action.payload.message;
     },
-    [deleteOrder.fulfilled]: (state) => {
+    [deleteOrder.fulfilled]: (state, action) => {
       state.loading = false;
-      state.order = [];
+      state.order = state.order.filter((order) => order._id !== action.payload);
       state.error = "";
-      state.state = "";
-      state.id = "";
-      state.userId = "";
     },
   },
 });
 
-const { actions, reducer } = orderSlice;
-export const { getOrderWithCart } = actions;
+const { reducer } = orderSlice;
 export default reducer;

@@ -19,6 +19,8 @@ import other from "../../../../../assets/images/other.svg";
 
 function OrderForm({
   user,
+  cart,
+  order,
   addresses,
   showAddressForm,
   setShowAddressForm,
@@ -27,13 +29,29 @@ function OrderForm({
   setPaymentMethod,
   paymentMethod,
   loadingMoMo,
-  savedOrder,
+  orderData,
 }) {
   const defaultValues = {
-    fullname: savedOrder ? savedOrder.fullname : user.firstname + user.lastname,
-    email: savedOrder ? savedOrder.email : user.email,
-    phone: savedOrder ? savedOrder.phone : user.phone,
-    address: "",
+    fullname: orderData
+      ? orderData.fullname
+      : order.length !== 0
+      ? order[order.length - 1].fullname
+      : user.firstname + " " + user.lastname,
+    email: orderData
+      ? orderData.email
+      : order.length !== 0
+      ? order[order.length - 1].email
+      : user.email,
+    phone: orderData
+      ? orderData.phone
+      : order.length !== 0
+      ? order[order.length - 1].phone
+      : user.phone,
+    address: orderData
+      ? orderData.address
+      : order.length !== 0
+      ? order[order.length - 1].address
+      : "",
   };
 
   // yup schema
@@ -57,10 +75,24 @@ function OrderForm({
     getValues,
   } = useForm({ defaultValues, resolver: yupResolver(schema) });
 
-  const onSubmit = (data) => {
+  const onSubmit = async (data) => {
     if (!onCheckoutSubmit) return;
-    onCheckoutSubmit(data);
+    await onCheckoutSubmit(data);
   };
+  const addressesClone = addresses.slice();
+  const getLatestAddress = (addressList) => {
+    if (orderData || order.length !== 0) {
+      const index = addressesClone.findIndex(
+        ({ address }) => address === addressList.address
+      );
+      const savedAddress = addressesClone[index];
+      addressesClone.splice(index, 1);
+      addressesClone.unshift(savedAddress);
+    }
+  };
+  // get latest order address
+  addresses.length !== 0 &&
+    getLatestAddress(orderData || order[order.length - 1]);
   return (
     <div className="OrderForm" onSubmit={handleSubmit(onSubmit)}>
       <Form>
@@ -167,15 +199,18 @@ function OrderForm({
                     setSelectedAddress(e.target.value);
                   }}
                 >
-                  {addresses.length === 0 ? (
+                  {addresses.length === 0 && (
                     <option value="">
                       You do not have an address. Please add an address to
                       order...
                     </option>
-                  ) : (
-                    <option value="">Select address...</option>
                   )}
-                  {addresses.map(({ address }) => (
+
+                  {addresses.length !== 0 && order.length === 0 && (
+                    <option value="">Select order address...</option>
+                  )}
+
+                  {addressesClone.map(({ address }, index) => (
                     <option key={address} value={address}>
                       {address.split("#")[0]}
                     </option>
@@ -223,9 +258,7 @@ function OrderForm({
           </h4>
           <FormGroup check>
             <Input
-              defaultChecked={
-                savedOrder ? !savedOrder.paymentMethod : !paymentMethod
-              }
+              defaultChecked={!paymentMethod}
               style={{ cursor: "pointer" }}
               id="paymentMethodDelivery"
               name="paymentMethod"
@@ -251,9 +284,7 @@ function OrderForm({
           {/* Payment online method */}
           <FormGroup check>
             <Input
-              defaultChecked={
-                savedOrder ? savedOrder.paymentMethod : paymentMethod
-              }
+              defaultChecked={paymentMethod}
               id="paymentMethodOnline"
               name="paymentMethod"
               className="mt-3 me-4"
@@ -283,7 +314,7 @@ function OrderForm({
           <Col md={10}>
             <Button
               type="submit"
-              disabled={loadingMoMo || isSubmitting}
+              disabled={loadingMoMo || isSubmitting || cart.length === 0}
               style={{ backgroundColor: "deeppink" }}
               className="text-white rounded-1 float-end p-3 border-0"
             >

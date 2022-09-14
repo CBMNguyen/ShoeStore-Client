@@ -12,7 +12,6 @@ import {
 } from "features/Cart/cartSlice";
 import CartEditModal from "features/Cart/components/CartEditModal";
 import CartList from "features/Cart/components/CartList";
-import { getOrderWithCart } from "features/Order/orderSlice";
 import useModel from "hooks/useModel";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -52,17 +51,6 @@ function MainPage(props) {
   // handle remove product
   const handleRemoveProduct = (product) => {
     dispatch(removeProduct({ id: product._id }));
-    const order = cart
-      .filter(
-        (item) =>
-          !(
-            item._id === product._id &&
-            item.selectedColor === product.selectedColor &&
-            item.selectedSize === product.selectedSize
-          )
-      )
-      .map((cart) => ({ ...cart, state: "" }));
-    dispatch(getOrderWithCart({ order, userId: user._id }));
   };
 
   // handle sign up add new user
@@ -91,9 +79,6 @@ function MainPage(props) {
   const handleCheckOutClick = async () => {
     try {
       await jwt.verify(token, process.env.REACT_APP_JWT_KEY);
-      const order = cart.map((cart) => ({ ...cart, state: "" }));
-      dispatch(getOrderWithCart({ order, userId: user._id }));
-
       history.push("/order/");
     } catch (error) {
       loginModel.showModel();

@@ -1,16 +1,12 @@
-import React from "react";
-import PropTypes from "prop-types";
-import { Button, Container } from "reactstrap";
 import { Link } from "react-router-dom";
+import { Button, Container } from "reactstrap";
 import brandLogo from "../../assets/images/brandLogo.png";
 import "./checkoutSuccess.scss";
-
-CheckoutSuccess.propTypes = {};
 
 function CheckoutSuccess({ user }) {
   return (
     <div className="CheckoutSuccess shadow">
-      <div className="d-flex flex-column align-items-center">
+      <Container className="d-flex flex-column align-items-center">
         <i
           className="bx bx-check-circle"
           style={{ fontSize: "100px", color: "#63C000" }}
@@ -23,36 +19,43 @@ function CheckoutSuccess({ user }) {
             </Link>
           </h2>
         </div>
+
         <h3 className="my-3">Checkout Successfully</h3>
 
-        <p className="mt-2">
+        <div className="my-3 text-center">
           <code className="text-secondary">
             Thank you so much for your order! We really appreciate it. Enjoy 10%
             off your next purchase with this coupon code: THANKYOU10.
           </code>
-        </p>
+        </div>
 
-        <div className="d-flex w-100 justify-content-center mt-4">
+        <div className="d-flex w-100 flex-column flex-lg-row justify-content-center align-items-center mt-4">
           <Button
             type="submit"
-            style={{ backgroundColor: "deeppink" }}
-            className="text-white rounded-1 float-end p-3 border-0 w-25 me-5 shadow"
+            style={{ backgroundColor: "deeppink", width: "240px" }}
+            className="text-white rounded-1 border-0 shadow"
           >
             <Link to="/products" className="text-decoration-none">
-              <code className="text-white fs-6">Keep shopping</code>
+              <code className="text-white fs-6 p-3 d-block w-100">
+                Keep shopping
+              </code>
             </Link>
           </Button>
+          <div className="my-2 mx-4"></div>
           <Button
             type="submit"
-            style={{ backgroundColor: "cyan" }}
-            className="text-white rounded-1 float-end p-3 border-0 w-25 shadow"
+            style={{ backgroundColor: "cyan", width: "240px" }}
+            className="text-white rounded-1 border-0 shadow"
           >
-            <Link to={`/order/${user?._id}`} className="text-decoration-none">
+            <Link
+              to={`/order/${user?._id}`}
+              className="text-decoration-none p-3 d-block w-100"
+            >
               <code className="text-white fs-6">View orders</code>
             </Link>
           </Button>
         </div>
-      </div>
+      </Container>
     </div>
   );
 }

@@ -36,6 +36,7 @@ function CartModal({
               borderBottom:
                 index + 1 !== carts.length ? "1px solid #dedede" : "unset",
             }}
+            key={index}
           >
             <div
               className="CartModal__removeCartItem"
@@ -117,9 +118,12 @@ function CartModal({
       <div className="d-flex">
         <Button
           style={{ backgroundColor: "#000" }}
-          className="rounded-1 flex-grow-1 p-2 shadow"
+          className="rounded-1 flex-grow-1 shadow"
         >
-          <Link to="/cart" className="text-white text-decoration-none">
+          <Link
+            to="/cart"
+            className="text-white text-decoration-none d-block p-2"
+          >
             <code className="text-white fs-6">View cart</code>
           </Link>
         </Button>

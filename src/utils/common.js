@@ -78,7 +78,7 @@ export const sliderSettings = {
 };
 
 // handle total price order
-export const total = (order) => {
+export const total = (order = []) => {
   return order.reduce(
     (sum, product) =>
       sum +
@@ -153,7 +153,7 @@ export const checkout = (cloneOrder, order) => {
     });
 
     return {
-      ...item,
+      _id: item._id,
       productDetail,
       quantityStock: item.quantityStock - selectedQuantity,
     };

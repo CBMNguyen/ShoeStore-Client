@@ -22,6 +22,9 @@ import {
 } from "reactstrap";
 import { showToastError, showToastSuccess } from "utils/common";
 import "./home.scss";
+import slider1 from "../../assets/images/slider1.webp";
+import slider2 from "../../assets/images/slider_2.jpg";
+import slider3 from "../../assets/images/slider3.webp";
 
 function Home(props) {
   const dispatch = useDispatch();
@@ -51,15 +54,15 @@ function Home(props) {
 
   const items = [
     {
-      src: "https://bizweb.dktcdn.net/100/292/624/themes/758446/assets/slider_1.jpg?1662463008840",
+      src: slider1,
       key: 1,
     },
     {
-      src: "https://theme.hstatic.net/200000265619/1000860341/14/slider_2.jpg?v=580",
+      src: slider2,
       key: 2,
     },
     {
-      src: "https://brand.assets.adidas.com/image/upload/f_auto,q_auto,fl_lossy/if_w_gt_1920,w_1920/viVN/Images/fw22-ao-jeremy-scott-launch-hp-mh-d_tcm337-926213.jpeg",
+      src: slider3,
       key: 3,
     },
   ];

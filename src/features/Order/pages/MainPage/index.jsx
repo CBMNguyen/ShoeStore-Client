@@ -9,7 +9,7 @@ import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { Breadcrumb, BreadcrumbItem, Col, Container, Row } from "reactstrap";
-import { total } from "utils/common";
+import { checkout, total } from "utils/common";
 import brandLogo from "../../../../assets/images/brandLogo.png";
 import OrderDetail from "../components/OrderDetail";
 import OrderForm from "../components/OrderForm";
@@ -19,27 +19,41 @@ import "./order.scss";
 import Loading from "components/Loading";
 import { toast } from "react-toastify";
 import useQuery from "hooks/useQuery";
-import { createOrder } from "features/Order/orderSlice";
 import CheckoutSuccess from "components/CheckoutSuccess";
+import orderApi from "api/order";
+import { resetCart } from "features/Cart/cartSlice";
+import { getOrderById } from "features/Order/orderSlice";
 
 function MainPage(props) {
   const dispatch = useDispatch();
-  const { order, id, loading, state } = useSelector((state) => state.order);
 
+  const { cart } = useSelector((state) => state.cart);
+  const { order } = useSelector((state) => state.order);
   const { user } = useSelector((state) => state.user);
-
   const { addresses } = useSelector((state) => state.address);
-  const [selectedAddress, setSelectedAddress] = useState("");
 
+  const orderData = JSON.parse(localStorage.getItem("orderData"));
+
+  const [selectedAddress, setSelectedAddress] = useState(() => {
+    if (orderData) return orderData?.address;
+    if (order.length !== 0) return order[order.length - 1].address;
+    return "";
+  });
   const [totalFeeShip, setTotalFeeShip] = useState(0);
-  const [discount, setDiscount] = useState(0);
-  const [paymentMethod, setPaymentMethod] = useState(false);
-  const [payment, setPayment] = useState(false);
-  const [discountCode, setDiscountCode] = useState("");
 
-  const [savedOrder, setSavedOrder] = useState(() =>
-    JSON.parse(localStorage.getItem("orderData"))
-  );
+  const [discount, setDiscount] = useState(() => {
+    return orderData?.discount || 0;
+  });
+
+  const [paymentMethod, setPaymentMethod] = useState(() => {
+    return orderData?.paymentMethod || false;
+  });
+
+  const [discountCode, setDiscountCode] = useState(() => {
+    return orderData?.discountCode || "";
+  });
+
+  const [checkoutSuccess, setCheckoutSuccess] = useState(false);
 
   // momo link
   const [linkMoMo, setLinkMoMo] = useState("");
@@ -55,13 +69,12 @@ function MainPage(props) {
           try {
             const orderData = JSON.parse(localStorage.getItem("orderData"));
             orderData.payment = true; // has payment
-            delete orderData["provisionalPrice"];
-            console.log(orderData);
-            // await dispatch(createOrder(orderData));
-            toast("Checkout successfully.", {
-              ...PRODUCT_TOAST_OPTIONS,
-            });
+            setLoadingMoMo(true);
+            await orderApi.create(orderData);
+            setLoadingMoMo(false);
             localStorage.removeItem("orderData");
+            dispatch(resetCart());
+            setCheckoutSuccess(true);
           } catch (error) {
             console.log(error);
           }
@@ -75,7 +88,16 @@ function MainPage(props) {
     }
   }, [query]);
 
-  const checkoutSuccess = query.get("resultCode");
+  useEffect(() => {
+    const fetchOrderByUserId = async () => {
+      try {
+        await dispatch(getOrderById(user._id));
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    fetchOrderByUserId();
+  }, [user._id, dispatch]);
 
   const [showAddressForm, setShowAddressForm] = useState(false);
   useEffect(() => {
@@ -110,7 +132,7 @@ function MainPage(props) {
             },
             params: {
               service_id: service_type, // service type
-              insurance_value: total(order) * EXCHANGE_RATE, // total order
+              insurance_value: total(cart) * EXCHANGE_RATE, // total order
               coupon: null,
               from_district_id: 2081, // Binh Tan District Code
               to_district_id: Number(selectedAddress.split("#")[1]),
@@ -128,24 +150,29 @@ function MainPage(props) {
       }
     };
     fetchShipFee();
-  }, [selectedAddress]);
-
+  }, [selectedAddress, cart]);
   const handleCheckoutSubmit = async (data) => {
-    data.address = data.address.split("#")[0];
+    if (cart.length === 0) return;
+
     data.paymentMethod = paymentMethod;
     data.discount = discount;
-    data.payment = payment;
+    data.payment = false;
     data.transportFee = Number(totalFeeShip);
     data.discountCode = discountCode;
-    data.total = total(order) + Number(totalFeeShip) - Number(discount);
+    data.total = total(cart) + Number(totalFeeShip) - Number(discount);
     data.user = user._id;
+    data.products = cart.map((product) => ({
+      _id: product._id,
+      selectedColor: product.selectedColor,
+      selectedQuantity: product.selectedQuantity,
+      selectedSize: product.selectedSize,
+    }));
 
-    const orderData = { ...data };
-    orderData.provisionalPrice = total(order);
+    const cloneCart = cart.slice().map((item) => ({ ...item }));
+    data.updateProduct = checkout(cloneCart, cart);
 
-    if (paymentMethod || savedOrder?.paymentMethod) {
-      !savedOrder &&
-        localStorage.setItem("orderData", JSON.stringify(orderData));
+    if (paymentMethod || orderData?.paymentMethod) {
+      localStorage.setItem("orderData", JSON.stringify(data));
 
       try {
         setLoadingMoMo(true);
@@ -153,18 +180,25 @@ function MainPage(props) {
           _id: Math.trunc(Math.random() * 100000000000).toString(),
           total: Math.trunc(data.total * EXCHANGE_RATE),
         });
+
         setLinkMoMo(shortLink);
         checkoutLinkRef.current.click();
         setLoadingMoMo(false);
       } catch (error) {
-        localStorage.removeItem("orderData");
         console.log(error);
       }
     } else {
-      console.log(data);
-      toast("Checkout successfully.", {
-        ...PRODUCT_TOAST_OPTIONS,
-      });
+      try {
+        await orderApi.create(data);
+        toast("Checkout successfully.", {
+          ...PRODUCT_TOAST_OPTIONS,
+        });
+        localStorage.removeItem("orderData");
+        dispatch(resetCart());
+        setCheckoutSuccess(true);
+      } catch (error) {
+        console.log(error);
+      }
     }
   };
 
@@ -211,8 +245,10 @@ function MainPage(props) {
 
               {/* Order form */}
               <OrderForm
-                savedOrder={savedOrder}
                 user={user}
+                cart={cart}
+                order={order}
+                orderData={orderData}
                 addresses={addresses}
                 showAddressForm={showAddressForm}
                 setPaymentMethod={setPaymentMethod}
@@ -234,12 +270,11 @@ function MainPage(props) {
                 }}
               >
                 <OrderDetail
-                  order={order}
+                  cart={cart}
                   totalFeeShip={totalFeeShip}
                   discount={discount}
                   discountCode={discountCode}
                   setDiscountCode={setDiscountCode}
-                  savedOrder={savedOrder}
                 />
               </div>
             </Col>
@@ -248,14 +283,12 @@ function MainPage(props) {
       </Container>
 
       {/* address modal */}
-      {showAddressForm && (
-        <AddressForm
-          user={user}
-          addresses={addresses}
-          showAddressForm={showAddressForm}
-          setShowAddressForm={setShowAddressForm}
-        />
-      )}
+      <AddressForm
+        user={user}
+        addresses={addresses}
+        showAddressForm={showAddressForm}
+        setShowAddressForm={setShowAddressForm}
+      />
 
       {/* link momo to redirect */}
       <a ref={checkoutLinkRef} style={{ display: "none" }} href={linkMoMo}>
