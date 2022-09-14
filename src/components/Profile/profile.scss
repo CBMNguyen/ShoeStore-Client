@@ -57,6 +57,21 @@
     }
   }
 
+  &__avatarText {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background-color: #000;
+    color: #fff;
+
+    font-weight: bolder;
+    font-size: 38px;
+  }
+
   &__logout {
     position: absolute;
     top: 0;
@@ -111,6 +126,14 @@
   & .passwordEdit:hover {
     cursor: pointer;
     transform: scale(1.05);
+  }
+
+  &__closeIcon {
+    transition: all 0.2s ease-in-out;
+    &:hover {
+      cursor: pointer;
+      transform: scale(1.1);
+    }
   }
 }
 

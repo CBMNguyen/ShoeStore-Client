@@ -15,7 +15,7 @@ function ReviewForm(props) {
       </code>
       <Button
         onClick={() => setShowReviewForm(true)}
-        className="btn btn-dark border-5 d-block mt-2"
+        className="btn btn-dark border-5 d-block mt-2 shadow"
       >
         Create a review
       </Button>
@@ -28,10 +28,10 @@ function ReviewForm(props) {
           <Input type="textarea" placeholder="Enter your review..." />
 
           <div className="ms-auto mt-4 d-flex justify-content-end">
-            <Button className="btn btn-dark btn-sm">Send Review</Button>
+            <Button className="btn btn-dark btn-sm shadow">Send Review</Button>
             <Button
               onClick={() => setShowReviewForm(false)}
-              className="btn btn-dark btn-sm ms-2"
+              className="btn btn-dark btn-sm ms-2 shadow"
             >
               Close
             </Button>

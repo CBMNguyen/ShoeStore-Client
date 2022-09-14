@@ -1,16 +1,38 @@
 import { yupResolver } from "@hookform/resolvers/yup";
+import { deleteAddress } from "app/addressSlice";
 import { logOut } from "app/userSlice";
-import { GENDER_OPTIONS, STYLE_MODEL } from "constants/globals";
+import AddressForm from "components/AddressForm";
+import {
+  GENDER_OPTIONS,
+  PRODUCT_TOAST_OPTIONS,
+  STYLE_MODEL,
+} from "constants/globals";
 import DateInputField from "custom-field/DateInputField";
 import InputField from "custom-field/InputField";
 import SelectField from "custom-field/SelectField";
 import firebase from "firebase";
 import PropTypes from "prop-types";
-import { useEffect } from "react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import { useDispatch } from "react-redux";
-import { Col, Form, FormFeedback, Input, Row, Spinner } from "reactstrap";
+import { useDispatch, useSelector } from "react-redux";
+import { Link } from "react-router-dom";
+import { toast } from "react-toastify";
+import brandLogo from "../../assets/images/brandLogo.png";
+
+import {
+  Alert,
+  Button,
+  Col,
+  Form,
+  FormFeedback,
+  Input,
+  Modal,
+  ModalBody,
+  ModalFooter,
+  ModalHeader,
+  Row,
+  Spinner,
+} from "reactstrap";
 import { capitalizeFirstLetter } from "utils/common";
 import * as yup from "yup";
 import "./profile.scss";
@@ -29,7 +51,12 @@ function Profile(props) {
   const { model, closeModel, onSubmit, loading } = props;
   const [readOnly, setReadOnly] = useState(true);
   const [avatar, setAvatar] = useState();
+  const [modal, setModal] = useState(false);
+  const [selectedAddress, setSelectedAddress] = useState();
 
+  const { addresses, loading: addressLoading } = useSelector(
+    (state) => state.address
+  );
   useEffect(() => {
     return () => {
       avatar && URL.revokeObjectURL(avatar.review);
@@ -37,6 +64,7 @@ function Profile(props) {
   }, [avatar]);
 
   const dispatch = useDispatch();
+  const [showAddressForm, setShowAddressForm] = useState(false);
   // convert date from string to date value
   const birthdate = new Date(model.data.birthdate);
 
@@ -53,7 +81,6 @@ function Profile(props) {
       value: model.data.gender,
     },
     image: model.data.image,
-    address: model.data.address,
   };
 
   // Schema Yup
@@ -80,7 +107,6 @@ function Profile(props) {
       ),
     gender: yup.object().required("This field is require.").nullable(),
     image: yup.mixed().required("This file is required"),
-    address: yup.string().required("This field is require."),
     birthdate: yup.date().required("This field is require."),
   });
 
@@ -98,13 +124,15 @@ function Profile(props) {
     if (!onSubmit) return;
     await onSubmit(data);
   };
-
   // handle log out
 
   const handleLogout = async () => {
     await firebase.auth().signOut();
     dispatch(logOut());
     closeModel();
+    toast("Successfully logout.", {
+      ...PRODUCT_TOAST_OPTIONS,
+    });
   };
 
   const handleAvatarChange = (e) => {
@@ -112,6 +140,20 @@ function Profile(props) {
     file.preview = URL.createObjectURL(file);
     setAvatar(file);
     setValue("image", file);
+  };
+
+  // Handle remove address
+
+  const handleRemoveAddress = async () => {
+    try {
+      await dispatch(deleteAddress(selectedAddress._id));
+      toast("Successfully deleted address.", {
+        ...PRODUCT_TOAST_OPTIONS,
+      });
+      setModal(false);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
@@ -133,11 +175,19 @@ function Profile(props) {
               <FormFeedback>{errors["image"]["message"]}</FormFeedback>
             )}
 
-            <img
-              className="shadow-sm img-fluid"
-              src={avatar ? avatar.preview : model.data.image}
-              alt=""
-            />
+            {(model.data.image || avatar) && (
+              <img
+                className="shadow-sm img-fluid shadow"
+                src={avatar ? avatar.preview : model.data.image}
+                alt=""
+              />
+            )}
+
+            {!model.data.image && (
+              <div className="Profile__avatarText shadow">
+                <code className="text-white">{model.data.firstname[0]}</code>
+              </div>
+            )}
           </div>
 
           <div className="Profile__logout">
@@ -153,7 +203,7 @@ function Profile(props) {
           </div>
         </div>
         <Row>
-          <Col xs={6} md={6}>
+          <Col xs={6} md={4}>
             <InputField
               className="mb-2"
               name="firstname"
@@ -163,13 +213,23 @@ function Profile(props) {
             />
           </Col>
 
-          <Col xs={6} md={6}>
+          <Col xs={6} md={4}>
             <InputField
               className="mb-2"
               name="lastname"
               control={control}
               label="Last Name"
               errors={errors}
+            />
+          </Col>
+
+          <Col xs={6} md={4}>
+            <SelectField
+              name="gender"
+              control={control}
+              label="Gender"
+              errors={errors}
+              options={GENDER_OPTIONS}
             />
           </Col>
 
@@ -223,25 +283,6 @@ function Profile(props) {
             </Col>
           }
 
-          <Col md={6} xs={6}>
-            <SelectField
-              name="gender"
-              control={control}
-              label="Gender"
-              errors={errors}
-              options={GENDER_OPTIONS}
-            />
-          </Col>
-
-          <Col md={6}>
-            <InputField
-              name="address"
-              control={control}
-              label="Address"
-              errors={errors}
-            />
-          </Col>
-
           <Col md={6}>
             <DateInputField
               name="birthdate"
@@ -252,6 +293,36 @@ function Profile(props) {
               errors={errors}
             />
           </Col>
+
+          <Col md={12}>
+            <p
+              onClick={() => setShowAddressForm(true)}
+              outline
+              color="secondary"
+              className="w-auto"
+              style={{ cursor: "pointer" }}
+            >
+              <code className="text-primary">
+                <i className="bx bx-location-plus"></i> Add new address
+              </code>
+            </p>
+          </Col>
+
+          {addresses.map(({ address, _id }) => (
+            <Col md={12} key={address}>
+              <Alert className="py-2 position-relative">
+                <code style={{ color: "unset" }}>{address.split("#")[0]}</code>
+
+                <i
+                  className="Profile__closeIcon bx bx-x position-absolute top-25 end-0 fs-3"
+                  onClick={() => {
+                    setModal(true);
+                    setSelectedAddress({ _id, address });
+                  }}
+                />
+              </Alert>
+            </Col>
+          ))}
         </Row>
 
         <button className="Profile__btn mt-4" type="submit" disabled={loading}>
@@ -267,6 +338,57 @@ function Profile(props) {
           {model.data ? "Update" : "Submit"}
         </button>
       </Form>
+
+      {showAddressForm && (
+        <AddressForm
+          user={model.data}
+          addresses={addresses}
+          showAddressForm={showAddressForm}
+          setShowAddressForm={setShowAddressForm}
+        />
+      )}
+
+      <div>
+        <Modal
+          isOpen={modal}
+          toggle={() => setModal(!modal)}
+          zIndex={2000}
+          centered
+        >
+          <ModalHeader toggle={() => setModal(!modal)}>
+            <div className="Header__logo">
+              <h2 className="my-0">
+                <Link to="/">
+                  Shoes Store{" "}
+                  <img className="img-fluid" src={brandLogo} alt="brandLogo" />
+                </Link>
+              </h2>
+            </div>
+          </ModalHeader>
+          <ModalBody>
+            Are you sure you want to remove address
+            <code>{` ${selectedAddress?.address?.split("#")[0]} ?`}</code>
+          </ModalBody>
+          <ModalFooter>
+            <Button
+              className="btn btn-sm"
+              color="primary"
+              onClick={handleRemoveAddress}
+              disabled={addressLoading}
+            >
+              Agree
+              {addressLoading && <Spinner size="sm ms-2">Loading</Spinner>}
+            </Button>{" "}
+            <Button
+              className="btn btn-sm"
+              color="secondary"
+              onClick={() => setModal(!modal)}
+            >
+              Cancel
+            </Button>
+          </ModalFooter>
+        </Modal>
+      </div>
     </div>
   );
 }

@@ -5,7 +5,6 @@ import Header from "components/Header";
 import LoginModel from "components/LoginModel";
 import Profile from "components/Profile";
 import SignUpModel from "components/SignUpModel";
-import { fetchFavourites } from "features/Favourite/FavouriteSlice";
 import ProductDetailImage from "features/Product/components/ProductDetailImages";
 import ProductReview from "features/Product/components/ProductReview";
 import RecentViewProduct from "features/Product/components/RecentViewProduct";
@@ -22,7 +21,9 @@ function ProductDetail(props) {
   const { productId } = useParams();
 
   const { products } = useSelector((state) => state.products);
-  const { favourites } = useSelector((state) => state.favourite);
+  const { favourites, loading: favouriteLoading } = useSelector(
+    (state) => state.favourite
+  );
   const [product, setProduct] = useState();
 
   // Scroll To Top
@@ -135,6 +136,7 @@ function ProductDetail(props) {
         user={user}
         product={product}
         favourites={favourites}
+        favouriteLoading={favouriteLoading}
         showLoginModal={loginModel.showModel}
       />
 

@@ -1,7 +1,10 @@
-import FavouriteApi from "api/favourite";
 import Loading from "components/Loading";
 import { PRODUCT_TOAST_OPTIONS } from "constants/globals";
 import { addToCart, selectQuantity } from "features/Cart/cartSlice";
+import {
+  createFavourite,
+  deleteFavourite,
+} from "features/Favourite/FavouriteSlice";
 import { useEffect, useState } from "react";
 import ImageGallery from "react-image-gallery";
 import "react-image-gallery/styles/scss/image-gallery.scss";
@@ -19,19 +22,16 @@ import {
   Col,
   Container,
   Input,
-  Row,
   Modal,
-  ModalHeader,
   ModalBody,
   ModalFooter,
+  ModalHeader,
+  Row,
+  Spinner,
 } from "reactstrap";
-import brandLogo from "../../../../assets/images/brandLogo.png";
 import { capitalizeFirstLetter } from "utils/common";
+import brandLogo from "../../../../assets/images/brandLogo.png";
 import "./productDetailImage.scss";
-import {
-  createFavourite,
-  deleteFavourite,
-} from "features/Favourite/FavouriteSlice";
 
 function ProductDetailImage({
   product,
@@ -39,6 +39,7 @@ function ProductDetailImage({
   token,
   user,
   favourites,
+  favouriteLoading,
 }) {
   const [open, setOpen] = useState("");
   const [selectProductDetail, setSelectProductDetail] = useState({
@@ -222,7 +223,7 @@ function ProductDetailImage({
                     </Link>
                   </BreadcrumbItem>
                   <BreadcrumbItem active>
-                    <code>{product._id}</code>
+                    <code>{product.name}</code>
                   </BreadcrumbItem>
                 </Breadcrumb>
                 {/* Product title */}
@@ -323,7 +324,7 @@ function ProductDetailImage({
                           selectProductDetail.selectedQuantity - 1
                         )
                       }
-                      className="btn btn-light"
+                      className="btn btn-light shadow-sm"
                     >
                       <i className="bx bx-minus"></i>
                     </Button>
@@ -339,7 +340,7 @@ function ProductDetailImage({
                           selectProductDetail.selectedQuantity + 1
                         )
                       }
-                      className="btn btn-light"
+                      className="btn btn-light shadow-sm"
                     >
                       <i className="bx bx-plus"></i>
                     </Button>
@@ -358,7 +359,7 @@ function ProductDetailImage({
                     <AccordionBody accordionId="2">
                       <ul>
                         {product.material.split("-").map((item) => (
-                          <li>{item}</li>
+                          <li key={item}>{item}</li>
                         ))}
                       </ul>
                     </AccordionBody>
@@ -384,7 +385,10 @@ function ProductDetailImage({
                 </Accordion>
 
                 <div className="ProductDetailImage__button mb-2">
-                  <button onClick={() => handleAddtoCart(product)}>
+                  <button
+                    className="shadow-lg"
+                    onClick={() => handleAddtoCart(product)}
+                  >
                     <div>
                       <i className="bx bx-basket" />
                       {`$${product.originalPrice} - Add to Cart`}
@@ -420,11 +424,13 @@ function ProductDetailImage({
             </ModalBody>
             <ModalFooter>
               <Button
+                disabled={favouriteLoading}
                 className="btn btn-sm"
                 color="primary"
                 onClick={handleRemoveProductFavourite}
               >
                 Agree
+                {favouriteLoading && <Spinner size="sm ms-2">Loading</Spinner>}
               </Button>{" "}
               <Button
                 className="btn btn-sm"

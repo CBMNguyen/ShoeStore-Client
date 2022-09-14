@@ -1,367 +1,272 @@
 import axios from "axios";
-import React, { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
-import { Link } from "react-router-dom";
+import AddressForm from "components/AddressForm";
 import {
-  Breadcrumb,
-  BreadcrumbItem,
-  Button,
-  Col,
-  Container,
-  Form,
-  FormGroup,
-  Input,
-  Label,
-  Row,
-  Spinner,
-} from "reactstrap";
+  EXCHANGE_RATE,
+  PRODUCT_TOAST_OPTIONS,
+  STYLE_MODEL,
+} from "constants/globals";
+import { useEffect, useRef, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { Link } from "react-router-dom";
+import { Breadcrumb, BreadcrumbItem, Col, Container, Row } from "reactstrap";
 import { total } from "utils/common";
 import brandLogo from "../../../../assets/images/brandLogo.png";
-import OrderItem from "../components/OrderItem";
+import OrderDetail from "../components/OrderDetail";
+import OrderForm from "../components/OrderForm";
+import pavementApi from "api/payment";
+
 import "./order.scss";
-import cod from "../../../../assets/images/cod.svg";
-import other from "../../../../assets/images/other.svg";
 import Loading from "components/Loading";
+import { toast } from "react-toastify";
+import useQuery from "hooks/useQuery";
+import { createOrder } from "features/Order/orderSlice";
+import CheckoutSuccess from "components/CheckoutSuccess";
 
 function MainPage(props) {
+  const dispatch = useDispatch();
   const { order, id, loading, state } = useSelector((state) => state.order);
 
   const { user } = useSelector((state) => state.user);
 
-  // Set filter when change
-  const [filter, setFilter] = useState({
-    cityCode: null,
-    districtCode: null,
-  });
+  const { addresses } = useSelector((state) => state.address);
+  const [selectedAddress, setSelectedAddress] = useState("");
 
-  const [city, setCity] = useState([]);
-  const [district, setDistrict] = useState([]);
-  const [commune, setCommune] = useState([]);
-  const [loadAddress, setLoadAddress] = useState(false);
+  const [totalFeeShip, setTotalFeeShip] = useState(0);
+  const [discount, setDiscount] = useState(0);
+  const [paymentMethod, setPaymentMethod] = useState(false);
+  const [payment, setPayment] = useState(false);
+  const [discountCode, setDiscountCode] = useState("");
 
-  // Fetch city on Province page
+  const [savedOrder, setSavedOrder] = useState(() =>
+    JSON.parse(localStorage.getItem("orderData"))
+  );
+
+  // momo link
+  const [linkMoMo, setLinkMoMo] = useState("");
+  const checkoutLinkRef = useRef();
+  const [loadingMoMo, setLoadingMoMo] = useState(false);
+
+  const query = useQuery();
+
   useEffect(() => {
-    const fetchCity = async () => {
-      const City = await axios.get("https://provinces.open-api.vn/api/");
-      const data = City.data || [];
+    if (query.get("resultCode")) {
+      if (Number(query.get("resultCode")) === 0) {
+        const createOrder = async () => {
+          try {
+            const orderData = JSON.parse(localStorage.getItem("orderData"));
+            orderData.payment = true; // has payment
+            delete orderData["provisionalPrice"];
+            console.log(orderData);
+            // await dispatch(createOrder(orderData));
+            toast("Checkout successfully.", {
+              ...PRODUCT_TOAST_OPTIONS,
+            });
+            localStorage.removeItem("orderData");
+          } catch (error) {
+            console.log(error);
+          }
+        };
+        createOrder();
+      } else {
+        toast.error("There was an error while paying.", {
+          ...PRODUCT_TOAST_OPTIONS,
+        });
+      }
+    }
+  }, [query]);
 
-      const cityOptions = data.map((ct) => ({
-        label: ct.name,
-        value: ct.code,
-      }));
+  const checkoutSuccess = query.get("resultCode");
 
-      setCity(cityOptions);
-    };
-    fetchCity();
-  }, []);
-
-  // Fetch district when city change
+  const [showAddressForm, setShowAddressForm] = useState(false);
   useEffect(() => {
-    const fetchDistrict = async () => {
-      if (filter.cityCode === null) return;
-      setLoadAddress(true);
+    const fetchShipFee = async () => {
+      let services;
+      try {
+        if (!selectedAddress) return;
+        // fetch services
+        services = await axios.get(
+          `https://online-gateway.ghn.vn/shiip/public-api/v2/shipping-order/available-services`,
+          {
+            headers: {
+              token: process.env.REACT_APP_GHN_TOKEN,
+            },
+            params: {
+              from_district: 2081, // Binh Tan District Code
+              to_district: Number(selectedAddress.split("#")[1]),
+              shop_id: process.env.REACT_APP_GHN_SHOP_ID,
+            },
+          }
+        );
 
-      const District = await axios.get(
-        `https://provinces.open-api.vn/api/p/${filter.cityCode}/?depth=2`
-      );
+        const service_type = services.data.data[0].service_id; // get service type
+        if (!service_type) return;
 
-      const data = District.data.districts || [];
-      const districtOptions = data.map((ct) => ({
-        label: ct.name,
-        value: ct.code,
-      }));
-
-      setLoadAddress(false);
-      setDistrict(districtOptions);
+        const { data } = await axios.get(
+          `https://online-gateway.ghn.vn/shiip/public-api/v2/shipping-order/fee`,
+          {
+            headers: {
+              token: process.env.REACT_APP_GHN_TOKEN,
+              shop_id: process.env.REACT_APP_GHN_SHOP_ID,
+            },
+            params: {
+              service_id: service_type, // service type
+              insurance_value: total(order) * EXCHANGE_RATE, // total order
+              coupon: null,
+              from_district_id: 2081, // Binh Tan District Code
+              to_district_id: Number(selectedAddress.split("#")[1]),
+              to_ward_code: Number(selectedAddress.split("#")[2]),
+              height: 15,
+              length: 25,
+              weight: 500,
+              width: 10,
+            },
+          }
+        );
+        setTotalFeeShip((data.data.total / EXCHANGE_RATE).toFixed(2));
+      } catch (error) {
+        console.log(error);
+      }
     };
-    fetchDistrict();
-  }, [filter]);
+    fetchShipFee();
+  }, [selectedAddress]);
 
-  // Fetch commune when district change
-  useEffect(() => {
-    const fetchCommune = async () => {
-      if (filter.districtCode === null) return;
-      setLoadAddress(true);
-      const Commune = await axios.get(
-        `https://provinces.open-api.vn/api/d/${filter.districtCode}/?depth=2`
-      );
+  const handleCheckoutSubmit = async (data) => {
+    data.address = data.address.split("#")[0];
+    data.paymentMethod = paymentMethod;
+    data.discount = discount;
+    data.payment = payment;
+    data.transportFee = Number(totalFeeShip);
+    data.discountCode = discountCode;
+    data.total = total(order) + Number(totalFeeShip) - Number(discount);
+    data.user = user._id;
 
-      const data = Commune.data.wards || [];
-      const communeOptions = data.map((ct) => ({
-        label: ct.name,
-        value: ct.code,
-      }));
-      setLoadAddress(false);
-      setCommune(communeOptions);
-    };
-    fetchCommune();
-  }, [filter]);
+    const orderData = { ...data };
+    orderData.provisionalPrice = total(order);
+
+    if (paymentMethod || savedOrder?.paymentMethod) {
+      !savedOrder &&
+        localStorage.setItem("orderData", JSON.stringify(orderData));
+
+      try {
+        setLoadingMoMo(true);
+        const { shortLink } = await pavementApi.post({
+          _id: Math.trunc(Math.random() * 100000000000).toString(),
+          total: Math.trunc(data.total * EXCHANGE_RATE),
+        });
+        setLinkMoMo(shortLink);
+        checkoutLinkRef.current.click();
+        setLoadingMoMo(false);
+      } catch (error) {
+        localStorage.removeItem("orderData");
+        console.log(error);
+      }
+    } else {
+      console.log(data);
+      toast("Checkout successfully.", {
+        ...PRODUCT_TOAST_OPTIONS,
+      });
+    }
+  };
 
   return (
     <div className="Order">
       <Container>
-        <Row style={{ marginTop: "45px" }}>
-          <Col lg={6}>
-            <div className="Order__logo">
-              <h2>
-                <Link to="/">
-                  Shoes Store{" "}
-                  <img className="img-fluid" src={brandLogo} alt="brandLogo" />
-                </Link>
-              </h2>
-            </div>
+        {checkoutSuccess && <CheckoutSuccess user={user} />}
+        {!checkoutSuccess && (
+          <Row style={{ marginTop: "45px" }}>
+            <Col lg={6}>
+              <div className="Order__logo">
+                <h2>
+                  <Link to="/">
+                    Shoes Store{" "}
+                    <img
+                      className="img-fluid"
+                      src={brandLogo}
+                      alt="brandLogo"
+                    />
+                  </Link>
+                </h2>
+              </div>
 
-            <Breadcrumb>
-              <BreadcrumbItem>
-                <Link to="/cart" className="text-decoration-none">
-                  <code>Cart</code>
-                </Link>
-              </BreadcrumbItem>
-              <BreadcrumbItem active>
-                <code>Order information</code>
-              </BreadcrumbItem>
-              <BreadcrumbItem>
-                <Link className="text-decoration-none">
-                  <code>Payment method</code>
-                </Link>
-              </BreadcrumbItem>
-            </Breadcrumb>
-
-            <h4 className="mb-3">
-              <code className="text-secondary">Order Information</code>
-            </h4>
-
-            <Form>
-              <Row>
-                <Col md={12}>
-                  <FormGroup floating>
-                    <Input id="fullname" name="fullname" type="text" />
-                    <Label for="fullname">Full Name</Label>
-                  </FormGroup>
-                </Col>
-              </Row>
-              <Row>
-                <Col md={8}>
-                  <FormGroup floating>
-                    <Input id="email" name="email" type="email" />
-                    <Label for="email">Email</Label>
-                  </FormGroup>
-                </Col>
-                <Col md={4}>
-                  <FormGroup floating>
-                    <Input id="number" name="number" type="number" />
-                    <Label for="number">Number</Label>
-                  </FormGroup>
-                </Col>
-              </Row>
-              <FormGroup floating>
-                <Input id="address" name="address" />
-                <Label for="address">Address</Label>
-              </FormGroup>
-              <Row className="position-relative">
-                {loadAddress && (
-                  <div className="position-absolute" style={{ top: "12px" }}>
-                    <Loading />
-                  </div>
-                )}
-
-                <Col md={4}>
-                  {/* City */}
-                  <FormGroup floating>
-                    <Input
-                      id="city"
-                      name="city"
-                      onChange={(e) =>
-                        setFilter({ ...filter, cityCode: e.target.value })
-                      }
-                      type="select"
-                    >
-                      {!filter.cityCode && (
-                        <option value="">Select Provice / City</option>
-                      )}
-                      {city.map((item) => (
-                        <option value={item.value}>{item.label}</option>
-                      ))}
-                    </Input>
-                    <Label for="city">City / Province</Label>
-                  </FormGroup>
-                </Col>
-
-                {/* District */}
-                <Col md={4}>
-                  <FormGroup floating>
-                    <Input
-                      id="district"
-                      name="district"
-                      onChange={(e) =>
-                        setFilter({ ...filter, districtCode: e.target.value })
-                      }
-                      type="select"
-                    >
-                      {!filter.cityCode && (
-                        <option value="">Select District</option>
-                      )}
-                      {district.map((item) => (
-                        <option value={item.value}>{item.label}</option>
-                      ))}
-                    </Input>
-                    <Label for="district">District</Label>
-                  </FormGroup>
-                </Col>
-
-                {/* Commune */}
-                <Col md={4}>
-                  <FormGroup floating>
-                    <Input id="commune" name="select" type="select">
-                      {!filter.districtCode && (
-                        <option value="">Select Provice / City</option>
-                      )}
-                      {commune.map((item) => (
-                        <option value={item.value}>{item.label}</option>
-                      ))}
-                    </Input>
-                    <Label for="commune">Wards / Commune</Label>
-                  </FormGroup>
-                </Col>
-              </Row>
-
-              {/* Payment method */}
-              <FormGroup row tag="fieldset">
-                <h4 className="mb-3">
-                  <code className="text-secondary">Payment Method</code>
-                </h4>
-                <FormGroup check>
-                  <Input
-                    defaultChecked
-                    style={{ cursor: "pointer" }}
-                    id="paymentMethodDelivery"
-                    name="paymentMethod"
-                    className="mt-3 me-4"
-                    type="radio"
-                  />
-                  <Label
-                    check
-                    for="paymentMethodDelivery"
-                    className="mt-1"
-                    style={{ cursor: "pointer" }}
-                  >
-                    {" "}
-                    <img src={cod} alt="cod" />
-                    <code className="text-secondary fs-6 ms-3">
-                      Payment on delivery
-                    </code>
-                  </Label>
-                </FormGroup>
-
-                {/* Payment online method */}
-                <FormGroup check>
-                  <Input
-                    id="paymentMethodOnline"
-                    name="paymentMethod"
-                    className="mt-3 me-4"
-                    type="radio"
-                    style={{ cursor: "pointer" }}
-                  />
-                  <Label
-                    check
-                    for="paymentMethodOnline"
-                    className="mt-1"
-                    style={{ cursor: "pointer" }}
-                  >
-                    {" "}
-                    <img src={other} alt="other" />
-                    <code className="text-secondary fs-6 ms-3">
-                      Online Payment
-                    </code>
-                  </Label>
-                </FormGroup>
-              </FormGroup>
-
-              <Row className="mt-2">
-                <Col md={2}>
-                  <Link to="/cart" className="text-decoration-none fs-4">
+              {/* Navigate between pages */}
+              <Breadcrumb>
+                <BreadcrumbItem>
+                  <Link to="/cart" className="text-decoration-none">
                     <code>Cart</code>
                   </Link>
-                </Col>
-                <Col md={10}>
-                  <Button
-                    disabled={order.length === 0}
-                    style={{ backgroundColor: "deeppink" }}
-                    className="text-white rounded-1 float-end p-3 border-0"
-                  >
-                    Complete payment
-                  </Button>
-                </Col>
-              </Row>
-            </Form>
-          </Col>
+                </BreadcrumbItem>
+                <BreadcrumbItem active>
+                  <code>Order information</code>
+                </BreadcrumbItem>
+                <BreadcrumbItem>
+                  <Link to="order" className="text-decoration-none">
+                    <code>Payment method</code>
+                  </Link>
+                </BreadcrumbItem>
+              </Breadcrumb>
 
-          {/* Order Information side */}
-          <Col lg={6}>
-            <div
-              style={{
-                borderLeft: "2px solid #dedede",
-                height: "88vh",
-                overflowY: "scroll",
-              }}
-            >
-              <Container>
-                <div className="w-75 m-auto">
-                  <Row className="mt-3">
-                    {order.map((orderItem) => (
-                      <OrderItem order={orderItem} />
-                    ))}
-                  </Row>
+              <h4 className="mb-3">
+                <code className="text-secondary">Order Information</code>
+              </h4>
 
-                  <Row
-                    className="my-3 pb-4"
-                    style={{ borderBottom: "1px solid #dedede" }}
-                  >
-                    <Col md={9}>
-                      <FormGroup floating>
-                        <Input
-                          id="discountCode"
-                          name="discountCode"
-                          type="text"
-                        />
-                        <Label for="discountCode">Discount code</Label>
-                      </FormGroup>
-                    </Col>
-                    <Col md={3}>
-                      <Button className="w-100 h-75 bg-info border-0">
-                        Apply
-                      </Button>
-                    </Col>
-                  </Row>
+              {/* Order form */}
+              <OrderForm
+                savedOrder={savedOrder}
+                user={user}
+                addresses={addresses}
+                showAddressForm={showAddressForm}
+                setPaymentMethod={setPaymentMethod}
+                setShowAddressForm={setShowAddressForm}
+                setSelectedAddress={setSelectedAddress}
+                onCheckoutSubmit={handleCheckoutSubmit}
+                loadingMoMo={loadingMoMo}
+                paymentMethod={paymentMethod}
+              />
+            </Col>
 
-                  <Row style={{ borderBottom: "1px solid #dedede" }}>
-                    <div className="py-3">
-                      <div className="d-flex justify-content-between text-secondary">
-                        <div>Provisional Price</div>
-                        <div>${total(order).toFixed(2)}</div>
-                      </div>
-                      <div className="d-flex justify-content-between my-2 text-secondary">
-                        <div>Transport Fee</div>
-                        <div>$5</div>
-                      </div>
-                      <div className="d-flex justify-content-between text-secondary">
-                        <div>Discount</div>
-                        <div>$5</div>
-                      </div>
-                    </div>
-                  </Row>
-                  <div className="d-flex justify-content-between mt-3 text-secondary fs-5">
-                    <div>Total Amount:</div>
-                    <div className="text-dark fw-bold">
-                      ${total(order).toFixed(2)}
-                    </div>
-                  </div>
-                </div>
-              </Container>
-            </div>
-          </Col>
-        </Row>
+            {/* Order Information side */}
+            <Col lg={6}>
+              <div
+                style={{
+                  borderLeft: "2px solid #dedede",
+                  height: "88vh",
+                  overflowY: "scroll",
+                }}
+              >
+                <OrderDetail
+                  order={order}
+                  totalFeeShip={totalFeeShip}
+                  discount={discount}
+                  discountCode={discountCode}
+                  setDiscountCode={setDiscountCode}
+                  savedOrder={savedOrder}
+                />
+              </div>
+            </Col>
+          </Row>
+        )}
       </Container>
+
+      {/* address modal */}
+      {showAddressForm && (
+        <AddressForm
+          user={user}
+          addresses={addresses}
+          showAddressForm={showAddressForm}
+          setShowAddressForm={setShowAddressForm}
+        />
+      )}
+
+      {/* link momo to redirect */}
+      <a ref={checkoutLinkRef} style={{ display: "none" }} href={linkMoMo}>
+        checkout momo
+      </a>
+
+      {loadingMoMo && (
+        <div style={{ ...STYLE_MODEL }}>
+          <Loading />
+        </div>
+      )}
     </div>
   );
 }

@@ -1,6 +1,8 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import userApi from "api/user";
+import { fetchFavourites } from "features/Favourite/FavouriteSlice";
 import jwt from "jsonwebtoken";
+import { fetchAddresses } from "./addressSlice";
 
 const initialState = {
   token: null,
@@ -19,6 +21,9 @@ export const userLogin = createAsyncThunk(
         process.env.REACT_APP_JWT_KEY
       );
       await dispatch(getMe(userId));
+      await dispatch(fetchFavourites(userId));
+
+      await dispatch(fetchAddresses(userId));
       return fulfillWithValue({ message, accessToken });
     } catch (error) {
       return rejectWithValue(error);

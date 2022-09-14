@@ -33,8 +33,8 @@ function SignUpModel(props) {
     password: "",
     phone: "",
     gender: "",
-    address: "",
     birthdate: "",
+    passwordConfirmation: "",
   };
 
   // yup schema
@@ -56,12 +56,14 @@ function SignUpModel(props) {
         "Password must be at least 8 characters with one uppercase letter, one lowercase letter, and one special character"
       )
       .required("This field is require."),
+    passwordConfirmation: yup
+      .string()
+      .oneOf([yup.ref("password"), null], "Passwords must match"),
     phone: yup
       .string()
       .required("this field is require.")
       .matches(/^0[0-9]{9}$/, "Please enter correct phone number!"),
     gender: yup.object().required("This field is require.").nullable(),
-    address: yup.string().required("This field is require."),
     birthdate: yup.date().required("This field is require."),
   });
 
@@ -157,12 +159,14 @@ function SignUpModel(props) {
               type="password"
             />
           </Col>
+
           <Col md={12}>
             <InputField
-              name="address"
+              name="passwordConfirmation"
               control={control}
-              label="Address"
+              label="Password Confirm"
               errors={errors}
+              type="password"
             />
           </Col>
         </Row>

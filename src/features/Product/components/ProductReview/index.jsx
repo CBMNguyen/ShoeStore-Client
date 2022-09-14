@@ -73,7 +73,12 @@ function ProductReview({ product }) {
         <ReviewItem key={review._id} review={review} />
       ))}
 
-      <Button outline color="primary" disabled className="d-block mx-auto my-4">
+      <Button
+        outline
+        color="primary"
+        disabled
+        className="d-block mx-auto my-4 shadow"
+      >
         View more previews
       </Button>
     </Container>

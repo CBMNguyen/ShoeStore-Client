@@ -173,9 +173,6 @@ export const getMessageOrderByState = (state) => {
   }
 };
 
-// tỷ giá dolar
-export const EXCHANGE_RATE = 23000;
-
 // get star
 
 export const getStarNumbers = (star, reviews) => {

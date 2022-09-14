@@ -16,6 +16,10 @@ import avt from "../../assets/images/avt.jpg";
 import brandLogo from "../../assets/images/brandLogo.png";
 import noResultFound from "../../assets/images/noResultFound.png";
 import "./header.scss";
+import SpeechRecognition, {
+  useSpeechRecognition,
+} from "react-speech-recognition";
+import { useRef } from "react";
 
 Header.propTypes = {
   showModel: PropTypes.func.isRequired,
@@ -44,6 +48,9 @@ function Header(props) {
   const { token, user } = useSelector((state) => state.user);
   const { products } = useSelector((state) => state.products);
   const { favourites } = useSelector((state) => state.favourite);
+
+  // React search voice
+  const { transcript, listening, resetTranscript } = useSpeechRecognition();
 
   let filterProducts = products.filter(
     (product) =>
@@ -96,6 +103,17 @@ function Header(props) {
     }
   };
 
+  const timeoutId = useRef(null);
+  useEffect(() => {
+    setValue(transcript);
+
+    if (timeoutId.current) clearTimeout(timeoutId.current);
+
+    timeoutId.current = setTimeout(() => {
+      SpeechRecognition.stopListening();
+    }, 2000);
+  }, [transcript]);
+
   return (
     <div className="Header Container">
       <div className="Header__logo">
@@ -129,21 +147,58 @@ function Header(props) {
           </Link>
         </nav>
       </div>
+      {/* Header input search */}
       <div
         className={showInputMobile ? "Header__input d-block" : "Header__input"}
       >
         <i className="bx bx-search" />
+        {/* voice icon */}
+        {!listening && (
+          <i
+            className="bx bx-microphone"
+            onClick={() => {
+              SpeechRecognition.startListening({ continuous: true });
+              resetTranscript("");
+            }}
+          ></i>
+        )}
+        {/* voice icon when listening */}
+        {listening && (
+          <div className="icon">
+            <svg
+              onClick={() => SpeechRecognition.stopListening()}
+              focusable="false"
+              viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg"
+              style={{ position: "absolute", width: "24px" }}
+            >
+              <path
+                fill="#4285f4"
+                d="m12 15c1.66 0 3-1.31 3-2.97v-7.02c0-1.66-1.34-3.01-3-3.01s-3 1.34-3 3.01v7.02c0 1.66 1.34 2.97 3 2.97z"
+              ></path>
+              <path fill="#34a853" d="m11 18.08h2v3.92h-2z"></path>
+              <path
+                fill="#fbbc05"
+                d="m7.05 16.87c-1.27-1.33-2.05-2.83-2.05-4.87h2c0 1.45 0.56 2.42 1.47 3.38v0.32l-1.15 1.18z"
+              ></path>
+              <path
+                fill="#ea4335"
+                d="m12 16.93a4.97 5.25 0 0 1 -3.54 -1.55l-1.41 1.49c1.26 1.34 3.02 2.13 4.95 2.13 3.87 0 6.99-2.92 6.99-7h-1.99c0 2.92-2.24 4.93-5 4.93z"
+              ></path>
+            </svg>
+          </div>
+        )}
         <Input
           onChange={(e) => setValue(e.target.value)}
           value={value}
-          placeholder="Search name product ..."
+          placeholder="Search product ..."
         />
+
         <img
           className="img-fluid search-logo"
           src={brandLogo}
           alt="branchLogo"
         />
-
         {/* Search Products */}
         <div className="Header__search shadow">
           {filterProducts.length > 0 && (
@@ -153,8 +208,9 @@ function Header(props) {
                   <Link
                     className="text-decoration-none text-dark"
                     to={`/products/${product._id}`}
+                    key={product._id}
                   >
-                    <li key={product._id}>
+                    <li>
                       <img
                         src={product.productDetail[0].images[0]}
                         alt={product._id}
@@ -227,7 +283,7 @@ function Header(props) {
             >
               <Badge className="bg-danger rounded-circle" size="sm">
                 {cart.reduce(
-                  (sum, cartItem) => (sum += cartItem.selectedQuantity),
+                  (sum, cartItem) => (sum += Number(cartItem.selectedQuantity)),
                   0
                 )}
               </Badge>
@@ -246,19 +302,27 @@ function Header(props) {
         {token && (
           <div>
             <i
-              onClick={() => history.push(`/order/:${user._id}`)}
+              onClick={() => history.push(`/order/${user._id}`)}
               className="bx bxl-shopify"
               key={cart.length}
             ></i>
           </div>
         )}
 
-        <img
-          className="img-fluid Header__avatar"
-          onClick={handleProfileClick}
-          src={!token ? avt : user.image}
-          alt="#"
-        />
+        {(!user || user?.image) && (
+          <img
+            className="img-fluid Header__avatar"
+            onClick={handleProfileClick}
+            src={!token ? avt : user.image}
+            alt="#"
+          />
+        )}
+
+        {user && !user?.image && (
+          <div onClick={handleProfileClick} className="Header__avatarText">
+            <code className="text-white">{user.firstname[0]}</code>
+          </div>
+        )}
       </div>
 
       {mapModel.model.show && <Map onClose={mapModel.closeModel} />}

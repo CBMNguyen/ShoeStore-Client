@@ -14,6 +14,7 @@ import {
 
 import colorReducer from "../features/Product/colorSlice";
 import favouriteReducer from "../features/Favourite/FavouriteSlice";
+import addressReducer from "./addressSlice";
 import cartReducer from "../features/Cart/cartSlice";
 import categoryReducer from "../features/Product/categorySlice";
 import sizeReducer from "../features/Product/sizeSlice";
@@ -24,13 +25,14 @@ import userReducer from "./userSlice";
 const persistConfig = {
   key: "cart",
   storage,
-  whitelist: ["cart", "user", "favourite", "order"],
+  whitelist: ["cart", "user", "favourite", "address", "order"],
 };
 
 const rootReducer = combineReducers({
   cart: cartReducer,
   color: colorReducer,
   favourite: favouriteReducer,
+  address: addressReducer,
   category: categoryReducer,
   size: sizeReducer,
   products: productReducer,

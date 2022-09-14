@@ -146,7 +146,6 @@ function Home(props) {
   return (
     <div className="Home">
       <Header
-        home="home"
         showModel={loginModel.showModel}
         showProfileModel={profileModel.showModel}
         showInputMobile={showInputMobile}

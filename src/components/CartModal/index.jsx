@@ -79,7 +79,10 @@ function CartModal({
             </div>
             <div className="my-auto">
               <Badge className="bg-warning">
-                ${cartItem.salePrice * (1 - cartItem.promotionPercent)}
+                $
+                {cartItem.salePrice *
+                  cartItem.selectedQuantity *
+                  (1 - cartItem.promotionPercent)}
               </Badge>
             </div>
           </div>
@@ -114,7 +117,7 @@ function CartModal({
       <div className="d-flex">
         <Button
           style={{ backgroundColor: "#000" }}
-          className="rounded-1 flex-grow-1 p-2"
+          className="rounded-1 flex-grow-1 p-2 shadow"
         >
           <Link to="/cart" className="text-white text-decoration-none">
             <code className="text-white fs-6">View cart</code>
@@ -123,7 +126,7 @@ function CartModal({
         <Button
           disabled={carts.length === 0}
           style={{ backgroundColor: "#000" }}
-          className="rounded-1 flex-grow-1 ms-2"
+          className="rounded-1 flex-grow-1 ms-2 shadow"
           onClick={() => onCheckoutClick()}
         >
           <code className="text-white fs-6">Check out</code>

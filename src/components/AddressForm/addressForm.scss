@@ -1,0 +1,28 @@
+.AddressForm {
+  position: fixed;
+  padding: 50px;
+  top: 0;
+  right: 0;
+  background-color: #fff;
+  height: 100vh;
+  width: 480px;
+  max-width: 100%;
+  overflow-y: scroll;
+  transform: translateX(100%);
+  transition: all linear 0.2s;
+  z-index: 1;
+  opacity: 1;
+
+  &__closeIcon {
+    position: absolute;
+    top: 28px;
+    right: 8px;
+    font-size: 38px;
+    transition: all ease-in-out 0.2s;
+
+    &:hover {
+      cursor: pointer;
+      transform: scale(1.1);
+    }
+  }
+}

@@ -4,7 +4,6 @@ import Header from "components/Header";
 import LoginModel from "components/LoginModel";
 import Profile from "components/Profile";
 import SignUpModel from "components/SignUpModel";
-import { fetchFavourites } from "features/Favourite/FavouriteSlice";
 import ProductItem from "features/Product/components/ProductItem";
 import useModel from "hooks/useModel";
 import { useEffect, useState } from "react";
@@ -18,11 +17,6 @@ function Favourite(props) {
   const { loading, user } = useSelector((state) => state.user);
   const favouritesData = useSelector((state) => state.favourite);
   const dispatch = useDispatch();
-  // fetch favourites
-  useEffect(() => {
-    if (!user._id) return;
-    dispatch(fetchFavourites(user._id));
-  }, [user._id, dispatch]);
 
   // Scroll To Top
 
@@ -119,12 +113,16 @@ function Favourite(props) {
         )}
         {(favouritesData.favourites.length === 0 || !user?._id) && (
           <div className="text-center">
-            <img src={NoResultImage} alt="No result " />
+            <img
+              style={{ height: "60vh" }}
+              src={NoResultImage}
+              alt="No result "
+            />
           </div>
         )}
 
         <Button
-          className="rounded-1 border-0 my-5 d-block m-auto shadow-lg"
+          className="rounded-1 border-0 my-5 d-block m-auto shadow"
           style={{ backgroundColor: "deeppink" }}
         >
           <Link to="/products" className="text-white text-decoration-none">

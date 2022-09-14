@@ -1,0 +1,35 @@
+.CheckoutSuccess {
+  position: relative;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  height: 90vh;
+  margin-top: 5vh;
+
+  &__logo {
+    & h2 {
+      position: absolute;
+      top: 24px;
+      left: 24px;
+      font-size: 40px;
+      font-family: "Pacifico", cursive;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    & a {
+      color: black;
+      text-decoration: none;
+    }
+
+    & img {
+      position: relative;
+      top: -4px;
+      width: 38px;
+      height: 38px;
+      object-fit: cover;
+    }
+  }
+}
