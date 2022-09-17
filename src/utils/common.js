@@ -202,3 +202,22 @@ export const getAverageStar = (reviews) => {
 
   return totalStarNumber / totalReviewNumber;
 };
+
+export const getColorByState = (state) => {
+  if (state === "pending") return "bg-danger";
+  if (state === "confirmed") return "bg-info";
+  if (state === "shipping") return "bg-warning";
+  if (state === "delivered") return "bg-success";
+  if (state === "cancelled") return "bg-danger";
+};
+
+export const formatDate = (dateStr) => {
+  const date = new Date(dateStr);
+  const day = `0${date.getDay()}`.slice(-2);
+  const month = `0${date.getMonth() + 1}`.slice(-2);
+  const year = `${date.getFullYear()}`;
+  const hour = `0${date.getHours()}`.slice(-2);
+  const minutes = `0${date.getMinutes()}`.slice(-2);
+  const seconds = `0${date.getSeconds()}`.slice(-2);
+  return `${day}/${month}/${year} - ${hour}:${minutes}:${seconds}`;
+};

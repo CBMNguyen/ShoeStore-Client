@@ -83,7 +83,7 @@ function Header(props) {
     try {
       await jwt.verify(token, process.env.REACT_APP_JWT_KEY);
 
-      history.push("/order/" + user._id);
+      history.push("/order/checkout");
     } catch (error) {
       showModel();
     }
@@ -288,7 +288,7 @@ function Header(props) {
         {token && (
           <div>
             <i
-              onClick={() => history.push(`/order/${user._id}`)}
+              onClick={() => history.push(`/order`)}
               className="bx bxl-shopify"
               key={cart.length}
             ></i>

@@ -52,3 +52,11 @@ export const EXCHANGE_RATE = 23000;
 export const EMAIL_REGEX =
   /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/;
 export const PHONE_REGEX = /^0[0-9]{9}$/;
+
+export const ORDER_STATE = {
+  pending: "pending",
+  confirmed: "confirmed",
+  shipping: "shipping",
+  delivered: "delivered",
+  cancelled: "cancelled",
+};

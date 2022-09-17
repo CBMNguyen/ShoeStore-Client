@@ -1,92 +1,85 @@
-import axios from "axios";
-import AddressForm from "components/AddressForm";
-import {
-  EXCHANGE_RATE,
-  PRODUCT_TOAST_OPTIONS,
-  STYLE_MODEL,
-} from "constants/globals";
-import { useEffect, useRef, useState } from "react";
+import { createUser, updateUser, userLogin } from "app/userSlice";
+import Footer from "components/Footer";
+import Header from "components/Header";
+import Loading from "components/Loading";
+import LoginModel from "components/LoginModel";
+import Pagination from "components/Pagination";
+import Profile from "components/Profile";
+import SignUpModel from "components/SignUpModel";
+import { getOrderById, updateOrder } from "features/Order/orderSlice";
+import useModel from "hooks/useModel";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
-import { Breadcrumb, BreadcrumbItem, Col, Container, Row } from "reactstrap";
-import { checkout, total } from "utils/common";
+import {
+  Badge,
+  Breadcrumb,
+  BreadcrumbItem,
+  Button,
+  Col,
+  Container,
+  Modal,
+  ModalBody,
+  ModalFooter,
+  ModalHeader,
+  Row,
+  Spinner,
+  Table,
+} from "reactstrap";
+import {
+  capitalizeFirstLetter,
+  formatDate,
+  getColorByState,
+  showToastError,
+  showToastSuccess,
+} from "utils/common";
+
+import deliveredLogo from "../../../../assets/images/delivery-logo.png";
+import momoImage from "../../../../assets/images/MoMo_Logo.png";
 import brandLogo from "../../../../assets/images/brandLogo.png";
-import OrderDetail from "../components/OrderDetail";
-import OrderForm from "../components/OrderForm";
-import pavementApi from "api/payment";
 
 import "./order.scss";
-import Loading from "components/Loading";
+import OrderDetailModal from "features/Order/components/OrderDetailModal";
+import { ORDER_STATE, PRODUCT_TOAST_OPTIONS } from "constants/globals";
 import { toast } from "react-toastify";
-import useQuery from "hooks/useQuery";
-import CheckoutSuccess from "components/CheckoutSuccess";
-import orderApi from "api/order";
-import { resetCart } from "features/Cart/cartSlice";
-import { getOrderById } from "features/Order/orderSlice";
 
 function MainPage(props) {
   const dispatch = useDispatch();
+  const { loading, user } = useSelector((state) => state.user);
+  const { order, loading: orderLoading } = useSelector((state) => state.order);
 
-  const { cart } = useSelector((state) => state.cart);
-  const { order } = useSelector((state) => state.order);
-  const { user } = useSelector((state) => state.user);
-  const { addresses } = useSelector((state) => state.address);
+  const [showInputMobile, setShowInputMobile] = useState(false);
+  const [modal, setModal] = useState(false);
+  const [nestedModal, setNestedModal] = useState(false);
+  const [closeAll, setCloseAll] = useState(false);
 
-  const orderData = JSON.parse(localStorage.getItem("orderData"));
-
-  const [selectedAddress, setSelectedAddress] = useState(() => {
-    if (orderData) return orderData?.address;
-    if (order.length !== 0) return order[order.length - 1].address;
-    return "";
-  });
-  const [totalFeeShip, setTotalFeeShip] = useState(0);
-
-  const [discount, setDiscount] = useState(() => {
-    return orderData?.discount || 0;
+  const [selectedOrder, setSelectedOrder] = useState();
+  const [filter, setFilter] = useState({
+    page: 1,
+    limit: 8,
   });
 
-  const [paymentMethod, setPaymentMethod] = useState(() => {
-    return orderData?.paymentMethod || false;
-  });
+  const toggle = () => setModal(!modal);
 
-  const [discountCode, setDiscountCode] = useState(() => {
-    return orderData?.discountCode || "";
-  });
+  const toggleNested = () => {
+    setNestedModal(!nestedModal);
+  };
 
-  const [checkoutSuccess, setCheckoutSuccess] = useState(false);
+  const toggleAll = () => {
+    setNestedModal(!nestedModal);
+    setCloseAll(true);
+  };
 
-  // momo link
-  const [linkMoMo, setLinkMoMo] = useState("");
-  const checkoutLinkRef = useRef();
-  const [loadingMoMo, setLoadingMoMo] = useState(false);
-
-  const query = useQuery();
-
-  useEffect(() => {
-    if (query.get("resultCode")) {
-      if (Number(query.get("resultCode")) === 0) {
-        const createOrder = async () => {
-          try {
-            const orderData = JSON.parse(localStorage.getItem("orderData"));
-            orderData.payment = true; // has payment
-            setLoadingMoMo(true);
-            await orderApi.create(orderData);
-            setLoadingMoMo(false);
-            localStorage.removeItem("orderData");
-            dispatch(resetCart());
-            setCheckoutSuccess(true);
-          } catch (error) {
-            console.log(error);
-          }
-        };
-        createOrder();
-      } else {
-        toast.error("There was an error while paying.", {
-          ...PRODUCT_TOAST_OPTIONS,
-        });
-      }
+  const handleCancelOrder = async (orderId) => {
+    try {
+      setNestedModal(true);
+      await dispatch(updateOrder(orderId));
+      toggleAll();
+      toast("Your order has been cancelled.", { ...PRODUCT_TOAST_OPTIONS });
+    } catch (error) {
+      console.log(error);
     }
-  }, [query]);
+  };
 
   useEffect(() => {
     const fetchOrderByUserId = async () => {
@@ -96,120 +89,253 @@ function MainPage(props) {
         console.log(error);
       }
     };
+
     fetchOrderByUserId();
-  }, [user._id, dispatch]);
+  }, [dispatch, user._id]);
 
-  const [showAddressForm, setShowAddressForm] = useState(false);
-  useEffect(() => {
-    const fetchShipFee = async () => {
-      let services;
-      try {
-        if (!selectedAddress) return;
-        // fetch services
-        services = await axios.get(
-          `https://online-gateway.ghn.vn/shiip/public-api/v2/shipping-order/available-services`,
-          {
-            headers: {
-              token: process.env.REACT_APP_GHN_TOKEN,
-            },
-            params: {
-              from_district: 2081, // Binh Tan District Code
-              to_district: Number(selectedAddress.split("#")[1]),
-              shop_id: process.env.REACT_APP_GHN_SHOP_ID,
-            },
-          }
-        );
+  const loginModel = useModel();
+  const signupModel = useModel();
+  const profileModel = useModel();
 
-        const service_type = services.data.data[0].service_id; // get service type
-        if (!service_type) return;
+  // handle sign up add user
+  const handleCreateUser = async (data) => {
+    try {
+      await showToastSuccess(dispatch(createUser(data)));
+      signupModel.closeModel();
+      loginModel.showModel();
+    } catch (error) {
+      showToastError(error);
+    }
+  };
 
-        const { data } = await axios.get(
-          `https://online-gateway.ghn.vn/shiip/public-api/v2/shipping-order/fee`,
-          {
-            headers: {
-              token: process.env.REACT_APP_GHN_TOKEN,
-              shop_id: process.env.REACT_APP_GHN_SHOP_ID,
-            },
-            params: {
-              service_id: service_type, // service type
-              insurance_value: total(cart) * EXCHANGE_RATE, // total order
-              coupon: null,
-              from_district_id: 2081, // Binh Tan District Code
-              to_district_id: Number(selectedAddress.split("#")[1]),
-              to_ward_code: Number(selectedAddress.split("#")[2]),
-              height: 15,
-              length: 25,
-              weight: 500,
-              width: 10,
-            },
-          }
-        );
-        setTotalFeeShip((data.data.total / EXCHANGE_RATE).toFixed(2));
-      } catch (error) {
-        console.log(error);
-      }
-    };
-    fetchShipFee();
-  }, [selectedAddress, cart]);
-  const handleCheckoutSubmit = async (data) => {
-    if (cart.length === 0) return;
+  // handle login
+  const handleLogin = async (data) => {
+    try {
+      await showToastSuccess(dispatch(userLogin(data)));
+      loginModel.closeModel();
+    } catch (error) {
+      showToastError(error);
+    }
+  };
 
-    data.paymentMethod = paymentMethod;
-    data.discount = discount;
-    data.payment = false;
-    data.transportFee = Number(totalFeeShip);
-    data.discountCode = discountCode;
-    data.total = total(cart) + Number(totalFeeShip) - Number(discount);
-    data.user = user._id;
-    data.products = cart.map((product) => ({
-      _id: product._id,
-      selectedColor: product.selectedColor,
-      selectedQuantity: product.selectedQuantity,
-      selectedSize: product.selectedSize,
-    }));
-
-    const cloneCart = cart.slice().map((item) => ({ ...item }));
-    data.updateProduct = checkout(cloneCart, cart);
-
-    if (paymentMethod || orderData?.paymentMethod) {
-      localStorage.setItem("orderData", JSON.stringify(data));
-
-      try {
-        setLoadingMoMo(true);
-        const { shortLink } = await pavementApi.post({
-          _id: Math.trunc(Math.random() * 100000000000).toString(),
-          total: Math.trunc(data.total * EXCHANGE_RATE),
-        });
-
-        setLinkMoMo(shortLink);
-        checkoutLinkRef.current.click();
-        setLoadingMoMo(false);
-      } catch (error) {
-        console.log(error);
-      }
-    } else {
-      try {
-        await orderApi.create(data);
-        toast("Checkout successfully.", {
-          ...PRODUCT_TOAST_OPTIONS,
-        });
-        localStorage.removeItem("orderData");
-        dispatch(resetCart());
-        setCheckoutSuccess(true);
-      } catch (error) {
-        console.log(error);
-      }
+  // handle profile change
+  const handleProfileChange = async (data) => {
+    const formData = new FormData();
+    formData.append("firstname", data.firstname);
+    formData.append("lastname", data.lastname);
+    formData.append("email", data.email);
+    formData.append("phone", data.phone);
+    formData.append("password", data.password);
+    formData.append("gender", data.gender.value);
+    formData.append("image", data.image);
+    formData.append("address", data.address);
+    formData.append("birthdate", data.birthdate);
+    try {
+      await showToastSuccess(
+        dispatch(
+          updateUser({ _id: profileModel.model.data._id, user: formData })
+        )
+      );
+      profileModel.closeModel();
+    } catch (error) {
+      showToastError(error);
     }
   };
 
   return (
     <div className="Order">
-      <Container>
-        {checkoutSuccess && <CheckoutSuccess user={user} />}
-        {!checkoutSuccess && (
-          <Row style={{ marginTop: "45px" }}>
-            <Col lg={6}>
-              <div className="Order__logo">
+      <Header
+        showModel={loginModel.showModel}
+        showProfileModel={profileModel.showModel}
+        showInputMobile={showInputMobile}
+        setShowInputMobile={setShowInputMobile}
+      />
+      {!orderLoading && (
+        <Container className="shadow rounded-1">
+          <Row className="my-5">
+            {/* handle when order empty */}
+            {order.length === 0 && (
+              <div className="Order__empty">
+                <i className="bx bxl-shopify animate__animated animate__swing">
+                  <Badge className="bg-warning rounded-circle">0</Badge>
+                </i>
+                <div className="d-flex">
+                  <Link
+                    to="/"
+                    className="button shadow-lg text-decoration-none"
+                  >
+                    Home
+                  </Link>
+
+                  <Link
+                    to="/products"
+                    className="button shadow-lg ms-4 text-decoration-none"
+                  >
+                    See other products
+                  </Link>
+                </div>
+              </div>
+            )}
+
+            {order.length !== 0 && (
+              <div className="py-2">
+                <header className="d-flex justify-content-between">
+                  <h2 className="text-uppercase">My Shopping Order 🛒</h2>
+                  {/* navigation */}
+                  <Breadcrumb className="mt-2 me-2">
+                    <BreadcrumbItem>
+                      <Link style={{ textDecoration: "none" }} to="/">
+                        Home
+                      </Link>
+                    </BreadcrumbItem>
+                    <BreadcrumbItem active>Order</BreadcrumbItem>
+                  </Breadcrumb>
+                </header>
+                <Table>
+                  <thead
+                    className="text-white"
+                    style={{ backgroundColor: "deeppink" }}
+                  >
+                    <tr>
+                      <th>#</th>
+                      <th>Address</th>
+                      <th>State</th>
+                      <th>Total</th>
+                      <th>Payment</th>
+                      <th>Method</th>
+                      <th>Order Date</th>
+                      <th>Action</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {order
+                      .slice(filter.page - 1, filter.limit)
+                      .map((item, index) => (
+                        <tr style={{ verticalAlign: "middle" }} key={index}>
+                          <th scope="row">{index + 1}</th>
+                          <td style={{ width: "300px" }}>
+                            <code className="text-dark">
+                              {item.address.split("#")[0]}
+                            </code>
+                          </td>
+                          <td>
+                            <Badge className={getColorByState(item.state)}>
+                              {capitalizeFirstLetter(item.state)}
+                            </Badge>
+                          </td>
+                          <td>
+                            <Badge className="bg-warning">
+                              ${item.total.toFixed(2)}
+                            </Badge>
+                          </td>
+                          <td>
+                            {item.payment ? (
+                              <i className="bx bx-check text-success fs-3 ms-3"></i>
+                            ) : (
+                              <i className="bx bx-x text-danger text-danger fs-3 ms-3"></i>
+                            )}
+                          </td>
+                          <td>
+                            {item.paymentMethod ? (
+                              <img
+                                src={momoImage}
+                                className="ms-3 rounded"
+                                width={28}
+                                height={28}
+                                alt="momoLogo"
+                              />
+                            ) : (
+                              <img
+                                src={deliveredLogo}
+                                className="ms-2"
+                                width={40}
+                                height={28}
+                                alt="deliveredLogo"
+                              />
+                            )}
+                          </td>
+                          <td>
+                            <Badge className="bg-dark">
+                              {formatDate(item.createdAt)}
+                            </Badge>
+                          </td>
+                          <td>
+                            <i
+                              onClick={() => {
+                                setSelectedOrder(item);
+                                toggle();
+                              }}
+                              className="Order__viewIcon bx bx-show fs-3 ms-2 text-primary"
+                            ></i>
+                          </td>
+                        </tr>
+                      ))}
+                  </tbody>
+                </Table>
+
+                <div className="d-flex justify-content-center mt-2">
+                  <Pagination filter={{ page: 1, limit: 8, totalRow: 8 }} />
+                </div>
+              </div>
+            )}
+          </Row>
+        </Container>
+      )}
+
+      {orderLoading && <Loading />}
+
+      {/* Show login model */}
+      {loginModel.model.show && (
+        <LoginModel
+          onLogin={handleLogin}
+          closeModel={loginModel.closeModel}
+          showModel={signupModel.showModel}
+        />
+      )}
+      {/* Show sign up model */}
+      {signupModel.model.show && (
+        <SignUpModel
+          onCreateUser={handleCreateUser}
+          closeModel={signupModel.closeModel}
+        />
+      )}
+      {profileModel.model.show && (
+        <Profile
+          loading={loading}
+          onSubmit={handleProfileChange}
+          model={profileModel.model}
+          closeModel={profileModel.closeModel}
+        />
+      )}
+
+      {/* Order Detail Modal */}
+
+      <Modal isOpen={modal} toggle={toggle} fullscreen>
+        <ModalHeader toggle={toggle} className="py-2">
+          <div className="Order__logo">
+            <h2>
+              <Link to="/">
+                Shoes Store{" "}
+                <img className="img-fluid" src={brandLogo} alt="brandLogo" />
+              </Link>
+            </h2>
+          </div>
+        </ModalHeader>
+        <ModalBody className="py-0">
+          <OrderDetailModal
+            onRemoveOrderClick={toggleNested}
+            order={selectedOrder}
+          />
+
+          {/* Coonfirm remove order */}
+
+          <Modal
+            isOpen={nestedModal}
+            toggle={toggleNested}
+            onClosed={closeAll ? toggle : undefined}
+          >
+            <ModalHeader>
+              <div className="Order__logo py-0">
                 <h2>
                   <Link to="/">
                     Shoes Store{" "}
@@ -221,85 +347,107 @@ function MainPage(props) {
                   </Link>
                 </h2>
               </div>
-
-              {/* Navigate between pages */}
-              <Breadcrumb>
-                <BreadcrumbItem>
-                  <Link to="/cart" className="text-decoration-none">
-                    <code>Cart</code>
-                  </Link>
-                </BreadcrumbItem>
-                <BreadcrumbItem active>
-                  <code>Order information</code>
-                </BreadcrumbItem>
-                <BreadcrumbItem>
-                  <Link to="order" className="text-decoration-none">
-                    <code>Payment method</code>
-                  </Link>
-                </BreadcrumbItem>
-              </Breadcrumb>
-
-              <h4 className="mb-3">
-                <code className="text-secondary">Order Information</code>
-              </h4>
-
-              {/* Order form */}
-              <OrderForm
-                user={user}
-                cart={cart}
-                order={order}
-                orderData={orderData}
-                addresses={addresses}
-                showAddressForm={showAddressForm}
-                setPaymentMethod={setPaymentMethod}
-                setShowAddressForm={setShowAddressForm}
-                setSelectedAddress={setSelectedAddress}
-                onCheckoutSubmit={handleCheckoutSubmit}
-                loadingMoMo={loadingMoMo}
-                paymentMethod={paymentMethod}
-              />
-            </Col>
-
-            {/* Order Information side */}
-            <Col lg={6}>
-              <div
-                style={{
-                  borderLeft: "2px solid #dedede",
-                  height: "88vh",
-                  overflowY: "scroll",
-                }}
+            </ModalHeader>
+            <ModalBody>
+              <code className="text-secondary fs-6">
+                Are you sure you want to cancel this order?
+              </code>
+            </ModalBody>
+            <ModalFooter>
+              <Button
+                disabled={orderLoading}
+                color="primary"
+                className="btn-sm"
+                onClick={() => handleCancelOrder(selectedOrder._id)}
               >
-                <OrderDetail
-                  cart={cart}
-                  totalFeeShip={totalFeeShip}
-                  discount={discount}
-                  discountCode={discountCode}
-                  setDiscountCode={setDiscountCode}
-                />
+                Confirm
+                {orderLoading && (
+                  <Spinner size="sm" className="ms-2">
+                    Loading
+                  </Spinner>
+                )}
+              </Button>{" "}
+              <Button
+                disabled={orderLoading}
+                color="secondary"
+                className="btn-sm"
+                onClick={toggleNested}
+              >
+                Cancel
+              </Button>
+            </ModalFooter>
+          </Modal>
+        </ModalBody>
+        <ModalFooter className="py-2 d-block">
+          <Row>
+            <Col md={10}>
+              <div className="d-flex align-items-center">
+                <div className="d-flex align-items-center me-2">
+                  <code className="text-secondary">Payment Method:</code>
+                  {selectedOrder?.paymentMethod ? (
+                    <img
+                      src={momoImage}
+                      className="ms-3 rounded"
+                      width={28}
+                      height={28}
+                      alt="momoLogo"
+                    />
+                  ) : (
+                    <img
+                      src={deliveredLogo}
+                      className="ms-2"
+                      width={40}
+                      height={28}
+                      alt="deliveredLogo"
+                    />
+                  )}
+                </div>
+                <div className="d-flex align-items-center mx-2">
+                  <code className="text-secondary">Payment Status:</code>
+                  {selectedOrder?.payment ? (
+                    <i className="bx bx-check text-success fs-3 ms-3"></i>
+                  ) : (
+                    <i className="bx bx-x text-danger text-danger fs-3 ms-3"></i>
+                  )}
+                </div>
+                <div className="d-flex align-items-center mx-2">
+                  <code className="text-secondary me-4">Delivery charges</code>{" "}
+                  <code className="fw-bold">
+                    ${selectedOrder?.transportFee.toFixed(2)}
+                  </code>
+                </div>
+                <div className="d-flex align-items-center">
+                  <code className="text-secondary mx-3">Discount</code>
+                  <code className="fw-bold">${selectedOrder?.discount}</code>
+                </div>
               </div>
             </Col>
+            <Col md={2}>
+              <Button
+                disabled={selectedOrder?.state !== ORDER_STATE.pending}
+                color="danger"
+                className="rounded-1 btn-sm"
+                style={{
+                  backgroundImage:
+                    "linear-gradient(136deg) ,rgb(242, 113, 33) 0%,rgb(233, 64, 87) 50%,rgb(138, 35, 135) 100%",
+                }}
+                onClick={toggleNested}
+              >
+                <code className="text-white text-uppercase">Cancel Order</code>
+              </Button>{" "}
+              <Button
+                color="dark"
+                className="rounded-1 btn-sm"
+                onClick={toggle}
+              >
+                <code className="text-white text-uppercase">Close</code>
+              </Button>
+            </Col>
           </Row>
-        )}
-      </Container>
+        </ModalFooter>
+      </Modal>
 
-      {/* address modal */}
-      <AddressForm
-        user={user}
-        addresses={addresses}
-        showAddressForm={showAddressForm}
-        setShowAddressForm={setShowAddressForm}
-      />
-
-      {/* link momo to redirect */}
-      <a ref={checkoutLinkRef} style={{ display: "none" }} href={linkMoMo}>
-        checkout momo
-      </a>
-
-      {loadingMoMo && (
-        <div style={{ ...STYLE_MODEL }}>
-          <Loading />
-        </div>
-      )}
+      <Footer />
     </div>
   );
 }

@@ -126,7 +126,7 @@ function Favourite(props) {
           style={{ backgroundColor: "deeppink" }}
         >
           <Link to="/products" className="text-white text-decoration-none">
-            View other products
+            <code className="fs-6">View other products</code>
           </Link>
         </Button>
       </Container>

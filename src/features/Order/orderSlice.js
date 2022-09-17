@@ -31,8 +31,20 @@ export const createOrder = createAsyncThunk(
   }
 );
 
-export const deleteOrder = createAsyncThunk(
+export const updateOrder = createAsyncThunk(
   "order/updateOrder",
+  async (id, { rejectWithValue, fulfillWithValue }) => {
+    try {
+      const data = await orderApi.update(id);
+      return fulfillWithValue({ ...data, _id: id });
+    } catch (error) {
+      return rejectWithValue(error);
+    }
+  }
+);
+
+export const deleteOrder = createAsyncThunk(
+  "order/deleteOrder",
   async (id, { rejectWithValue, fulfillWithValue }) => {
     try {
       const data = await orderApi.delete(id);
@@ -79,6 +91,26 @@ const orderSlice = createSlice({
       state.error = "";
     },
 
+    // handle update order
+    [updateOrder.pending]: (state) => {
+      state.loading = true;
+    },
+    [updateOrder.rejected]: (state, action) => {
+      state.loading = false;
+      state.error = action.payload.message;
+    },
+    [updateOrder.fulfilled]: (state, action) => {
+      state.loading = false;
+      state.order.map((order) => {
+        if (order._id === action.payload._id) {
+          order.state = action.payload.state;
+          return order;
+        } else {
+          return order;
+        }
+      });
+      state.error = "";
+    },
     // handle delete order
     [deleteOrder.pending]: (state) => {
       state.loading = true;

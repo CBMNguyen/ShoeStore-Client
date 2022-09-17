@@ -1,4 +1,3 @@
-import addressApi from "api/address";
 import { createAddress } from "app/addressSlice";
 import axios from "axios";
 import Loading from "components/Loading";

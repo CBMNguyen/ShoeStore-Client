@@ -44,7 +44,7 @@ function App() {
   const Home = React.lazy(() => import("./features/Home"));
   const Favourite = React.lazy(() => import("./features/Favourite"));
   const Cart = React.lazy(() => import("./features/Cart"));
-  const Order = React.lazy(() => import("./features/Order"));
+  const Order = React.lazy(() => import("./features/Order/"));
   const Product = React.lazy(() => import("./features/Product"));
   const ResetPassWord = React.lazy(() => import("./components/ResetPassWord"));
 
@@ -57,7 +57,7 @@ function App() {
             <Route path="/products" component={Product} />
             <Route path="/cart" component={Cart} />
             <ProtectedRoute path="/favourite" component={Favourite} />
-            <ProtectedRoute path="/order/" component={Order} />
+            <ProtectedRoute path="/order" component={Order} />
             <Route path="/resetpassword/:email" component={ResetPassWord} />
             <Route component={NotFound} />
           </Switch>

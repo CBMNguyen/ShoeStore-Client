@@ -1,5 +1,12 @@
-@import url("https://fonts.googleapis.com/css2?family=Pacifico&display=swap");
 .Order {
+  &__viewIcon {
+    transition: all 0.2s ease-in-out;
+    &:hover {
+      transform: scale(1.05);
+      cursor: pointer;
+    }
+  }
+
   &__logo {
     & h2 {
       position: relative;
@@ -20,6 +27,46 @@
       width: 32px;
       height: 32px;
       object-fit: cover;
+    }
+  }
+
+  &__empty {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    width: 100%;
+    height: 600px;
+    background-color: #ff1493;
+    border-radius: 8px;
+
+    & i {
+      position: relative;
+      font-size: 15rem;
+
+      & span {
+        position: absolute;
+        top: 11rem;
+        left: 12.6rem;
+        font-size: 1.5rem;
+      }
+    }
+
+    & .button {
+      display: block;
+      width: 300px;
+      margin-top: 2rem;
+      padding: 1rem 2rem;
+
+      background-color: deeppink;
+      color: white;
+      border: none;
+      border-radius: 0.4rem;
+      text-align: center;
+
+      font-weight: bold;
+      cursor: pointer;
     }
   }
 }

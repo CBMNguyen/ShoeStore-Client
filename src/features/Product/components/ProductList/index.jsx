@@ -40,7 +40,7 @@ function ProductList(props) {
   };
   return (
     <div className="ProductList">
-      <Breadcrumb className="ms-2">
+      <Breadcrumb className="ms-2" style={{ marginBottom: "0 !important" }}>
         <BreadcrumbItem>
           <Link to="/" className="text-decoration-none">
             <code>Home</code>
@@ -69,7 +69,7 @@ function ProductList(props) {
             ></label>
           </label>
 
-          <h3 className="mb-1">All Products</h3>
+          <h3 className="mb-0">All Products</h3>
         </div>
         <div>
           <div className="d-none d-md-block">
@@ -82,7 +82,7 @@ function ProductList(props) {
 
           <Button
             type="button"
-            className="btn btn-light btn-sm mx-4 ProductList__button"
+            className="btn btn-light btn-sm mx-4 ProductList__button shadow-sm"
             onClick={handleSortPriceClick}
           >
             <div className="d-flex align-items-center">
@@ -98,7 +98,7 @@ function ProductList(props) {
           <Button
             onClick={() => onResetFilter()}
             type="button"
-            className="btn btn-dark btn-sm"
+            className="btn btn-dark btn-sm shadow-sm"
           >
             Clear
           </Button>

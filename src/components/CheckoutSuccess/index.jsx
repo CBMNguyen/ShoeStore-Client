@@ -48,7 +48,7 @@ function CheckoutSuccess({ user }) {
             className="text-white rounded-1 border-0 shadow"
           >
             <Link
-              to={`/order/${user?._id}`}
+              to={`/order`}
               className="text-decoration-none p-3 d-block w-100"
             >
               <code className="text-white fs-6">View orders</code>

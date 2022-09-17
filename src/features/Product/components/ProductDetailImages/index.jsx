@@ -430,9 +430,14 @@ function ProductDetailImage({
                 onClick={handleRemoveProductFavourite}
               >
                 Agree
-                {favouriteLoading && <Spinner size="sm ms-2">Loading</Spinner>}
+                {favouriteLoading && (
+                  <Spinner size="sm" className="ms-2">
+                    Loading
+                  </Spinner>
+                )}
               </Button>{" "}
               <Button
+                disabled={favouriteLoading}
                 className="btn btn-sm"
                 color="secondary"
                 onClick={() => setModal(!modal)}

@@ -156,7 +156,7 @@ function ProductDetail(props) {
         />
       )}
 
-      <ProductReview product={product} />
+      <ProductReview product={product} user={user} />
 
       {/* Show login model */}
       {loginModel.model.show && (

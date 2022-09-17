@@ -14,8 +14,8 @@ import {
   Spinner,
 } from "reactstrap";
 import * as yup from "yup";
-import cod from "../../../../../assets/images/cod.svg";
-import other from "../../../../../assets/images/other.svg";
+import cod from "../../../../assets/images/cod.svg";
+import other from "../../../../assets/images/other.svg";
 
 function OrderForm({
   user,

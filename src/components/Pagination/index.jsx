@@ -39,11 +39,15 @@ function Pagination(props) {
     filterList = filterList.slice(0, 4);
   }
 
+  if (filterList.length === 0) {
+    filterList[0] = 1;
+  }
+
   return (
     <div className="Pagination">
       {/* previous button */}
       <Button
-        className="btn btn-sm me-4 Pagination__button"
+        className="btn btn-sm me-4 Pagination__button shadow-sm"
         type="button"
         color="light"
         disabled={page <= 1}
@@ -67,10 +71,10 @@ function Pagination(props) {
 
       {/* Next Button */}
       <Button
-        className="btn btn-sm ms-4 Pagination__button"
+        className="btn btn-sm ms-4 shadow-sm"
         type="button"
         color="light"
-        disabled={page >= totalPage}
+        disabled={page >= totalPage || filterList.length === 1}
         onClick={() => handlePageChange(page + 1)}
       >
         <i className="bx bx-chevron-right d-inline-block m-auto" />

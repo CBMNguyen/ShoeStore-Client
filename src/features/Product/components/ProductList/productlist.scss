@@ -21,6 +21,10 @@
       font-weight: bold;
     }
   }
+
+  & .breadcrumb {
+    --bs-breadcrumb-margin-bottom: 0.4rem;
+  }
 }
 
 .ProductList::-webkit-scrollbar {

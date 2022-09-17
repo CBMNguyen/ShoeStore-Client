@@ -1,5 +1,4 @@
-import React from "react";
-import { Badge, Container } from "reactstrap";
+import { Badge } from "reactstrap";
 import { capitalizeFirstLetter } from "utils/common";
 
 function OrderItem({ order }) {
@@ -44,7 +43,10 @@ function OrderItem({ order }) {
       </div>
       <div className="my-auto">
         <Badge className="bg-warning">
-          ${order.salePrice * (1 - order.promotionPercent / 100)}
+          $
+          {order.salePrice *
+            (1 - order.promotionPercent / 100) *
+            order.selectedQuantity}
         </Badge>
       </div>
     </div>

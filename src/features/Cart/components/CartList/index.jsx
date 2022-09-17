@@ -48,7 +48,9 @@ function CartList(props) {
   return (
     <Container>
       <div
-        className={classNames("CartList shadow", { "p-0": cart.length === 0 })}
+        className={classNames("CartList shadow rounded-1", {
+          "p-0": cart.length === 0,
+        })}
       >
         {/* handle when order empty */}
         {cart.length === 0 && (
@@ -96,7 +98,7 @@ function CartList(props) {
                     <th>Quantity</th>
                     <th>Discount</th>
                     <th>Price</th>
-                    <th className="text-end">actions</th>
+                    <th className="text-end">Actions</th>
                   </tr>
                 </thead>
 

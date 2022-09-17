@@ -20,6 +20,8 @@ class Rating extends Component {
       value: newValue,
       dynamicValue: newValue,
     });
+
+    this.props.setStar(newValue);
   }
   handleMouseEnter(newValue) {
     this.setState({ dynamicValue: newValue });

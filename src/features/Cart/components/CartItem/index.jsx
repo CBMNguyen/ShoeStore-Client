@@ -1,6 +1,5 @@
 import PropTypes from "prop-types";
-import React from "react";
-import { Badge, Input } from "reactstrap";
+import { Badge } from "reactstrap";
 import { capitalizeFirstLetter } from "utils/common";
 import "./cartitem.scss";
 

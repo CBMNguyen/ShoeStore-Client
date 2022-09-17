@@ -21,7 +21,7 @@ import { useHistory } from "react-router-dom";
 
 function MainPage(props) {
   const { cart } = useSelector((state) => state.cart);
-  const { token, user } = useSelector((state) => state.user);
+  const { token } = useSelector((state) => state.user);
   const { loading } = useSelector((state) => state.user);
 
   useEffect(() => window.scrollTo(0, 0), []);
@@ -79,7 +79,7 @@ function MainPage(props) {
   const handleCheckOutClick = async () => {
     try {
       await jwt.verify(token, process.env.REACT_APP_JWT_KEY);
-      history.push("/order/");
+      history.push("/order/checkout");
     } catch (error) {
       loginModel.showModel();
     }
