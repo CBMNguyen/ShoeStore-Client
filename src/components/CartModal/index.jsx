@@ -30,7 +30,7 @@ function CartModal({
       {carts.length !== 0 &&
         carts.map((cartItem, index) => (
           <div
-            className="d-flex  pb-4 mb-4 position-relative"
+            className="d-flex pb-4 mb-4 position-relative"
             style={{
               borderBottomStyle: "dashed",
               borderBottom:
@@ -67,8 +67,10 @@ function CartModal({
                 {cartItem.selectedQuantity}
               </Badge>
             </div>
-            <div className="flex-grow-1 ms-4">
-              <Badge className="bg-secondary">{cartItem.name}</Badge>
+            <div className="flex-grow-1 ms-3">
+              <code className="bg-secondary text-white rounded-2 px-2 fw-bold CartModal__name">
+                {cartItem.name}
+              </code>
               <h6>
                 <Badge className="bg-dark">
                   {capitalizeFirstLetter(cartItem.category.name)}
@@ -83,7 +85,7 @@ function CartModal({
                 $
                 {cartItem.salePrice *
                   cartItem.selectedQuantity *
-                  (1 - cartItem.promotionPercent)}
+                  (1 - cartItem.promotionPercent / 100)}
               </Badge>
             </div>
           </div>

@@ -148,6 +148,25 @@ function ProductDetailImage({
       return;
     }
 
+    const currentProductDetail = product.productDetail.find(
+      (productDetailItem) =>
+        productDetailItem.color.color === selectProductDetail.selectedColor
+    );
+
+    const currentQuantity = currentProductDetail.sizeAndQuantity.find(
+      (item) => item.size.size === selectProductDetail.selectedSize
+    ).quantity;
+
+    if (selectProductDetail.selectedQuantity > currentQuantity) {
+      toast(
+        "The number of products in the cart has exceeded the quantity in stock",
+        {
+          ...PRODUCT_TOAST_OPTIONS,
+        }
+      );
+      return;
+    }
+
     const { quantity } = product.productDetail
       .find((item) => item.color.color === selectProductDetail.selectedColor)
       .sizeAndQuantity.find(
@@ -241,7 +260,20 @@ function ProductDetailImage({
                       style={{ cursor: "pointer" }}
                     ></i>
                   </div>
-                  <div>{product.name}</div>
+                  <div>
+                    {product.name}{" "}
+                    {product.promotionPercent !== 0 && (
+                      <code
+                        className="fw-bolder text-center px-2 fw-bold text-white rounded-4 d-inline-block"
+                        style={{
+                          backgroundColor: "orange",
+                          fontSize: "12px",
+                        }}
+                      >
+                        discount {product.promotionPercent}%
+                      </code>
+                    )}
+                  </div>
                 </div>
 
                 {/* Product color */}
@@ -391,7 +423,9 @@ function ProductDetailImage({
                   >
                     <div>
                       <i className="bx bx-basket" />
-                      {`$${product.salePrice} - Add to Cart`}
+                      {`$${
+                        product.salePrice * (1 - product.promotionPercent / 100)
+                      } - Add to Cart`}
                     </div>
                   </button>
                 </div>

@@ -13,6 +13,14 @@
   z-index: 1;
   opacity: 1;
 
+  &__name {
+    width: 210px;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 1;
+    overflow: hidden;
+  }
+
   &__closeIcon {
     position: absolute;
     top: 28px;

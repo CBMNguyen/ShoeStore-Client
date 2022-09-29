@@ -24,9 +24,8 @@ import ReviewProgressItem from "../ReviewProgressItem";
 import brandLogo from "../../../../assets/images/brandLogo.png";
 
 function ProductReview({ product, user, order }) {
-  const [reviews, setReview] = useState([]);
+  let [reviews, setReview] = useState([]);
   const [showReviewForm, setShowReviewForm] = useState(false);
-
   const [addReviewLoading, setAddReviewLoading] = useState(false);
 
   const [showReviewUpdateForm, setShowReviewUpdateForm] = useState(false);
@@ -50,6 +49,8 @@ function ProductReview({ product, user, order }) {
     };
     fetchReviews();
   }, [product]);
+
+  const [currentReviewQuantity, setCurrentReviewQuantity] = useState(2);
 
   const handleReviewFormSubmit = async (data) => {
     data.userId = user._id;
@@ -182,6 +183,7 @@ function ProductReview({ product, user, order }) {
 
         {reviews
           .filter((review) => review.userId._id === user?._id || review.state)
+          .slice(0, currentReviewQuantity)
           .map((review) => (
             <ReviewItem
               key={review._id}
@@ -202,7 +204,10 @@ function ProductReview({ product, user, order }) {
       <Button
         outline
         color="primary"
-        disabled
+        disabled={currentReviewQuantity > reviews.length}
+        onClick={() => {
+          setCurrentReviewQuantity(currentReviewQuantity + 1);
+        }}
         className="d-block mx-auto my-4 shadow"
       >
         View more previews
