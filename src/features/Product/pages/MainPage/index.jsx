@@ -89,7 +89,8 @@ function MainPage(props) {
           ) !== -1) &&
       product.originalPrice >= filter["price"]["minPrice"] &&
       product.originalPrice <= filter["price"]["maxPrice"] &&
-      product.category.name.indexOf(filter["category"]) !== -1
+      product.category.name.indexOf(filter["category"]) !== -1 &&
+      !product.state
   );
 
   // Sort product

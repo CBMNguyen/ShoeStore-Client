@@ -147,14 +147,38 @@ function ReviewItem({
     >
       <div className="d-flex">
         <div>
-          <img
-            width={68}
-            height={68}
-            className="rounded-circle"
-            style={{ objectFit: "cover" }}
-            src={review.userId.image}
-            alt={review._id}
-          />
+          {review.userId.image && (
+            <img
+              width={68}
+              height={68}
+              className="rounded-circle"
+              style={{ objectFit: "cover" }}
+              src={review.userId.image}
+              alt={review._id}
+            />
+          )}
+
+          {!review.userId.image && (
+            <div
+              className="shadow"
+              style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+
+                width: "68px",
+                height: "68px",
+                borderRadius: "50%",
+                backgroundColor: "#000",
+                color: "#fff",
+
+                fontWeight: "bolder",
+                fontSize: "38px",
+              }}
+            >
+              <code className="text-white">{review.userId.firstname[0]}</code>
+            </div>
+          )}
         </div>
 
         <div className="ms-3">
@@ -231,7 +255,7 @@ function ReviewItem({
         isNested={false}
         feedback={review}
         updateFeedback={selectedFeedback}
-        feedbackLoading={selectedFeedback}
+        feedbackLoading={feedbackLoading}
         onAddFeedback={handleAddReviewFeedback}
         onUpdateFeedback={handleUpdateReviewFeedback}
         showFeedbackForm={showFeedbackForm}

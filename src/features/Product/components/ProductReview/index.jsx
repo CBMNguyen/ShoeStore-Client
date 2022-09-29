@@ -1,5 +1,9 @@
 import reviewApi from "api/review";
-import { PRODUCT_TOAST_OPTIONS, STAR_MEANINGS } from "constants/globals";
+import {
+  ORDER_STATE,
+  PRODUCT_TOAST_OPTIONS,
+  STAR_MEANINGS,
+} from "constants/globals";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
@@ -19,7 +23,7 @@ import ReviewItem from "../ReviewItem";
 import ReviewProgressItem from "../ReviewProgressItem";
 import brandLogo from "../../../../assets/images/brandLogo.png";
 
-function ProductReview({ product, user }) {
+function ProductReview({ product, user, order }) {
   const [reviews, setReview] = useState([]);
   const [showReviewForm, setShowReviewForm] = useState(false);
 
@@ -149,7 +153,17 @@ function ProductReview({ product, user }) {
             Only the people who bought the product can rate the product
           </code>
           <Button
-            disabled={!user?._id}
+            disabled={
+              !user?._id ||
+              !order.find(
+                (orderItem) =>
+                  orderItem.user === user?._id &&
+                  orderItem.state === ORDER_STATE.delivered &&
+                  orderItem.products.some(
+                    (productItem) => productItem?._id?._id === product?._id
+                  )
+              )
+            }
             onClick={() => setShowReviewForm(!showReviewForm)}
             className="btn btn-dark border-5 d-block mt-2 shadow"
           >
@@ -166,21 +180,23 @@ function ProductReview({ product, user }) {
           )}
         </Container>
 
-        {reviews.map((review) => (
-          <ReviewItem
-            key={review._id}
-            review={review}
-            user={user}
-            product={product}
-            setSelectedReview={setSelectedReview}
-            setModal={setModal}
-            updateReviewLoading={updateReviewLoading}
-            setUpdateReviewLoading={setUpdateReviewLoading}
-            showReviewUpdateForm={showReviewUpdateForm}
-            setShowReviewUpdateForm={setShowReviewUpdateForm}
-            onReviewUpdateFormSubmit={handleReviewUpdateFormSubmit}
-          />
-        ))}
+        {reviews
+          .filter((review) => review.userId._id === user?._id || review.state)
+          .map((review) => (
+            <ReviewItem
+              key={review._id}
+              review={review}
+              user={user}
+              product={product}
+              setSelectedReview={setSelectedReview}
+              setModal={setModal}
+              updateReviewLoading={updateReviewLoading}
+              setUpdateReviewLoading={setUpdateReviewLoading}
+              showReviewUpdateForm={showReviewUpdateForm}
+              setShowReviewUpdateForm={setShowReviewUpdateForm}
+              onReviewUpdateFormSubmit={handleReviewUpdateFormSubmit}
+            />
+          ))}
       </Row>
 
       <Button

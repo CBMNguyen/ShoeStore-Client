@@ -63,7 +63,9 @@ function FeedbackForm({
                   <Badge className="bg-dark">
                     {" "}
                     <code className="text-white">
-                      {`@${feedback.userId.firstname} ${feedback.userId.lastname}`}
+                      {feedback?.userId
+                        ? `@${feedback?.userId?.firstname} ${feedback?.userId?.lastname}`
+                        : `@${feedback?.employeeId?.firstname} ${feedback?.employeeId?.lastname}`}
                     </code>
                   </Badge>
                 </div>

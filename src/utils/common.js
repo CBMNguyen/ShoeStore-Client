@@ -1,10 +1,12 @@
 import { unwrapResult } from "@reduxjs/toolkit";
+import { logOut } from "app/userSlice";
 import {
   LeftArrowDirection,
   RightArrowDirection,
 } from "components/ArrowDirection";
 import { PRODUCT_TOAST_OPTIONS } from "constants/globals";
 import { toast } from "react-toastify";
+import firebase from "firebase";
 
 export function capitalizeFirstLetter(string = "") {
   return string.charAt(0).toUpperCase() + string.slice(1);
@@ -48,13 +50,19 @@ export function dataURLtoFile(dataurl, filename) {
 
 // Show Toast Success
 
-export const showToastSuccess = async (asyncAction) => {
-  const result = await asyncAction;
-  if (!unwrapResult(result)) return;
-  toast(result.payload.message, {
-    ...PRODUCT_TOAST_OPTIONS,
-  });
-  return result.payload;
+export const showToastSuccess = async (asyncAction, dispatch) => {
+  try {
+    const result = await asyncAction;
+    if (!unwrapResult(result)) return;
+    toast(result.payload.message, {
+      ...PRODUCT_TOAST_OPTIONS,
+    });
+    return result.payload;
+  } catch (error) {
+    showToastError(error);
+    dispatch && dispatch(logOut());
+    firebase.auth().signOut();
+  }
 };
 
 // Show Toast Error
@@ -204,8 +212,8 @@ export const getAverageStar = (reviews) => {
 };
 
 export const getColorByState = (state) => {
-  if (state === "pending") return "bg-danger";
-  if (state === "confirmed") return "bg-info";
+  if (state === "pending") return "bg-info";
+  if (state === "confirmed") return "bg-dark";
   if (state === "shipping") return "bg-warning";
   if (state === "delivered") return "bg-success";
   if (state === "cancelled") return "bg-danger";

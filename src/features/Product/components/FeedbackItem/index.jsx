@@ -35,6 +35,7 @@ function FeedbackItem({
     setSelectedFeedback(feedback);
     setRemoveConfirmModal(true);
   };
+
   return (
     <div onClick={(e) => e.stopPropagation()}>
       <div
@@ -42,18 +43,18 @@ function FeedbackItem({
         style={{ marginLeft: "80px", borderBottom: "1px solid #dedede" }}
       >
         <div>
-          {feedback?.userId?.image && (
+          {(feedback?.userId?.image || feedback?.employeeId?.image) && (
             <img
               width={60}
               height={60}
               className="rounded-circle"
               style={{ objectFit: "cover" }}
-              src={feedback.userId.image}
-              alt={feedback.userId.image}
+              src={feedback?.userId?.image || feedback?.employeeId?.image}
+              alt={feedback?.userId?.image || feedback?.employeeId?.image}
             />
           )}
 
-          {!feedback?.userId?.image && (
+          {!feedback?.userId?.image && !feedback?.employeeId?.image && (
             <div
               style={{
                 display: "flex",
@@ -78,30 +79,42 @@ function FeedbackItem({
         </div>
 
         <div className="ms-3">
-          {review.userId._id !== feedback.userId._id && (
+          {review?.userId &&
+            !feedback?.employeeId &&
+            review?.userId?._id !== feedback?.userId?._id && (
+              <div>
+                <code className="fw-bold text-dark">{`${feedback?.userId?.firstname} ${feedback?.userId?.lastname}`}</code>
+                <code className="text-secondary ms-2">
+                  {format(feedback?.updatedAt)}
+                </code>
+              </div>
+            )}
+
+          {feedback?.employeeId && (
             <div>
-              <code className="fw-bold text-dark">{`${feedback.userId.firstname} ${feedback.userId.lastname}`}</code>
+              <code className="fw-bold text-dark">{`${feedback?.employeeId?.firstname} ${feedback?.employeeId?.lastname}`}</code>
               <code className="text-secondary ms-2">
-                {format(feedback.updatedAt)}
-              </code>
-            </div>
-          )}
-          {review.userId._id === feedback.userId._id && (
-            <div>
-              <Badge>{`${feedback.userId.firstname} ${feedback.userId.lastname}`}</Badge>
-              <code className="text-secondary ms-2">
-                {format(feedback.updatedAt)}
+                {format(feedback?.updatedAt)}
               </code>
             </div>
           )}
 
-          {user?.role && (
-            <code>
-              Administrators <i className="bx bxs-crown text-warning"></i>
+          {review?.userId?._id === feedback?.userId?._id && (
+            <div>
+              <Badge>{`${feedback?.userId?.firstname} ${feedback?.userId?.lastname}`}</Badge>
+              <code className="text-secondary ms-2">
+                {format(feedback?.updatedAt)}
+              </code>
+            </div>
+          )}
+
+          {feedback.employeeId && (
+            <code className="fw-bold">
+              <i className="bx bxs-face text-dark"></i> Administrators
             </code>
           )}
 
-          {!user?.role && (
+          {review.userId && !feedback.employeeId && (
             <div className="text-success">
               <i className="bx bx-check"></i>{" "}
               <code className="text-success">Đã mua hàng</code>
@@ -113,18 +126,30 @@ function FeedbackItem({
               className="fw-bold text-primary me-2 position-relative"
               style={{ top: "-1px" }}
             >
-              {`@${
-                feedback?.feedbackId
-                  ? feedback.feedbackId.userId.firstname +
-                    " " +
-                    feedback.feedbackId.userId.lastname
-                  : feedback.reviewId.userId.firstname +
-                    " " +
-                    feedback.reviewId.userId.lastname
-              }`}
+              {feedback?.feedbackId?.userId &&
+                `@${
+                  feedback?.feedbackId
+                    ? feedback?.feedbackId?.userId?.firstname +
+                      " " +
+                      feedback?.feedbackId?.userId?.lastname
+                    : feedback?.reviewId?.userId?.firstname +
+                      " " +
+                      feedback?.reviewId?.userId?.lastname
+                }`}
+
+              {feedback?.feedbackId?.employeeId &&
+                `@${
+                  feedback?.feedbackId
+                    ? feedback?.feedbackId?.employeeId?.firstname +
+                      " " +
+                      feedback?.feedbackId?.employeeId?.lastname
+                    : feedback?.reviewId?.employeeId?.firstname +
+                      " " +
+                      feedback?.reviewId?.employeeId?.lastname
+                }`}
             </code>
 
-            {feedback.content}
+            {feedback?.content}
           </div>
         </div>
 
@@ -136,13 +161,13 @@ function FeedbackItem({
                 className="bx bx-message-dots text-dark me-1 fs-4"
               ></i>
             )}
-            {user?._id && user?._id === feedback.userId._id && (
+            {user?._id && user?._id === feedback?.userId?._id && (
               <i
                 onClick={toggleFeedBackUpdateForm}
                 className="bx bx-edit text-info me-1 fs-4"
               ></i>
             )}
-            {user?._id === feedback.userId._id && (
+            {user?._id === feedback?.userId?._id && (
               <i
                 onClick={handleRemoveFeedback}
                 className="bx bx-trash text-danger fs-4"

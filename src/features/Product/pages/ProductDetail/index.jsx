@@ -5,6 +5,7 @@ import Header from "components/Header";
 import LoginModel from "components/LoginModel";
 import Profile from "components/Profile";
 import SignUpModel from "components/SignUpModel";
+import { getOrderById } from "features/Order/orderSlice";
 import ProductDetailImage from "features/Product/components/ProductDetailImages";
 import ProductReview from "features/Product/components/ProductReview";
 import RecentViewProduct from "features/Product/components/RecentViewProduct";
@@ -24,6 +25,8 @@ function ProductDetail(props) {
   const { favourites, loading: favouriteLoading } = useSelector(
     (state) => state.favourite
   );
+  const { order } = useSelector((state) => state.order);
+
   const [product, setProduct] = useState();
 
   // Scroll To Top
@@ -66,6 +69,16 @@ function ProductDetail(props) {
     };
     fetchProduct();
   }, [productId]);
+
+  useEffect(() => {
+    try {
+      if (user?._id) {
+        dispatch(getOrderById(user?._id));
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }, [dispatch, user?._id]);
 
   // Scroll on top
   useEffect(() => {
@@ -156,7 +169,7 @@ function ProductDetail(props) {
         />
       )}
 
-      <ProductReview product={product} user={user} />
+      <ProductReview product={product} user={user} order={order} />
 
       {/* Show login model */}
       {loginModel.model.show && (

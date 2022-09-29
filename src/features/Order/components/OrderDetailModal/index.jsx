@@ -242,8 +242,8 @@ function OrderDetailModal({ order }) {
               <div className="my-auto">
                 <Badge className="bg-warning">
                   $
-                  {product._id.salePrice *
-                    (1 - product._id.promotionPercent / 100) *
+                  {product.currentSalePrice *
+                    (1 - product.currentPromotionPercent / 100) *
                     product.selectedQuantity}
                 </Badge>
               </div>

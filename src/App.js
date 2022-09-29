@@ -8,7 +8,7 @@ import React, { Suspense, useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { BrowserRouter, Route, Switch } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
-import { showToastError } from "utils/common";
+import { showToastError, showToastSuccess } from "utils/common";
 import "./App.scss";
 
 // Configure Firebase.
@@ -30,7 +30,7 @@ function App() {
       .onAuthStateChanged(async (user) => {
         if (user) {
           try {
-            dispatch(userLogin({ token: user.getIdToken() }));
+            showToastSuccess(dispatch(userLogin({ token: user.getIdToken() })));
             loginModel.closeModel();
           } catch (error) {
             showToastError(error);

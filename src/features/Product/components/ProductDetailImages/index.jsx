@@ -391,7 +391,7 @@ function ProductDetailImage({
                   >
                     <div>
                       <i className="bx bx-basket" />
-                      {`$${product.originalPrice} - Add to Cart`}
+                      {`$${product.salePrice} - Add to Cart`}
                     </div>
                   </button>
                 </div>

@@ -19,7 +19,7 @@ DateInputField.defaultProps = {
 };
 
 function DateInputField(props) {
-  const { name, label, placeholder, control, errors } = props;
+  const { name, label, placeholder, control, errors, disabled } = props;
   return (
     <Controller
       control={control}
@@ -47,6 +47,7 @@ function DateInputField(props) {
               shouldCloseOnSelect
               customInput={<StyledInput errors={errors} />}
               showYearDropdown
+              disabled={disabled}
             />
             <div className="is-invalid"></div>
             {showError && (

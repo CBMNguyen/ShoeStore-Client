@@ -36,7 +36,6 @@ function Checkout(props) {
 
   const [selectedAddress, setSelectedAddress] = useState(() => {
     if (orderData) return orderData?.address;
-    if (order.length !== 0) return order[order.length - 1].address;
     return "";
   });
   const [totalFeeShip, setTotalFeeShip] = useState(0);
@@ -91,14 +90,17 @@ function Checkout(props) {
   useEffect(() => {
     const fetchOrderByUserId = async () => {
       try {
-        await dispatch(getOrderById(user._id));
+        const { payload } = await dispatch(getOrderById(user._id));
+        if (payload.order.length > 0 && !orderData) {
+          setSelectedAddress(payload.order[payload.order.length - 1].address);
+        }
       } catch (error) {
         console.log(error);
       }
     };
     fetchOrderByUserId();
-  }, [user._id, dispatch]);
-
+  }, [dispatch, user._id]);
+  console.log(selectedAddress);
   const [showAddressForm, setShowAddressForm] = useState(false);
   useEffect(() => {
     const fetchShipFee = async () => {
@@ -150,7 +152,7 @@ function Checkout(props) {
       }
     };
     fetchShipFee();
-  }, [selectedAddress, cart]);
+  }, [cart, selectedAddress]);
   const handleCheckoutSubmit = async (data) => {
     if (cart.length === 0) return;
 
@@ -166,6 +168,8 @@ function Checkout(props) {
       selectedColor: product.selectedColor,
       selectedQuantity: product.selectedQuantity,
       selectedSize: product.selectedSize,
+      currentOriginalPrice: product.originalPrice,
+      currentSalePrice: product.salePrice,
     }));
 
     const cloneCart = cart.slice().map((item) => ({ ...item }));

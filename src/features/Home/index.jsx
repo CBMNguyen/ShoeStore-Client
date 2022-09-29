@@ -236,7 +236,7 @@ function Home(props) {
         <Row>
           {products
             .slice()
-            .filter((item) => item.promotionPercent === 0)
+            .filter((item) => item.promotionPercent === 0 && !item.state)
             .slice(0, 8)
             .map((product) => (
               <ProductItem
@@ -264,7 +264,7 @@ function Home(props) {
         <Row>
           {products
             .slice()
-            .filter((item) => item.promotionPercent !== 0)
+            .filter((item) => item.promotionPercent !== 0 && !item.state)
             .slice(0, 8)
             .map((product) => (
               <ProductItem

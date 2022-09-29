@@ -52,7 +52,7 @@ function SelectField(props) {
               id={name}
               isMulti={isMulty}
               options={options}
-              disabled={disabled}
+              isDisabled={disabled}
               placeholder={placeholder}
             />
             {showError && (

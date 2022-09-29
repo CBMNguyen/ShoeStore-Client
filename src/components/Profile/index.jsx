@@ -170,6 +170,7 @@ function Profile(props) {
               type="file"
               onChange={handleAvatarChange}
               invalid={!!errors["image"]}
+              disabled={model?.data && !model?.data?.phone}
             />
             {errors["image"] && (
               <FormFeedback>{errors["image"]["message"]}</FormFeedback>
@@ -210,6 +211,7 @@ function Profile(props) {
               control={control}
               label="First Name"
               errors={errors}
+              disabled={model?.data && !model?.data?.phone}
             />
           </Col>
 
@@ -220,6 +222,7 @@ function Profile(props) {
               control={control}
               label="Last Name"
               errors={errors}
+              disabled={model?.data && !model?.data?.phone}
             />
           </Col>
 
@@ -230,6 +233,7 @@ function Profile(props) {
               label="Gender"
               errors={errors}
               options={GENDER_OPTIONS}
+              disabled={model?.data && !model?.data?.phone}
             />
           </Col>
 
@@ -241,6 +245,7 @@ function Profile(props) {
               label="Email"
               errors={errors}
               type="email"
+              disabled={model?.data && !model?.data?.phone}
             />
           </Col>
 
@@ -251,6 +256,7 @@ function Profile(props) {
               control={control}
               label="Phone"
               errors={errors}
+              disabled={model?.data && !model?.data?.phone}
             />
           </Col>
 
@@ -272,12 +278,12 @@ function Profile(props) {
                 />
 
                 <InputField
-                  readOnly={readOnly}
                   name="password"
                   control={control}
                   type="password"
                   label="Password"
                   errors={errors}
+                  disabled={(model?.data && !model?.data?.phone) || readOnly}
                 />
               </div>
             </Col>
@@ -291,41 +297,51 @@ function Profile(props) {
               label="Date of Birth"
               placeholder="dd/mm/yy"
               errors={errors}
+              disabled={model?.data && !model?.data?.phone}
             />
           </Col>
 
-          <Col md={12}>
-            <p
-              onClick={() => setShowAddressForm(true)}
-              outline
-              color="secondary"
-              className="w-auto"
-              style={{ cursor: "pointer" }}
-            >
-              <code className="text-primary">
-                <i className="bx bx-location-plus"></i> Add new address
-              </code>
-            </p>
-          </Col>
-
-          {addresses.map(({ address, _id }) => (
-            <Col md={12} key={address}>
-              <Alert className="py-2 position-relative">
-                <code style={{ color: "unset" }}>{address.split("#")[0]}</code>
-
-                <i
-                  className="Profile__closeIcon bx bx-x position-absolute top-25 end-0 fs-3"
-                  onClick={() => {
-                    setModal(true);
-                    setSelectedAddress({ _id, address });
-                  }}
-                />
-              </Alert>
+          {!(model?.data && !model?.data?.phone) && (
+            <Col md={12}>
+              <p
+                onClick={() => setShowAddressForm(true)}
+                outline
+                color="secondary"
+                className="w-auto"
+                style={{ cursor: "pointer" }}
+              >
+                <code className="text-primary">
+                  <i className="bx bx-location-plus"></i> Add new address
+                </code>
+              </p>
             </Col>
-          ))}
+          )}
+
+          {!(model?.data && !model?.data?.phone) &&
+            addresses.map(({ address, _id }) => (
+              <Col md={12} key={address}>
+                <Alert className="py-2 position-relative">
+                  <code style={{ color: "unset" }}>
+                    {address.split("#")[0]}
+                  </code>
+
+                  <i
+                    className="Profile__closeIcon bx bx-x position-absolute top-25 end-0 fs-3"
+                    onClick={() => {
+                      setModal(true);
+                      setSelectedAddress({ _id, address });
+                    }}
+                  />
+                </Alert>
+              </Col>
+            ))}
         </Row>
 
-        <button className="Profile__btn mt-4" type="submit" disabled={loading}>
+        <button
+          className="Profile__btn mt-4"
+          type="submit"
+          disabled={loading || (model?.data && !model?.data?.phone)}
+        >
           {loading && (
             <Spinner
               color="light"

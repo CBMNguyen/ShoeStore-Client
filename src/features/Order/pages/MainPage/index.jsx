@@ -423,21 +423,29 @@ function MainPage(props) {
               </div>
             </Col>
             <Col md={2}>
-              <Button
-                disabled={selectedOrder?.state !== ORDER_STATE.pending}
-                color="danger"
-                className="rounded-1 btn-sm"
-                style={{
-                  backgroundImage:
-                    "linear-gradient(136deg) ,rgb(242, 113, 33) 0%,rgb(233, 64, 87) 50%,rgb(138, 35, 135) 100%",
-                }}
-                onClick={toggleNested}
-              >
-                <code className="text-white text-uppercase">Cancel Order</code>
-              </Button>{" "}
+              {!selectedOrder?.payment && (
+                <Button
+                  disabled={selectedOrder?.state !== ORDER_STATE.pending}
+                  color="danger"
+                  className="rounded-1 btn-sm"
+                  style={{
+                    backgroundImage:
+                      "linear-gradient(136deg) ,rgb(242, 113, 33) 0%,rgb(233, 64, 87) 50%,rgb(138, 35, 135) 100%",
+                  }}
+                  onClick={toggleNested}
+                >
+                  <code className="text-white text-uppercase">
+                    Cancel Order
+                  </code>
+                </Button>
+              )}{" "}
               <Button
                 color="dark"
-                className="rounded-1 btn-sm"
+                className={
+                  selectedOrder?.payment
+                    ? "rounded-1 btn-sm float-end"
+                    : "rounded-1 btn-sm"
+                }
                 onClick={toggle}
               >
                 <code className="text-white text-uppercase">Close</code>
