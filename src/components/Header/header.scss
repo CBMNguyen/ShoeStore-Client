@@ -68,6 +68,7 @@
 
       font-size: 1.4rem;
       color: #eef;
+      width: 24px;
     }
 
     & i:nth-child(2) {
@@ -334,6 +335,7 @@
 
     &__searchIcon {
       position: relative;
+      display: inline-block;
       left: 24px !important;
     }
   }
