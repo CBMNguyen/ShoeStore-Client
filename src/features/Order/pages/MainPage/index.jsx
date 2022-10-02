@@ -173,28 +173,31 @@ function MainPage(props) {
       />
       {!orderLoading && (
         <Container className="shadow rounded-1">
-          <Row className="my-5">
+          <Row className="my-0 my-md-5">
             {/* handle when order empty */}
             {order.length === 0 && (
               <div className="Order__empty">
                 <i className="bx bxl-shopify animate__animated animate__swing">
                   <Badge className="bg-warning rounded-circle">0</Badge>
                 </i>
-                <div className="d-flex">
-                  <Link
-                    to="/"
-                    className="button shadow-lg text-decoration-none"
-                  >
-                    Home
-                  </Link>
-
-                  <Link
-                    to="/products"
-                    className="button shadow-lg ms-4 text-decoration-none"
-                  >
-                    See other products
-                  </Link>
-                </div>
+                <Row className="w-75">
+                  <Col md={6}>
+                    <Link
+                      to="/"
+                      className="button shadow-lg text-decoration-none"
+                    >
+                      Home
+                    </Link>
+                  </Col>
+                  <Col md={6}>
+                    <Link
+                      to="/products"
+                      className="button shadow-lg text-decoration-none"
+                    >
+                      See other products
+                    </Link>
+                  </Col>
+                </Row>
               </div>
             )}
 

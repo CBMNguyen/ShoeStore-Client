@@ -55,7 +55,6 @@
 
     & .button {
       display: block;
-      width: 300px;
       margin-top: 2rem;
       padding: 1rem 2rem;
 
@@ -67,6 +66,31 @@
 
       font-weight: bold;
       cursor: pointer;
+    }
+  }
+  & ::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+@media (max-width: 768px) {
+  .Order {
+    max-width: 100% !important;
+    max-height: 100vh - 4.5vh;
+    margin: 0;
+    & header {
+      & h2 {
+        font-size: 1.4rem;
+      }
+    }
+
+    &__empty {
+      height: 700px;
+      border-radius: 0 !important;
+    }
+
+    & .button:last-child {
+      margin-top: 1rem;
     }
   }
 }

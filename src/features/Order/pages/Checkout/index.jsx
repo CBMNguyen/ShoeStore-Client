@@ -258,7 +258,7 @@ function Checkout(props) {
       <Container>
         {checkoutSuccess && <CheckoutSuccess user={user} order={order} />}
         {!checkoutSuccess && (
-          <Row style={{ marginTop: "45px" }}>
+          <Row className="mt-3 mt-md-5">
             <Col lg={6}>
               <div className="Checkout__logo">
                 <h2>
@@ -284,7 +284,7 @@ function Checkout(props) {
                   <code>Order information</code>
                 </BreadcrumbItem>
                 <BreadcrumbItem>
-                  <Link to="order" className="text-decoration-none">
+                  <Link to="/order/checkout" className="text-decoration-none">
                     <code>Payment method</code>
                   </Link>
                 </BreadcrumbItem>

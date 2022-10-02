@@ -207,7 +207,7 @@
       padding: 16px;
       margin: 0;
       max-height: 64vh;
-      overflow-y: scroll;
+      overflow-y: auto;
 
       & li {
         display: flex;
@@ -230,14 +230,51 @@
 
 @media (max-width: 768px) {
   .Header {
+    padding-right: 8px;
     &__logo {
       & h2 {
+        font-size: 28px;
         left: -16px;
       }
 
       & img {
+        position: absolute;
+        right: -32px;
         width: 28px;
         height: 28px;
+      }
+    }
+
+    &__search {
+      position: absolute;
+      top: 100%;
+      z-index: 1;
+      left: 0;
+      width: 100%;
+      background-color: #fff;
+      & ul {
+        list-style: none;
+        padding: 16px;
+        margin: 0;
+        max-height: 58vh;
+        overflow-y: auto;
+
+        & li {
+          display: flex;
+          align-items: center;
+          border-bottom: 1px solid #dedede;
+          overflow: hidden;
+
+          & img {
+            position: relative;
+            right: 0 !important;
+            top: -28px;
+            width: 100px !important;
+            height: 100px !important;
+            object-fit: cover;
+            margin-right: 16px;
+          }
+        }
       }
     }
 

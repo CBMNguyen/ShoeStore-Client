@@ -48,7 +48,7 @@ function CartList(props) {
   };
 
   return (
-    <Container>
+    <Container className="p-0">
       <div
         className={classNames("CartList shadow rounded-1", {
           "p-0": cart.length === 0,

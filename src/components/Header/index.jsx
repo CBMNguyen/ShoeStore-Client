@@ -214,7 +214,7 @@ function Header(props) {
                 ))}
               </ul>
               <Link
-                className="text-info py-2 text-center d-block"
+                className="text-info pb-3 text-center d-block"
                 to="/products"
               >
                 View all products ...
@@ -263,8 +263,8 @@ function Header(props) {
             justifyContent: "center",
             alignItems: "center",
 
-            width: "44px",
-            height: "44px",
+            width: "60px",
+            height: "60px",
             backgroundColor: "cyan",
             color: "#fff",
             borderRadius: "50%",

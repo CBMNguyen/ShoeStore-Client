@@ -231,7 +231,7 @@ function ReviewItem({
               ></i>
             )}
 
-            {(user?.role || user?._id === review.userId._id) && (
+            {user?._id === review.userId._id && (
               <i
                 onClick={handleRemoveReview}
                 className="bx bx-trash text-danger fs-4"

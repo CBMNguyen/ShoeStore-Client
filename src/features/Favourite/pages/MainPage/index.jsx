@@ -12,7 +12,7 @@ import { Link } from "react-router-dom";
 import { Breadcrumb, BreadcrumbItem, Button, Container, Row } from "reactstrap";
 import { showToastError, showToastSuccess } from "utils/common";
 import NoResultImage from "../../../../assets/images/noResultFound.png";
-
+import "./favourite.scss";
 function Favourite(props) {
   const { loading, user } = useSelector((state) => state.user);
   const favouritesData = useSelector((state) => state.favourite);
@@ -86,7 +86,7 @@ function Favourite(props) {
       />
 
       <Container>
-        <div className="d-flex justify-content-between align-items-center">
+        <div className="Favourite d-flex justify-content-between align-items-center">
           <h3 className="text-uppercase my-5">Your Favourite Product</h3>
           <Breadcrumb className="mt-2">
             <BreadcrumbItem>
@@ -114,6 +114,7 @@ function Favourite(props) {
         {(favouritesData.favourites.length === 0 || !user?._id) && (
           <div className="text-center">
             <img
+              className="Favourite__notfoundImg"
               style={{ height: "60vh" }}
               src={NoResultImage}
               alt="No result "

@@ -167,7 +167,7 @@ function FeedbackItem({
                 className="bx bx-edit text-info me-1 fs-4"
               ></i>
             )}
-            {user?._id === feedback?.userId?._id && (
+            {user?._id && user?._id === feedback?.userId?._id && (
               <i
                 onClick={handleRemoveFeedback}
                 className="bx bx-trash text-danger fs-4"

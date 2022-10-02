@@ -27,3 +27,16 @@
     }
   }
 }
+
+@media (max-width: 768px) {
+  .Home {
+    &__carousel {
+      height: 30vh;
+      & img {
+        width: 100%;
+        height: 30vh;
+        object-fit: cover;
+      }
+    }
+  }
+}
