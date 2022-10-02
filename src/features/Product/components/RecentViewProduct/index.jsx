@@ -14,9 +14,9 @@ function RecentViewProduct({
   title,
 }) {
   return (
-    <div>
+    <Container>
       {products.length > 0 && (
-        <Container>
+        <div>
           <h3 className="text-uppercase mt-4">{title}</h3>
           <Row className="my-5">
             {products.map((product) => (
@@ -28,9 +28,9 @@ function RecentViewProduct({
               />
             ))}
           </Row>
-        </Container>
+        </div>
       )}
-    </div>
+    </Container>
   );
 }
 

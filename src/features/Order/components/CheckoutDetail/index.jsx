@@ -7,6 +7,7 @@ import {
   Input,
   Label,
   Row,
+  Spinner,
 } from "reactstrap";
 import { total } from "utils/common";
 import OrderItem from "../OrderItem";
@@ -16,11 +17,13 @@ function OrderDetail({
   totalFeeShip,
   discount,
   discountCode,
+  discountLoading,
   setDiscountCode,
+  onDiscountApplyClick,
 }) {
   return (
     <Container>
-      <div className="w-75 m-auto">
+      <div className="w-75 m-auto Checkout__detail">
         <Row className="mt-3">
           {cart.map((cartItem) => (
             <OrderItem key={cartItem._id} order={cartItem} />
@@ -44,7 +47,19 @@ function OrderDetail({
             </FormGroup>
           </Col>
           <Col md={3}>
-            <Button className="w-100 h-75 bg-info border-0">Apply</Button>
+            <Button
+              onClick={onDiscountApplyClick}
+              className="w-100 bg-info border-0"
+              style={{ height: "60px" }}
+              disabled={discountLoading}
+            >
+              Apply
+              {discountLoading && (
+                <Spinner className="ms-2" size="sm">
+                  {" "}
+                </Spinner>
+              )}
+            </Button>
           </Col>
         </Row>
 
@@ -52,15 +67,19 @@ function OrderDetail({
           <div className="py-3">
             <div className="d-flex justify-content-between text-secondary">
               <div>Provisional Price</div>
-              <div>${total(cart).toFixed(2)}</div>
+              <code className="text-warning fw-bold">
+                ${total(cart).toFixed(2)}
+              </code>
             </div>
             <div className="d-flex justify-content-between my-2 text-secondary">
               <div>Transport Fee</div>
-              <div>${totalFeeShip}</div>
+              <code className="fw-bold" style={{ color: "cyan" }}>
+                ${totalFeeShip}
+              </code>
             </div>
             <div className="d-flex justify-content-between text-secondary">
               <div>Discount</div>
-              <div>${discount}</div>
+              <code className="fw-bold">${discount}</code>
             </div>
           </div>
         </Row>

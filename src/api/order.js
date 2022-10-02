@@ -16,6 +16,11 @@ const orderApi = {
     return axiosClient.patch(url, data);
   },
 
+  updateState: (orderId, data) => {
+    const url = `/order/state/${orderId}`;
+    return axiosClient.patch(url, data);
+  },
+
   delete: (orderId) => {
     const url = `/order/${orderId}`;
     return axiosClient.delete(url);

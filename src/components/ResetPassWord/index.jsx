@@ -72,6 +72,7 @@ function ResetPassWord(props) {
               placeholder="Email..."
               type="email"
               value={email}
+              required
               onChange={(e) => setEmail(e.target.value)}
             />
           </FormGroup>

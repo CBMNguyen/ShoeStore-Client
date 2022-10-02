@@ -112,7 +112,7 @@ function Header(props) {
       </div>
 
       <div className="Header__navigation">
-        <nav className="d-flex justify-content-between w-75 m-auto">
+        <nav className="d-flex justify-content-between w-75 m-auto d-none d-xxl-flex">
           <Link to="/products">
             <h5>All Products</h5>
           </Link>
@@ -137,7 +137,7 @@ function Header(props) {
       <div
         className={showInputMobile ? "Header__input d-block" : "Header__input"}
       >
-        <i className="bx bx-search" />
+        <i className="bx bx-search Header__searchIcon" />
         {/* voice icon */}
         {!listening && (
           <i
@@ -244,9 +244,37 @@ function Header(props) {
           ></i>
         </div>
 
-        <div className="p-0 m-0" onClick={() => mapModel.showModel()}>
+        <div
+          className="p-0 m-0 d-none d-sm-block"
+          onClick={() => mapModel.showModel()}
+        >
           <i className="bx bx-map" />
         </div>
+
+        {/* map icon when width sm */}
+
+        <div
+          className="p-0 m-0 d-sm-none"
+          style={{
+            position: "fixed",
+            left: "1.2rem",
+            bottom: "1.2rem",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+
+            width: "44px",
+            height: "44px",
+            backgroundColor: "cyan",
+            color: "#fff",
+            borderRadius: "50%",
+          }}
+          onClick={() => mapModel.showModel()}
+        >
+          <i className="bx bx-map me-0" />
+        </div>
+
+        {/* =================================== */}
 
         {token && (
           <div className="p-0 m-0">
@@ -260,8 +288,8 @@ function Header(props) {
           </div>
         )}
 
-        <div>
-          <label htmlFor="nav-mobile-input" className="nav__mobile-btn me-2">
+        <div style={{ position: "relative", top: "-1px" }}>
+          <label htmlFor="nav-mobile-input" className="nav__mobile-btn mx-1">
             <i
               className="bx bx-basket animate__animated animate__swing"
               key={cart.length}

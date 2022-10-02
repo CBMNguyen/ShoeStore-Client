@@ -1,5 +1,6 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import orderApi from "api/order";
+import { ORDER_STATE } from "constants/globals";
 
 const initialState = {
   order: [],
@@ -37,6 +38,25 @@ export const updateOrder = createAsyncThunk(
     try {
       const data = await orderApi.update(id);
       return fulfillWithValue({ ...data, _id: id });
+    } catch (error) {
+      return rejectWithValue(error);
+    }
+  }
+);
+
+export const updateStateOrder = createAsyncThunk(
+  "order/updateStateOrder",
+  async (order, { rejectWithValue, fulfillWithValue }) => {
+    try {
+      const { message } = await orderApi.updateState(order._id, {
+        state: ORDER_STATE.delivered,
+        payment: true,
+        order,
+      });
+      return fulfillWithValue({
+        _id: order._id,
+        message,
+      });
     } catch (error) {
       return rejectWithValue(error);
     }
@@ -109,6 +129,24 @@ const orderSlice = createSlice({
           return order;
         }
       });
+      state.error = "";
+    },
+    // handle update order state
+
+    [updateStateOrder.pending]: (state) => {
+      state.loading = true;
+    },
+    [updateStateOrder.rejected]: (state, action) => {
+      state.loading = false;
+      state.error = action.payload.message;
+    },
+    [updateStateOrder.fulfilled]: (state, action) => {
+      const { _id } = action.payload;
+      state.loading = false;
+      const index = state.order.findIndex((order) => order._id === _id);
+      if (index === -1) return;
+      state.order[index].state = ORDER_STATE.delivered;
+      state.order[index].payment = true;
       state.error = "";
     },
     // handle delete order

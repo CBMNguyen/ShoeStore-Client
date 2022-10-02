@@ -23,3 +23,15 @@
     }
   }
 }
+
+@media (max-width: 992px) {
+  .Checkout {
+    &__borderLeft {
+      border: none !important;
+    }
+
+    &__detail {
+      width: 100% !important;
+    }
+  }
+}

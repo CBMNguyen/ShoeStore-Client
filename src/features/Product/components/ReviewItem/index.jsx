@@ -142,7 +142,7 @@ function ReviewItem({
     <div
       key={review._id}
       onClick={toggle}
-      className="shadow-lg rounded-2 p-4 mt-4"
+      className="shadow-lg rounded-2 p-md-4 mt-4 p-3"
       style={{ cursor: "pointer" }}
     >
       <div className="d-flex">

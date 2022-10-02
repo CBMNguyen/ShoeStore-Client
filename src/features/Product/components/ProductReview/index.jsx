@@ -75,7 +75,7 @@ function ProductReview({ product, user, order }) {
       await reviewApi.patch(selectedReView._id, data);
       setReview(
         reviews.map((review) => {
-          if (review.userId._id === user?._id) {
+          if (review._id === selectedReView._id) {
             return { ...review, ...data };
           } else {
             return review;
@@ -148,7 +148,7 @@ function ProductReview({ product, user, order }) {
             ))}
         </div>
 
-        <Container className="px-0">
+        <Container>
           <h5 className="mb-0">New Reviews</h5>
           <code className="text-secondary">
             Only the people who bought the product can rate the product
@@ -179,26 +179,28 @@ function ProductReview({ product, user, order }) {
               onReviewFormSubmit={handleReviewFormSubmit}
             />
           )}
-        </Container>
 
-        {reviews
-          .filter((review) => review.userId._id === user?._id || review.state)
-          .slice(0, currentReviewQuantity)
-          .map((review) => (
-            <ReviewItem
-              key={review._id}
-              review={review}
-              user={user}
-              product={product}
-              setSelectedReview={setSelectedReview}
-              setModal={setModal}
-              updateReviewLoading={updateReviewLoading}
-              setUpdateReviewLoading={setUpdateReviewLoading}
-              showReviewUpdateForm={showReviewUpdateForm}
-              setShowReviewUpdateForm={setShowReviewUpdateForm}
-              onReviewUpdateFormSubmit={handleReviewUpdateFormSubmit}
-            />
-          ))}
+          {reviews
+            .filter((review) => review.userId._id === user?._id || review.state)
+            .slice(0, currentReviewQuantity)
+            .map((review) => (
+              <ReviewItem
+                key={review._id}
+                review={review}
+                user={user}
+                product={product}
+                setSelectedReview={setSelectedReview}
+                setModal={setModal}
+                updateReviewLoading={updateReviewLoading}
+                setUpdateReviewLoading={setUpdateReviewLoading}
+                showReviewUpdateForm={
+                  showReviewUpdateForm && review._id === selectedReView?._id
+                }
+                setShowReviewUpdateForm={setShowReviewUpdateForm}
+                onReviewUpdateFormSubmit={handleReviewUpdateFormSubmit}
+              />
+            ))}
+        </Container>
       </Row>
 
       <Button

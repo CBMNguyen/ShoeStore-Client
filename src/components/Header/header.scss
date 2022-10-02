@@ -34,8 +34,9 @@
     }
 
     & img {
-      position: relative;
-      top: -4px;
+      position: absolute;
+      top: 4px;
+      right: -34px;
       width: 32px;
       height: 32px;
       object-fit: cover;
@@ -282,14 +283,22 @@
       animation: mobileSearchSlideIn linear 0.3s;
       transition: all linear 0.3s;
 
-      & i {
-        top: 24px;
-        left: 24px;
+      & i,
+      .icon {
+        top: 24px !important;
+        right: 48px !important;
       }
 
       & img {
-        left: 228px;
+        right: 16px !important;
+        width: 20px !important;
+        height: 20px !important;
       }
+    }
+
+    &__searchIcon {
+      position: relative;
+      left: 24px !important;
     }
   }
 }

@@ -6,7 +6,11 @@ import LoginModel from "components/LoginModel";
 import Pagination from "components/Pagination";
 import Profile from "components/Profile";
 import SignUpModel from "components/SignUpModel";
-import { getOrderById, updateOrder } from "features/Order/orderSlice";
+import {
+  getOrderById,
+  updateOrder,
+  updateStateOrder,
+} from "features/Order/orderSlice";
 import useModel from "hooks/useModel";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -56,7 +60,7 @@ function MainPage(props) {
   const [selectedOrder, setSelectedOrder] = useState();
   const [filter, setFilter] = useState({
     page: 1,
-    limit: 8,
+    limit: 5,
   });
 
   const toggle = () => setModal(!modal);
@@ -76,6 +80,16 @@ function MainPage(props) {
       await dispatch(updateOrder(orderId));
       toggleAll();
       toast("Your order has been cancelled.", { ...PRODUCT_TOAST_OPTIONS });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleReceivedOrder = async () => {
+    try {
+      await dispatch(updateStateOrder(selectedOrder));
+      toggle();
+      toast("ShoesStore thank you so much.", { ...PRODUCT_TOAST_OPTIONS });
     } catch (error) {
       console.log(error);
     }
@@ -142,6 +156,13 @@ function MainPage(props) {
     }
   };
 
+  const handlePageChange = (page) => {
+    setFilter({ ...filter, page });
+  };
+
+  const start = (filter["page"] - 1) * filter["limit"];
+  const end = filter["page"] * filter["limit"];
+
   return (
     <div className="Order">
       <Header
@@ -191,29 +212,28 @@ function MainPage(props) {
                     <BreadcrumbItem active>Order</BreadcrumbItem>
                   </Breadcrumb>
                 </header>
-                <Table>
-                  <thead
-                    className="text-white"
-                    style={{ backgroundColor: "deeppink" }}
-                  >
-                    <tr>
-                      <th>#</th>
-                      <th>Address</th>
-                      <th>State</th>
-                      <th>Total</th>
-                      <th>Payment</th>
-                      <th>Method</th>
-                      <th>Order Date</th>
-                      <th>Action</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {order
-                      .slice(filter.page - 1, filter.limit)
-                      .map((item, index) => (
+                <div className="table-responsive">
+                  <Table>
+                    <thead
+                      className="text-white"
+                      style={{ backgroundColor: "deeppink" }}
+                    >
+                      <tr>
+                        <th>#</th>
+                        <th>Address</th>
+                        <th>State</th>
+                        <th>Total</th>
+                        <th>Payment</th>
+                        <th>Method</th>
+                        <th>Order Date</th>
+                        <th>Action</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {order.slice(start, end).map((item, index) => (
                         <tr style={{ verticalAlign: "middle" }} key={index}>
                           <th scope="row">{index + 1}</th>
-                          <td style={{ width: "300px" }}>
+                          <td style={{ minWidth: "300px" }}>
                             <code className="text-dark">
                               {item.address.split("#")[0]}
                             </code>
@@ -270,11 +290,16 @@ function MainPage(props) {
                           </td>
                         </tr>
                       ))}
-                  </tbody>
-                </Table>
+                    </tbody>
+                  </Table>
+                </div>
 
                 <div className="d-flex justify-content-center mt-2">
-                  <Pagination filter={{ page: 1, limit: 8, totalRow: 8 }} />
+                  <Pagination
+                    filter={filter}
+                    onPageChange={handlePageChange}
+                    totalRow={order.length}
+                  />
                 </div>
               </div>
             )}
@@ -380,8 +405,8 @@ function MainPage(props) {
         </ModalBody>
         <ModalFooter className="py-2 d-block">
           <Row>
-            <Col md={10}>
-              <div className="d-flex align-items-center">
+            <Col>
+              <div className="d-flex flex-column flex-md-row align-items-center">
                 <div className="d-flex align-items-center me-2">
                   <code className="text-secondary">Payment Method:</code>
                   {selectedOrder?.paymentMethod ? (
@@ -417,39 +442,65 @@ function MainPage(props) {
                   </code>
                 </div>
                 <div className="d-flex align-items-center">
+                  <code className="text-secondary mx-3">Discount Code</code>
+                  <code className="fw-bold">{selectedOrder?.discountCode}</code>
+                </div>
+                <div className="d-flex align-items-center">
                   <code className="text-secondary mx-3">Discount</code>
                   <code className="fw-bold">${selectedOrder?.discount}</code>
                 </div>
               </div>
             </Col>
             <Col md={2}>
-              {!selectedOrder?.payment && (
+              <div className="float-end">
+                {selectedOrder?.state === ORDER_STATE.shipping && (
+                  <Button
+                    disabled={orderLoading}
+                    color="success"
+                    className="rounded-1 btn-sm mx-1 shadow"
+                    onClick={handleReceivedOrder}
+                  >
+                    <code className="text-white text-uppercase">
+                      successful delivery
+                    </code>
+
+                    {orderLoading && <Spinner size="sm"> </Spinner>}
+                  </Button>
+                )}
+                {!selectedOrder?.payment && (
+                  <Button
+                    disabled={orderLoading}
+                    color="danger"
+                    className="rounded-1 btn-sm"
+                    style={{
+                      backgroundImage:
+                        "linear-gradient(136deg) ,rgb(242, 113, 33) 0%,rgb(233, 64, 87) 50%,rgb(138, 35, 135) 100%",
+                      display:
+                        selectedOrder?.state !== ORDER_STATE.pending
+                          ? "none"
+                          : "inline-block",
+                    }}
+                    onClick={toggleNested}
+                  >
+                    <code className="text-white text-uppercase">
+                      Cancel Order
+                    </code>
+
+                    {orderLoading && <Spinner size="sm"> </Spinner>}
+                  </Button>
+                )}{" "}
                 <Button
-                  disabled={selectedOrder?.state !== ORDER_STATE.pending}
-                  color="danger"
-                  className="rounded-1 btn-sm"
-                  style={{
-                    backgroundImage:
-                      "linear-gradient(136deg) ,rgb(242, 113, 33) 0%,rgb(233, 64, 87) 50%,rgb(138, 35, 135) 100%",
-                  }}
-                  onClick={toggleNested}
+                  color="dark"
+                  className={
+                    selectedOrder?.payment
+                      ? "rounded-1 btn-sm"
+                      : "rounded-1 btn-sm"
+                  }
+                  onClick={toggle}
                 >
-                  <code className="text-white text-uppercase">
-                    Cancel Order
-                  </code>
+                  <code className="text-white text-uppercase">Close</code>
                 </Button>
-              )}{" "}
-              <Button
-                color="dark"
-                className={
-                  selectedOrder?.payment
-                    ? "rounded-1 btn-sm float-end"
-                    : "rounded-1 btn-sm"
-                }
-                onClick={toggle}
-              >
-                <code className="text-white text-uppercase">Close</code>
-              </Button>
+              </div>
             </Col>
           </Row>
         </ModalFooter>

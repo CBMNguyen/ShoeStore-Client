@@ -256,7 +256,7 @@ function OrderForm({
           <h4 className="mb-3">
             <code className="text-secondary">Payment Method</code>
           </h4>
-          <FormGroup check>
+          <FormGroup check className="ms-2">
             <Input
               defaultChecked={!paymentMethod}
               style={{ cursor: "pointer" }}
@@ -282,7 +282,7 @@ function OrderForm({
           </FormGroup>
 
           {/* Payment online method */}
-          <FormGroup check>
+          <FormGroup check className="ms-2">
             <Input
               defaultChecked={paymentMethod}
               id="paymentMethodOnline"
@@ -306,12 +306,12 @@ function OrderForm({
         </FormGroup>
 
         <Row className="mt-2">
-          <Col md={2}>
+          <Col>
             <Link to="/cart" className="text-decoration-none fs-4">
               <code>Cart</code>
             </Link>
           </Col>
-          <Col md={10}>
+          <Col>
             <Button
               type="submit"
               disabled={loadingMoMo || isSubmitting || cart.length === 0}

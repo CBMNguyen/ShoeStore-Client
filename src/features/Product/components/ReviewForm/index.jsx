@@ -1,7 +1,7 @@
 import { PRODUCT_TOAST_OPTIONS } from "constants/globals";
 import { useState } from "react";
 import { toast } from "react-toastify";
-import { Button, Container, Form, Input, Spinner } from "reactstrap";
+import { Button, Form, Input, Spinner } from "reactstrap";
 import Rating from "../Rating";
 
 ReviewForm.propTypes = {};
@@ -14,7 +14,7 @@ function ReviewForm({
   product,
   review,
 }) {
-  const [star, setStar] = useState(4);
+  const [star, setStar] = useState(review?.star || 4);
   const [content, setContent] = useState(() => {
     return review?.content || "";
   });
@@ -42,7 +42,7 @@ function ReviewForm({
       <div className="my-2">
         <code className="text-dark fs-6">Review for product: </code>
         <code>#{product.name}</code>
-        <Rating setStar={setStar} stars={4} />
+        <Rating setStar={setStar} stars={star} />
       </div>
       <Input
         required

@@ -14,7 +14,7 @@
   opacity: 1;
 
   &__name {
-    width: 210px;
+    max-width: 140px;
     display: -webkit-box;
     -webkit-box-orient: vertical;
     -webkit-line-clamp: 1;

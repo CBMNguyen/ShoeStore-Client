@@ -60,3 +60,9 @@ export const ORDER_STATE = {
   delivered: "delivered",
   cancelled: "cancelled",
 };
+
+export const DISCOUNT_TYPE = {
+  FREE_SHIP: "free shipping",
+  DISCOUNT_BY_MONEY: "discount by money",
+  DISCOUNT_BY_PERCENT: "discount by percent",
+};

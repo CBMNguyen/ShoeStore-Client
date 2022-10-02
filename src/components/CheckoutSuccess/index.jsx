@@ -1,9 +1,28 @@
+import discountApi from "api/discount";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { Button, Container } from "reactstrap";
+import { Button, Container, Spinner } from "reactstrap";
 import brandLogo from "../../assets/images/brandLogo.png";
 import "./checkoutSuccess.scss";
 
 function CheckoutSuccess({ user }) {
+  const [expiredDiscount, setExpiredDiscount] = useState(false);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    setLoading(true);
+    discountApi
+      .get("CUSTOMER_GRATITUDE")
+      .then(() => {
+        setExpiredDiscount(false);
+        setLoading(false);
+      })
+      .catch((error) => {
+        setLoading(false);
+        setExpiredDiscount(true);
+      });
+  }, []);
+
   return (
     <div className="CheckoutSuccess shadow">
       <Container className="d-flex flex-column align-items-center">
@@ -23,10 +42,19 @@ function CheckoutSuccess({ user }) {
         <h3 className="my-3">Checkout Successfully</h3>
 
         <div className="my-3 text-center">
-          <code className="text-secondary">
-            Thank you so much for your order! We really appreciate it. Enjoy 10%
-            off your next purchase with this coupon code: THANKYOU10.
-          </code>
+          {loading && <Spinner size="sm" color="primary" />}
+          {!loading && (
+            <code className="text-secondary">
+              Thank you so much for your order! We really appreciate it.
+              {expiredDiscount &&
+                "Please continue to shop to receive attractive vouchers"}
+              {!expiredDiscount &&
+                "Enjoy 5% off your next purchase with this coupon code:"}
+              {!expiredDiscount && (
+                <code className="fw-bold"> CUSTOMER_GRATITUDE.</code>
+              )}
+            </code>
+          )}
         </div>
 
         <div className="d-flex w-100 flex-column flex-lg-row justify-content-center align-items-center mt-4">

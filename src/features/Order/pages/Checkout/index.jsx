@@ -1,6 +1,7 @@
 import axios from "axios";
 import AddressForm from "components/AddressForm";
 import {
+  DISCOUNT_TYPE,
   EXCHANGE_RATE,
   PRODUCT_TOAST_OPTIONS,
   STYLE_MODEL,
@@ -23,6 +24,7 @@ import { resetCart } from "features/Cart/cartSlice";
 import { getOrderById } from "features/Order/orderSlice";
 import OrderForm from "features/Order/components/CheckoutForm";
 import OrderDetail from "features/Order/components/CheckoutDetail";
+import discountApi from "api/discount";
 
 function Checkout(props) {
   const dispatch = useDispatch();
@@ -51,6 +53,8 @@ function Checkout(props) {
   const [discountCode, setDiscountCode] = useState(() => {
     return orderData?.discountCode || "";
   });
+
+  const [discountLoading, setDiscountLoading] = useState(false);
 
   const [checkoutSuccess, setCheckoutSuccess] = useState(false);
 
@@ -153,6 +157,46 @@ function Checkout(props) {
     };
     fetchShipFee();
   }, [cart, selectedAddress]);
+
+  const handleDiscountClick = async () => {
+    if (!discountCode) {
+      toast("Please enter discount code", {
+        ...PRODUCT_TOAST_OPTIONS,
+      });
+      return;
+    }
+    setDiscountLoading(true);
+    discountApi
+      .get(discountCode)
+      .then((data) => {
+        setDiscountLoading(false);
+        toast(
+          data.discount.discountName + " discount code successfully applied",
+          {
+            ...PRODUCT_TOAST_OPTIONS,
+          }
+        );
+        const discountType = data.discount.discountType.discountTypeName;
+        if (discountType === DISCOUNT_TYPE.FREE_SHIP) {
+          setDiscount(totalFeeShip);
+        } else if (discountType === DISCOUNT_TYPE.DISCOUNT_BY_MONEY) {
+          setDiscount(data.discount.value);
+        } else {
+          // discount by promotion percent
+          setDiscount(
+            Number((total(cart) * (data.discount.value / 100)).toFixed(2))
+          );
+        }
+      })
+      .catch((error) => {
+        setDiscountLoading(false);
+        setDiscountCode("");
+        toast(error.message, {
+          ...PRODUCT_TOAST_OPTIONS,
+        });
+      });
+  };
+
   const handleCheckoutSubmit = async (data) => {
     if (cart.length === 0) return;
 
@@ -161,7 +205,9 @@ function Checkout(props) {
     data.payment = false;
     data.transportFee = Number(totalFeeShip);
     data.discountCode = discountCode;
-    data.total = total(cart) + Number(totalFeeShip) - Number(discount);
+    data.total = Number(
+      (total(cart) + Number(totalFeeShip) - Number(discount)).toFixed(2)
+    );
     data.user = user._id;
     data.products = cart.map((product) => ({
       _id: product._id,
@@ -170,6 +216,7 @@ function Checkout(props) {
       selectedSize: product.selectedSize,
       currentOriginalPrice: product.originalPrice,
       currentSalePrice: product.salePrice,
+      currentPromotionPercent: product.promotionPercent,
     }));
 
     const cloneCart = cart.slice().map((item) => ({ ...item }));
@@ -209,7 +256,7 @@ function Checkout(props) {
   return (
     <div className="Checkout">
       <Container>
-        {checkoutSuccess && <CheckoutSuccess user={user} />}
+        {checkoutSuccess && <CheckoutSuccess user={user} order={order} />}
         {!checkoutSuccess && (
           <Row style={{ marginTop: "45px" }}>
             <Col lg={6}>
@@ -270,14 +317,17 @@ function Checkout(props) {
                 style={{
                   borderLeft: "2px solid #dedede",
                   height: "88vh",
-                  overflowY: "scroll",
+                  overflowY: "auto",
                 }}
+                className="Checkout__borderLeft"
               >
                 <OrderDetail
                   cart={cart}
                   totalFeeShip={totalFeeShip}
                   discount={discount}
                   discountCode={discountCode}
+                  discountLoading={discountLoading}
+                  onDiscountApplyClick={handleDiscountClick}
                   setDiscountCode={setDiscountCode}
                 />
               </div>

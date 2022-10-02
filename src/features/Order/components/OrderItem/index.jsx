@@ -7,7 +7,7 @@ function OrderItem({ order }) {
       className="d-flex  pb-4 mb-4"
       style={{ borderBottom: "1px solid #dedede" }}
     >
-      <div className="position-relative">
+      <div className="position-relative flex-shrink-0">
         <img
           className="rounded-2 img-thumbnail img-fluid"
           style={{
@@ -31,7 +31,12 @@ function OrderItem({ order }) {
         </Badge>
       </div>
       <div className="flex-grow-1 ms-4">
-        <Badge className="bg-secondary">{order.name}</Badge>
+        <Badge
+          className="bg-secondary text-truncate"
+          style={{ maxWidth: "210px" }}
+        >
+          {order.name}
+        </Badge>
         <h6>
           <Badge className="bg-dark">
             {capitalizeFirstLetter(order.category.name)}

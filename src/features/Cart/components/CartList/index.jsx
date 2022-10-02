@@ -5,7 +5,9 @@ import {
   Badge,
   Breadcrumb,
   BreadcrumbItem,
+  Col,
   Container,
+  Row,
   Table,
 } from "reactstrap";
 import CartItem from "../CartItem";
@@ -58,18 +60,21 @@ function CartList(props) {
             <i className="bx bx-basket animate__animated animate__swing">
               <Badge className="bg-warning rounded-circle">0</Badge>
             </i>
-            <div className="d-flex">
-              <Link to="/" className="button shadow-lg text-decoration-none">
-                Home
-              </Link>
-
-              <Link
-                to="/products"
-                className="button shadow-lg ms-4 text-decoration-none"
-              >
-                See other products
-              </Link>
-            </div>
+            <Row className="w-75">
+              <Col md={6}>
+                <Link to="/" className="button shadow-lg text-decoration-none">
+                  Home
+                </Link>
+              </Col>
+              <Col md={6}>
+                <Link
+                  to="/products"
+                  className="button shadow-lg text-decoration-none"
+                >
+                  See other products
+                </Link>
+              </Col>
+            </Row>
           </div>
         )}
 
@@ -118,28 +123,27 @@ function CartList(props) {
                   ))}
                 </tbody>
               </Table>
-            </div>
-
-            <div className="CartList__payment mt-2">
-              <div>
-                <div>Total: </div>
-                <div className="ms-3">{`$${total.toFixed(2)}`}</div>
-                <div className="shadow" onClick={handleCheckOutClick}>
-                  Check out
+              <div className="CartList__payment mt-2">
+                <div>
+                  <div>Total: </div>
+                  <div className="ms-3">{`$${total.toFixed(2)}`}</div>
+                  <div className="shadow" onClick={handleCheckOutClick}>
+                    Check out
+                  </div>
+                  <Link
+                    className="btn btn-sm d-block rounded-1 shadow"
+                    style={{
+                      backgroundColor: "deeppink",
+                      color: "#fff",
+                      fontWeight: "500",
+                      paddingTop: "5px",
+                      paddingBottom: "5px",
+                    }}
+                    to="/products"
+                  >
+                    See other products
+                  </Link>
                 </div>
-                <Link
-                  className="btn btn-sm d-block rounded-1 shadow"
-                  style={{
-                    backgroundColor: "deeppink",
-                    color: "#fff",
-                    fontWeight: "500",
-                    paddingTop: "5px",
-                    paddingBottom: "5px",
-                  }}
-                  to="/products"
-                >
-                  See other products
-                </Link>
               </div>
             </div>
           </div>
