@@ -9,7 +9,7 @@ import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { useSelector } from "react-redux";
 import { Link, useHistory } from "react-router-dom";
-import { Badge, Input } from "reactstrap";
+import { Badge, Input, Tooltip } from "reactstrap";
 import { capitalizeFirstLetter } from "utils/common";
 import avt from "../../assets/images/avt.jpg";
 import brandLogo from "../../assets/images/brandLogo.png";
@@ -42,6 +42,25 @@ function Header(props) {
   const dispatch = useDispatch();
   const [value, setValue] = useState("");
   const [showCartModal, setShowCartModal] = useState(false);
+
+  // Map Tooltip
+  const [mapTooltipOpen, setMapTooltipOpen] = useState(false);
+  const toggleMapTooltip = () => setMapTooltipOpen(!mapTooltipOpen);
+
+  // Products Favourite Tooltip
+  const [productFavouriteTooltipOpen, setProductFavouriteTooltipOpen] =
+    useState(false);
+  const toggleProductFavouriteTooltip = () =>
+    setProductFavouriteTooltipOpen(!productFavouriteTooltipOpen);
+
+  // Cart Tooltip
+  const [cartTooltipOpen, setCartTooltipOpen] = useState(false);
+  const toggleCartTooltip = () => setCartTooltipOpen(!cartTooltipOpen);
+
+  // Order History Tooltip
+  const [orderHistoryTooltipOpen, setOrderHistoryTooltipOpen] = useState(false);
+  const toggleOrderHistoryTooltip = () =>
+    setOrderHistoryTooltipOpen(!orderHistoryTooltipOpen);
 
   const { cart } = useSelector((state) => state.cart);
   const { token, user } = useSelector((state) => state.user);
@@ -248,7 +267,15 @@ function Header(props) {
           className="p-0 m-0 d-none d-sm-block"
           onClick={() => mapModel.showModel()}
         >
-          <i className="bx bx-map" />
+          <i id="mapTooltip" className="bx bx-map" />
+          <Tooltip
+            placement="bottom"
+            isOpen={mapTooltipOpen}
+            toggle={toggleMapTooltip}
+            target="mapTooltip"
+          >
+            Map
+          </Tooltip>
         </div>
 
         {/* map icon when width sm */}
@@ -279,18 +306,28 @@ function Header(props) {
         {token && (
           <div className="p-0 m-0">
             <Link className="text-dark" to={"/favourite/" + user._id}>
-              <i className="bx bx-heart">
+              <i id="productFavouriteTooltip" className="bx bx-heart">
                 <Badge className="bg-danger rounded-circle" size="sm">
                   {favourites.length}
                 </Badge>
               </i>
             </Link>
+
+            <Tooltip
+              placement="bottom"
+              isOpen={productFavouriteTooltipOpen}
+              toggle={toggleProductFavouriteTooltip}
+              target="productFavouriteTooltip"
+            >
+              Products Favourite
+            </Tooltip>
           </div>
         )}
 
         <div style={{ position: "relative", top: "-1px" }}>
           <label htmlFor="nav-mobile-input" className="nav__mobile-btn mx-1">
             <i
+              id="cartTooltip"
               className="bx bx-basket animate__animated animate__swing"
               key={cart.length}
               onClick={() => setShowCartModal(true)}
@@ -302,6 +339,15 @@ function Header(props) {
                 )}
               </Badge>
             </i>
+
+            <Tooltip
+              placement="bottom"
+              isOpen={cartTooltipOpen}
+              toggle={toggleCartTooltip}
+              target="cartTooltip"
+            >
+              Cart
+            </Tooltip>
 
             <label
               onClick={() => setShowCartModal(false)}
@@ -319,7 +365,17 @@ function Header(props) {
               onClick={() => history.push(`/order`)}
               className="bx bxl-shopify"
               key={cart.length}
+              id="orderHistoryTooltip"
             ></i>
+
+            <Tooltip
+              placement="bottom"
+              isOpen={orderHistoryTooltipOpen}
+              toggle={toggleOrderHistoryTooltip}
+              target="orderHistoryTooltip"
+            >
+              Order History
+            </Tooltip>
           </div>
         )}
 
