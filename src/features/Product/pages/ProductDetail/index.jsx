@@ -55,7 +55,7 @@ function ProductDetail(props) {
       try {
         const data = await productApi.get(productId);
         const index = recentProducts.findIndex(
-          (item) => data.product._id === item._id
+          (item) => data?.product?._id === item?._id
         );
         if (index < 0) {
           recentProducts.push(data.product);
