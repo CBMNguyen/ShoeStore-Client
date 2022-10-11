@@ -253,7 +253,7 @@ function ProductDetailImage({
                     <i
                       onClick={handleProductFavouriteClick}
                       className={`bx ${
-                        !user._id || (!hasProductFavourite() && !user?.id)
+                        !user?._id || (!hasProductFavourite() && !user?.id)
                           ? "bx-heart"
                           : "bxs-heart text-danger"
                       } me-4`}
