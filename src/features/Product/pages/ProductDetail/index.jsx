@@ -54,13 +54,15 @@ function ProductDetail(props) {
     const fetchProduct = async () => {
       try {
         const data = await productApi.get(productId);
-        const index = recentProducts.findIndex(
-          (item) => data?.product?._id === item?._id
-        );
-        if (index < 0) {
-          recentProducts.push(data.product);
-          const recentProductsStr = JSON.stringify(recentProducts);
-          sessionStorage.setItem("recentProducts", recentProductsStr);
+        if (data) {
+          const index = recentProducts.findIndex(
+            (item) => data?.product?._id === item?._id
+          );
+          if (index < 0) {
+            recentProducts.push(data.product);
+            const recentProductsStr = JSON.stringify(recentProducts);
+            sessionStorage.setItem("recentProducts", recentProductsStr);
+          }
         }
         setProduct(data.product);
       } catch (error) {
