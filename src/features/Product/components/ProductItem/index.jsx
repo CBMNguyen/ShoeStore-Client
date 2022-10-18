@@ -72,7 +72,7 @@ function ProductItem(props) {
             <div>Price</div>
             <div>
               {product.promotionPercent !== 0 && (
-                <div>${product.salePrice * ((100 - 5) / 100)}</div>
+                <div>${(product.salePrice * ((100 - 5) / 100)).toFixed(2)}</div>
               )}
               <div className={`${product.promotionPercent !== 0 && "active"}`}>
                 ${`${product.salePrice}`}

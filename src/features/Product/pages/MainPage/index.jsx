@@ -44,8 +44,8 @@ function MainPage(props) {
     color: "",
     size: "",
     price: {
-      minPrice: 42.32,
-      maxPrice: 2000,
+      minPrice: 74.1,
+      maxPrice: 2191,
     },
     isIncreasePrice: 0,
     selectedProduct: null,
@@ -87,8 +87,8 @@ function MainPage(props) {
         : product.productDetail.findIndex((s) =>
             s.sizeAndQuantity.some((s) => s.size.size === filter.size)
           ) !== -1) &&
-      product.originalPrice >= filter["price"]["minPrice"] &&
-      product.originalPrice <= filter["price"]["maxPrice"] &&
+      product.salePrice >= filter["price"]["minPrice"] &&
+      product.salePrice <= filter["price"]["maxPrice"] &&
       product.category.name.indexOf(filter["category"]) !== -1 &&
       !product.state
   );
@@ -100,13 +100,13 @@ function MainPage(props) {
   filter.isIncreasePrice === 1 &&
     (sortProductByPrice = filterProduct
       .slice()
-      .sort((a, b) => a.originalPrice - b.originalPrice));
+      .sort((a, b) => a.salePrice - b.salePrice));
 
   // Sort Decrease Product
   filter.isIncreasePrice === -1 &&
     (sortProductByPrice = filterProduct
       .slice()
-      .sort((a, b) => b.originalPrice - a.originalPrice));
+      .sort((a, b) => b.salePrice - a.salePrice));
 
   const loginModel = useModel();
   const signupModel = useModel();
@@ -211,8 +211,8 @@ function MainPage(props) {
             category={category}
             size={size}
             filter={filter}
-            minPrice={42.32}
-            maxPrice={2000}
+            minPrice={74.1}
+            maxPrice={2191}
             onColorChange={handleColorChange}
             onSizeChange={handleSizeChange}
             onCategoryChange={handleCategoryChange}
@@ -258,8 +258,8 @@ function MainPage(props) {
           category={category}
           size={size}
           filter={filter}
-          minPrice={42.32}
-          maxPrice={2000}
+          minPrice={74.1}
+          maxPrice={2191}
           onColorChange={handleColorChange}
           onSizeChange={handleSizeChange}
           onCategoryChange={handleCategoryChange}

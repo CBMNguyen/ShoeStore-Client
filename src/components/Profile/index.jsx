@@ -106,7 +106,6 @@ function Profile(props) {
         "Password must be at least 8 characters with one uppercase letter, one lowercase letter, and one special character"
       ),
     gender: yup.object().required("This field is require.").nullable(),
-    image: yup.mixed().required("This file is required"),
     birthdate: yup.date().required("This field is require."),
   });
 
@@ -184,7 +183,7 @@ function Profile(props) {
               />
             )}
 
-            {!model.data.image && (
+            {(!model?.data?.image || model?.data?.image === "null") && !avatar && (
               <div className="Profile__avatarText shadow">
                 <code className="text-white">{model.data.firstname[0]}</code>
               </div>
