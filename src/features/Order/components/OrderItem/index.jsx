@@ -49,9 +49,11 @@ function OrderItem({ order }) {
       <div className="my-auto">
         <Badge className="bg-warning">
           $
-          {order.salePrice *
+          {(
+            order.salePrice *
             (1 - order.promotionPercent / 100) *
-            order.selectedQuantity}
+            order.selectedQuantity
+          ).toFixed(2)}
         </Badge>
       </div>
     </div>

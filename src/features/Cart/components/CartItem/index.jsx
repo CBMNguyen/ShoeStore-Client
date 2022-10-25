@@ -80,7 +80,10 @@ function CartItem(props) {
           />
           <div className="ps-4 d-none d-md-block">
             <Badge className="bg-dark d-block">{product.name}</Badge>
-            <Badge className="bg-warning">{`${product.originalPrice}$`}</Badge>
+            <Badge className="bg-warning">{`$${(
+              product.salePrice *
+              ((100 - product.promotionPercent) / 100)
+            ).toFixed(2)}`}</Badge>
           </div>
         </div>
       </td>

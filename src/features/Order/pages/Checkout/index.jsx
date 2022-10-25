@@ -138,7 +138,7 @@ function Checkout(props) {
             },
             params: {
               service_id: service_type, // service type
-              insurance_value: total(cart) * EXCHANGE_RATE, // total order
+              insurance_value: Math.trunc(total(cart) * EXCHANGE_RATE), // total order
               coupon: null,
               from_district_id: 2081, // Binh Tan District Code
               to_district_id: Number(selectedAddress.split("#")[1]),

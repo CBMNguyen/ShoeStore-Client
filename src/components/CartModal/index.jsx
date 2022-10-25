@@ -83,9 +83,11 @@ function CartModal({
             <div className="my-auto">
               <Badge className="bg-warning">
                 $
-                {cartItem.salePrice *
+                {(
+                  cartItem.salePrice *
                   cartItem.selectedQuantity *
-                  (1 - cartItem.promotionPercent / 100)}
+                  (1 - cartItem.promotionPercent / 100)
+                ).toFixed(2)}
               </Badge>
             </div>
           </div>

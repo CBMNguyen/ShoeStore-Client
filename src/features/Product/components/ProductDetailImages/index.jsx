@@ -423,9 +423,10 @@ function ProductDetailImage({
                   >
                     <div>
                       <i className="bx bx-basket" />
-                      {`$${
-                        product.salePrice * (1 - product.promotionPercent / 100)
-                      } - Add to Cart`}
+                      {`$${(
+                        product.salePrice *
+                        (1 - product.promotionPercent / 100)
+                      ).toFixed(2)} - Add to Cart`}
                     </div>
                   </button>
                 </div>

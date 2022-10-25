@@ -233,66 +233,73 @@ function MainPage(props) {
                       </tr>
                     </thead>
                     <tbody>
-                      {order.slice(start, end).map((item, index) => (
-                        <tr style={{ verticalAlign: "middle" }} key={index}>
-                          <th scope="row">{index + 1}</th>
-                          <td style={{ minWidth: "300px" }}>
-                            <code className="text-dark">
-                              {item.address.split("#")[0]}
-                            </code>
-                          </td>
-                          <td>
-                            <Badge className={getColorByState(item.state)}>
-                              {capitalizeFirstLetter(item.state)}
-                            </Badge>
-                          </td>
-                          <td>
-                            <Badge className="bg-warning">
-                              ${item.total.toFixed(2)}
-                            </Badge>
-                          </td>
-                          <td>
-                            {item.payment ? (
-                              <i className="bx bx-check text-success fs-3 ms-3"></i>
-                            ) : (
-                              <i className="bx bx-x text-danger text-danger fs-3 ms-3"></i>
-                            )}
-                          </td>
-                          <td>
-                            {item.paymentMethod ? (
-                              <img
-                                src={momoImage}
-                                className="ms-3 rounded"
-                                width={28}
-                                height={28}
-                                alt="momoLogo"
-                              />
-                            ) : (
-                              <img
-                                src={deliveredLogo}
-                                className="ms-2"
-                                width={40}
-                                height={28}
-                                alt="deliveredLogo"
-                              />
-                            )}
-                          </td>
-                          <td>
-                            <Badge className="bg-dark">
-                              {formatDate(item.createdAt)}
-                            </Badge>
-                          </td>
-                          <td>
-                            <i
-                              onClick={() => {
-                                setSelectedOrder(item);
-                                toggle();
-                              }}
-                              className="Order__viewIcon bx bx-show fs-3 ms-2 text-primary"
-                            ></i>
-                          </td>
-                        </tr>
-                      ))}
+                      {order
+                        .slice(start, end)
+                        .sort(
+                          (a, b) =>
+                            new Date(b.createdAt).getTime() -
+                            new Date(a.createdAt).getTime()
+                        )
+                        .map((item, index) => (
+                          <tr style={{ verticalAlign: "middle" }} key={index}>
+                            <th scope="row">{index + 1}</th>
+                            <td style={{ minWidth: "300px" }}>
+                              <code className="text-dark">
+                                {item.address.split("#")[0]}
+                              </code>
+                            </td>
+                            <td>
+                              <Badge className={getColorByState(item.state)}>
+                                {capitalizeFirstLetter(item.state)}
+                              </Badge>
+                            </td>
+                            <td>
+                              <Badge className="bg-warning">
+                                ${item.total.toFixed(2)}
+                              </Badge>
+                            </td>
+                            <td>
+                              {item.payment ? (
+                                <i className="bx bx-check text-success fs-3 ms-3"></i>
+                              ) : (
+                                <i className="bx bx-x text-danger text-danger fs-3 ms-3"></i>
+                              )}
+                            </td>
+                            <td>
+                              {item.paymentMethod ? (
+                                <img
+                                  src={momoImage}
+                                  className="ms-3 rounded"
+                                  width={28}
+                                  height={28}
+                                  alt="momoLogo"
+                                />
+                              ) : (
+                                <img
+                                  src={deliveredLogo}
+                                  className="ms-2"
+                                  width={40}
+                                  height={28}
+                                  alt="deliveredLogo"
+                                />
+                              )}
+                            </td>
+                            <td>
+                              <Badge className="bg-dark">
+                                {formatDate(item.createdAt)}
+                              </Badge>
+                            </td>
+                            <td>
+                              <i
+                                onClick={() => {
+                                  setSelectedOrder(item);
+                                  toggle();
+                                }}
+                                className="Order__viewIcon bx bx-show fs-3 ms-2 text-primary"
+                              ></i>
+                            </td>
+                          </tr>
+                        ))}
                     </tbody>
                   </Table>
                 </div>

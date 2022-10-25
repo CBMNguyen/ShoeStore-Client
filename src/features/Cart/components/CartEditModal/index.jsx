@@ -225,7 +225,10 @@ function CartEditModal({ cart, model, closeModel }) {
           <button onClick={handleUpdateCartItemClick}>
             <div>
               <i className="bx bx-basket" />
-              {`$${product.originalPrice} - Update to Cart`}
+              {`$${(
+                product.salePrice *
+                ((100 - product.promotionPercent) / 100)
+              ).toFixed(2)} - Update to Cart`}
             </div>
           </button>
         </div>
