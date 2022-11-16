@@ -85,9 +85,11 @@ function OrderForm({
       const index = addressesClone.findIndex(
         ({ address }) => address === addressList.address
       );
-      const savedAddress = addressesClone[index];
-      addressesClone.splice(index, 1);
-      addressesClone.unshift(savedAddress);
+      if (index >= 0) {
+        const savedAddress = addressesClone[index];
+        addressesClone.splice(index, 1);
+        addressesClone.unshift(savedAddress);
+      }
     }
   };
   // get latest order address
