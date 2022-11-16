@@ -81,7 +81,7 @@ function OrderForm({
   };
   const addressesClone = addresses.slice();
   const getLatestAddress = (addressList) => {
-    if (orderData || order.length !== 0) {
+    if (orderData?.email === user.email || order.length !== 0) {
       const index = addressesClone.findIndex(
         ({ address }) => address === addressList.address
       );
